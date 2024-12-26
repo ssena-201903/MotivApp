@@ -1,8 +1,10 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Dimensions } from "react-native";
 import FillGlassIcon from "../icons/FillGlassIcon";
 import CalendarIcon from "../icons/CalendarIcon";
 import UserIcon from "../icons/UserIcon";
+
+const { width } = Dimensions.get('window');
 
 const TopBar: React.FC = () => {
   return (
@@ -30,9 +32,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    width: 380,
-    marginLeft: 40,
-    marginRight: 40,
+    width: width - 40,
+    marginHorizontal: 20,
     marginTop: 20,
     marginBottom: 30,
   },
