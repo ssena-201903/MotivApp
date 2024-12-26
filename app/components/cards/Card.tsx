@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native'
-import FillGlass from '../icons/FillGlass';
+import FillGlass from '../icons/FillGlassIcon';
 
 const Card = () => {
   return (
@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     },
     text: {
         color: "#264653",
+        marginLeft: 20,
     },
 });
 

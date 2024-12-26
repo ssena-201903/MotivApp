@@ -1,11 +1,12 @@
 import React from 'react';
 import { Text, StyleSheet, View, Image } from 'react-native';
 import Card from '../components/cards/Card';
+import TopBar from '../components/cards/TopBar';
 
 const Home: React.FC = () => {
   return (
     <View style={styles.container}>
-        <Card/>
+        <TopBar/>
     </View>
   );
 };
@@ -13,8 +14,9 @@ const Home: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
+        justifyContent: "flex-start",
         alignItems: "center",
+        flexDirection: "column"
     },
     text: {
         color: "purple",
