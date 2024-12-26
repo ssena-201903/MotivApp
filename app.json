@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "shopList",
-    "slug": "shopList",
+    "name": "MotivApp",
+    "slug": "MotivApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -32,7 +32,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true
