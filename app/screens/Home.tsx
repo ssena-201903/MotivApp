@@ -3,12 +3,14 @@ import { Text, StyleSheet, View, Image } from 'react-native';
 import Card from '../components/cards/Card';
 import TopBar from '../components/cards/TopBar';
 import DailyText from '../components/cards/DailyText';
+import DateTodos from '../components/DateTodos';
 
 const Home: React.FC = () => {
   return (
     <View style={styles.container}>
         <TopBar/>
         <DailyText/>
+        <DateTodos/>
     </View>
   );
 };

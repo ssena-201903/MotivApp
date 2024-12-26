@@ -16,11 +16,11 @@ const TopBar: React.FC = () => {
       <View style={styles.topMenu}>
         <View style={styles.topMenuItem}>
           <CalendarIcon width={28} height={28} />
-          <Text style={styles.topMenuItemText}>Calendar</Text>
+          {/* <Text style={styles.topMenuItemText}>Calendar</Text> */}
         </View>
         <View style={styles.topMenuItem}>
           <UserIcon width={28} height={28} />
-          <Text style={styles.topMenuItemText}>Profile</Text>
+          {/* <Text style={styles.topMenuItemText}>Profile</Text> */}
         </View>
       </View>
     </View>
