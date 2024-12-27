@@ -1,5 +1,5 @@
 import React from 'react'
-import CardDate from '../components/cards/CardDate'
+import CardDate from './cards/CardDate'
 import { StyleSheet, View, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
