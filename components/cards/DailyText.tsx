@@ -1,10 +1,9 @@
-import React from "react";
 import { View, StyleSheet, Dimensions, Text } from "react-native";
-import StarIcon from "../icons/StarIcon";
+import StarIcon from "@/components/icons/StarIcon";
 
 const { width } = Dimensions.get("window");
 
-const DailyText: React.FC = () => {
+export default function DailyText () {
   return (
     <View style={styles.container}>
       <StarIcon width={20} height={20} />
@@ -34,5 +33,3 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
 });
-
-export default DailyText;

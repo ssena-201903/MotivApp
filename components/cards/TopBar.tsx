@@ -1,12 +1,12 @@
-import React from "react";
 import { View, StyleSheet, Text, Dimensions } from "react-native";
-import FillGlassIcon from "../icons/FillGlassIcon";
-import CalendarIcon from "../icons/CalendarIcon";
-import UserIcon from "../icons/UserIcon";
+import FillGlassIcon from "@/components/icons/FillGlassIcon";
+import CalendarIcon from "@/components/icons/CalendarIcon";
+import UserIcon from "@/components/icons/UserIcon";
+import { Ionicons } from "@expo/vector-icons";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
-const TopBar: React.FC = () => {
+export default function TopBar() {
   return (
     <View style={styles.container}>
       <View style={styles.date}>
@@ -15,37 +15,47 @@ const TopBar: React.FC = () => {
       </View>
       <View style={styles.topMenu}>
         <View style={styles.topMenuItem}>
-          <CalendarIcon width={28} height={28} />
-          {/* <Text style={styles.topMenuItemText}>Calendar</Text> */}
+          <Ionicons name="sparkles" size={28} color="#264653" />
         </View>
         <View style={styles.topMenuItem}>
-          <UserIcon width={28} height={28} />
-          {/* <Text style={styles.topMenuItemText}>Profile</Text> */}
+          <Ionicons name="calendar-clear" size={28} color="#264653" />
+        </View>
+        <View style={styles.topMenuItem}>
+          <Ionicons name="person" size={28} color="#264653" />
         </View>
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    backgroundColor: "#FFB9B4",
+    borderRadius: 10,
     width: width - 40,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
     marginHorizontal: 20,
-    marginTop: 20,
-    marginBottom: 30,
+    marginTop: 30,
+    marginBottom: 10,
   },
   date: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    // marginLeft: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: "#FCFCFC",
   },
   dateDay: {
     color: "#264653",
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 900,
     marginRight: 16,
   },
   dateYear: {
@@ -62,7 +72,11 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    marginLeft: 20,
+    marginLeft: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    // backgroundColor: "#FCFCFC",
   },
   topMenuItemText: {
     color: "#264653",
@@ -71,5 +85,3 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 });
-
-export default TopBar;

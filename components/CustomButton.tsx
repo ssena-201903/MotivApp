@@ -1,13 +1,11 @@
-import React from 'react'
-import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, View, StyleSheet, Pressable } from 'react-native';
 
-type ButtonProps = {
-    title: string,
+type Props = {
+    label: string,
     onPress: () => void;
     variant: 'outlined' | 'fill' | 'disabled';
 };
-
-const Button: React.FC<ButtonProps> = ({title, onPress, variant}) => {
+export default function CustomButton ({ label, onPress, variant } : Props) {
     const getButtonStyle = () => {
         switch (variant) {
             case 'outlined':
@@ -29,7 +27,7 @@ const Button: React.FC<ButtonProps> = ({title, onPress, variant}) => {
     >
         <Text style={[styles.text, variant === 'disabled' && styles.disabledText, 
                     variant === 'outlined' && styles.outlinedText]}>
-            {title}
+            {label}
         </Text>
     </TouchableOpacity>
   );
@@ -62,10 +60,10 @@ const styles = StyleSheet.create({
     },
     disabled: {
         backgroundColor: "#FF8462",
+        opacity: 0.7,
     },
     disabledText: {
         color: "white",
+        opacity: 0.8,
     },
 })
-
-export default Button

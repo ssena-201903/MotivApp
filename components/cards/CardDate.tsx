@@ -3,12 +3,12 @@ import { StyleSheet, View, Dimensions, Text } from "react-native";
 
 const { width } = Dimensions.get("window");
 
-interface CardDateProps {
+type Props = {
   variant: "active" | "passive";
   text: string;
 }
 
-const DateTodos: React.FC<CardDateProps> = ({ variant, text }) => {
+export default function CardDate ({ variant, text } : Props) {
   return (
     <View
       style={[
@@ -92,5 +92,3 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
-
-export default DateTodos;

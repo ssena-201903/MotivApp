@@ -1,10 +1,9 @@
-import React from 'react'
-import CardDate from './cards/CardDate'
 import { StyleSheet, View, Dimensions } from 'react-native';
+import CardDate from '@/components/cards/CardDate';
 
 const { width } = Dimensions.get('window');
 
-const DateTodos: React.FC = () => {
+export default function DateTodos () {
   return (
     <View style={styles.container}>
         <CardDate variant='active' text='Tue'/>
@@ -26,5 +25,3 @@ const styles = StyleSheet.create({
         // backgroundColor: "black",
     },
 });
-
-export default DateTodos
