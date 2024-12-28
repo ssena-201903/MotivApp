@@ -6,6 +6,7 @@ import CustomButton from "@/components/CustomButton";
 import SectionHeader from "@/components/headers/SectionHeader";
 import CardTodo from "@/components/cards/CardTodo";
 import CardGoal from "@/components/cards/CardGoal";
+import CardHabit from "@/components/cards/CardHabit";
 
 const { width } = Dimensions.get("window");
 
@@ -31,7 +32,7 @@ export default function Index() {
           variant="disabled"
           onPress={() => alert("pressed the disabled")}
         /> */}
-        <SectionHeader text="Goals"/>
+        <SectionHeader text="Goals" percentDone={25}/>
         <View style={styles.goalView}>
           <CardGoal type="videocam" inlineText="Movie" />
           <CardGoal type="car" inlineText="Place" />
@@ -40,17 +41,19 @@ export default function Index() {
           <CardGoal type="accessibility" inlineText="Activity" />
           <CardGoal type="cash" inlineText="Buy" />
         </View>
-        <SectionHeader text="To-Do List" />
+        <SectionHeader text="To-Do List" percentDone={25} />
         <ScrollView style={styles.todoView}>
           <CardTodo
             type="gift"
             inlineText="Anna's birthday! Haven't you celebrated?"
+            variant="birthday"
           />
-          <CardTodo type="checkmark-circle" inlineText="Dental Appointment" />
-          <CardTodo type="checkmark-circle" inlineText="Dental Appointment" />
-          <CardTodo type="checkmark-circle" inlineText="Dental Appointment" />
+          <CardTodo type="checkmark-circle" inlineText="Dental Appointment" variant="todo" />
+          <CardTodo type="checkmark-circle" inlineText="Meeting Friends" variant="todo"/>
+          <CardTodo type="checkmark-circle" inlineText="Do Project" variant="todo" />
         </ScrollView>
       </View>
+      <CardHabit variant="Water"/>
     </ScrollView>
   );
 }
@@ -70,7 +73,7 @@ const styles = StyleSheet.create({
   todoView: {
     flexGrow: 1,
     width: width - 40,
-    height: 140,
+    height: 170,
     overflow: "hidden",
   },
   goalView: {

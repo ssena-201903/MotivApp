@@ -14,14 +14,14 @@ export default function TopBar() {
         <Text style={styles.dateYear}>2024</Text>
       </View>
       <View style={styles.topMenu}>
+        {/* <View style={styles.topMenuItem}>
+          <Ionicons name="sparkles" size={28} color="#FCFCFC" />
+        </View> */}
         <View style={styles.topMenuItem}>
-          <Ionicons name="sparkles" size={28} color="#264653" />
+          <Ionicons name="calendar" size={28} color="#FCFCFC" />
         </View>
         <View style={styles.topMenuItem}>
-          <Ionicons name="calendar-clear" size={28} color="#264653" />
-        </View>
-        <View style={styles.topMenuItem}>
-          <Ionicons name="person" size={28} color="#264653" />
+          <Ionicons name="person" size={28} color="#FCFCFC" />
         </View>
       </View>
     </View>
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#FFB9B4",
+    backgroundColor: "#264653",
     borderRadius: 10,
     width: width - 40,
     paddingHorizontal: 10,
@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    marginLeft: 4,
-    paddingHorizontal: 10,
+    // marginLeft: 4,
+    paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
     // backgroundColor: "#FCFCFC",
