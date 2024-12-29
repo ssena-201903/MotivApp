@@ -77,10 +77,12 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "row",
-    padding: 16,
+    alignItems: "center",
+    paddingHorizontal: 20,
     marginBottom: 8,
     backgroundColor: "#E5EEFF",
     width: width - 40,
+    height: 50,
     borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -97,7 +99,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 16,
     marginBottom: 8,
-    backgroundColor: "#FFB9B4", // I can change later
+    backgroundColor: "#FFA38F", // I can change later
     width: width - 40,
     borderRadius: 12,
     shadowColor: "#000",

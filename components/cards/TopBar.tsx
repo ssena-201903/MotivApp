@@ -18,10 +18,10 @@ export default function TopBar() {
           <Ionicons name="sparkles" size={28} color="#FCFCFC" />
         </View> */}
         <View style={styles.topMenuItem}>
-          <Ionicons name="calendar" size={28} color="#FCFCFC" />
+          <Ionicons name="calendar" size={24} color="#FCFCFC" />
         </View>
         <View style={styles.topMenuItem}>
-          <Ionicons name="person" size={28} color="#FCFCFC" />
+          <Ionicons name="person" size={24} color="#FCFCFC" />
         </View>
       </View>
     </View>
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "#264653",
     borderRadius: 10,
-    width: width - 40,
+    width: 370,
     paddingHorizontal: 10,
     paddingVertical: 10,
     marginHorizontal: 20,
