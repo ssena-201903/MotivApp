@@ -14,7 +14,7 @@ export default function SectionHeader({ text, percentDone }: Props) {
 
   useEffect(() => {
     Animated.timing(progressWidth, {
-      toValue: (230 * percentDone) / 100, // // width of progress bar which is stable
+      toValue: (245 * percentDone) / 100, // // width of progress bar which is stable
       duration: 500,
       useNativeDriver: false,
     }).start();
@@ -55,11 +55,11 @@ const styles = StyleSheet.create({
   text: {
     color: "#FCFCFC",
     fontSize: 14,
-    fontWeight: "semibold",
+    fontWeight: "800",
     backgroundColor: "#264653",
     paddingHorizontal: 14,
     paddingVertical: 2,
-    borderRadius: 12,
+    borderRadius: 6,
     width: 110,
   },
   percentText: {
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   progressBarContainer: {
-    width: 230, // width of progress bar which is stable
+    width: 245, // width of progress bar which is stable
     height: 10,
     borderRadius: 5,
     overflow: "hidden",

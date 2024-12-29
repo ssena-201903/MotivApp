@@ -10,13 +10,17 @@ export default function TopBar() {
   return (
     <View style={styles.container}>
       <View style={styles.date}>
-        <Text style={styles.dateDay}>Dec 26</Text>
-        <Text style={styles.dateYear}>2024</Text>
+        <Text style={styles.dateMonth}>Dec 26</Text>
+        <Text style={styles.dateDay}>Wed</Text>
+        {/* <Text style={styles.dateYear}>2024</Text> */}
       </View>
       <View style={styles.topMenu}>
         {/* <View style={styles.topMenuItem}>
           <Ionicons name="sparkles" size={28} color="#FCFCFC" />
         </View> */}
+        <View style={styles.topMenuItem}>
+          <Ionicons name="diamond" size={24} color="#FCFCFC" />
+        </View>
         <View style={styles.topMenuItem}>
           <Ionicons name="calendar" size={24} color="#FCFCFC" />
         </View>
@@ -37,10 +41,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 370,
     paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingVertical: 8,
     marginHorizontal: 20,
     marginTop: 30,
-    marginBottom: 10,
+    marginBottom: 4,
   },
   date: {
     display: "flex",
@@ -48,20 +52,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     // marginLeft: 4,
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: 2,
     borderRadius: 6,
     backgroundColor: "#FCFCFC",
   },
-  dateDay: {
+  dateMonth: {
     color: "#264653",
     fontSize: 24,
-    fontWeight: 900,
+    fontWeight: 800,
+    marginRight: 16,
+  },
+  dateDay: {
+    color: "#264653",
+    opacity: 0.6,
+    fontSize: 16,
+    fontWeight: 400,
     marginRight: 16,
   },
   dateYear: {
     color: "#264653",
-    fontSize: 14,
-    fontWeight: "medium",
+    fontSize: 16,
+    fontWeight: "400",
     marginRight: 10,
   },
   topMenu: {

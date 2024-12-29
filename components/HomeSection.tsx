@@ -13,7 +13,7 @@ export default function HomeSection({ variant }: Props) {
     if (variant === "goals") {
       return (
         <>
-          <SectionHeader text="Goals" percentDone={25} />
+          <SectionHeader text="Goals" percentDone={30} />
           <View style={styles.gridView}>
             <CardGoal type="videocam" inlineText="Movie" />
             <CardGoal type="car" inlineText="Place" />
@@ -27,7 +27,7 @@ export default function HomeSection({ variant }: Props) {
     } else if (variant === "habits") {
       return (
         <>
-          <SectionHeader text="Habits" percentDone={25} />
+          <SectionHeader text="Habits" percentDone={60} />
           <View style={styles.gridView}>
             <CardHabit variant="Water" />
             <CardHabit variant="Sport" />
@@ -38,7 +38,7 @@ export default function HomeSection({ variant }: Props) {
     } else if (variant === "todos") {
       return (
         <>
-          <SectionHeader text="To-Do List" percentDone={25} />
+          <SectionHeader text="To-Do" percentDone={85} />
           <ScrollView style={styles.todoView}>
             <CardTodo
               type="gift"
