@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
-export default function TopBar() {
+export default function TopBar({ onDiamondPress }: { onDiamondPress: () => void}) {
   return (
     <View style={styles.container}>
       <View style={styles.date}>
@@ -19,7 +19,7 @@ export default function TopBar() {
           <Ionicons name="sparkles" size={28} color="#FCFCFC" />
         </View> */}
         <View style={styles.topMenuItem}>
-          <Ionicons name="diamond" size={24} color="#FCFCFC" />
+          <Ionicons name="diamond" size={24} color="#FCFCFC" onPress={onDiamondPress} />
         </View>
         <View style={styles.topMenuItem}>
           <Ionicons name="calendar" size={24} color="#FCFCFC" />

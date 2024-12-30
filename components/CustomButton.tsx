@@ -48,18 +48,18 @@ const styles = StyleSheet.create({
         color: "white",
     },
     fill: {
-        backgroundColor: "#FF8462",
+        backgroundColor: "#FF8462", // can change later
     },
     outlined: {
         borderWidth: 2,
-        borderColor: "#FF8462",
+        borderColor: "#FFA38F", // can change later
         backgroundColor: "transparent",
     },
     outlinedText: {
-        color: "#FF8462",
+        color: "#FFA38F", // can change later
     },
     disabled: {
-        backgroundColor: "#FF8462",
+        backgroundColor: "#FF8462", // can change later
         opacity: 0.7,
     },
     disabledText: {
