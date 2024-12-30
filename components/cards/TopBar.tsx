@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, Dimensions } from "react-native";
+import { View, StyleSheet, Text, Dimensions, Pressable, TouchableOpacity } from "react-native";
 import FillGlassIcon from "@/components/icons/FillGlassIcon";
 import CalendarIcon from "@/components/icons/CalendarIcon";
 import UserIcon from "@/components/icons/UserIcon";
@@ -12,12 +12,8 @@ export default function TopBar({ onDiamondPress }: { onDiamondPress: () => void}
       <View style={styles.date}>
         <Text style={styles.dateMonth}>Dec 26</Text>
         <Text style={styles.dateDay}>Wed</Text>
-        {/* <Text style={styles.dateYear}>2024</Text> */}
       </View>
       <View style={styles.topMenu}>
-        {/* <View style={styles.topMenuItem}>
-          <Ionicons name="sparkles" size={28} color="#FCFCFC" />
-        </View> */}
         <View style={styles.topMenuItem}>
           <Ionicons name="diamond" size={24} color="#FCFCFC" onPress={onDiamondPress} />
         </View>
