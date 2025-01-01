@@ -7,6 +7,10 @@ import { Ionicons } from "@expo/vector-icons";
 const { width } = Dimensions.get("window");
 
 export default function TopBar({ onDiamondPress }: { onDiamondPress: () => void}) {
+  const handleToast = () => {
+
+  };
+  
   return (
     <View style={styles.container}>
       <View style={styles.date}>

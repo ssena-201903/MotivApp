@@ -66,54 +66,78 @@ export default function CardHabit({ variant }: Props) {
   };
 
   const handleDonePress = () => {
-    // Alert.alert("Confirm Action", "Do you confirm this action?", [
-    //   {
-    //     text: "No",
-    //     style: "cancel",
-    //   },
-    //   {
-    //     text: "Yes",
-    //     onPress: () => {
-    //       setIsDone((prev) => !prev);
-    //     },
-    //   },
-    // ]);
-    setIsDone((prev) => !prev);
+    if (isDone) {
+      Alert.alert("Habit", "Undo the action", [
+        {
+          text: "No",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: () => {
+            setIsDone((prev) => !prev);
+          },
+        },
+      ]);
+    } else {
+      Alert.alert("Habit", "Mark as done?", [
+        {
+          text: "No",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: () => {
+            setIsDone((prev) => !prev);
+          },
+        },
+      ]);
+    }
   };
 
   const createHabitCard = () => {
+    const leftViewStyle = [
+      styles.leftView,
+      variant !== "Water" && { height: 30 },
+    ];
+
     if (variant === "Sport") {
       return (
         <>
-          <View style={styles.leftView}>
+          <View style={leftViewStyle}>
             <Ionicons name="barbell" size={20} color="#264653" />
             <Text style={styles.text}>Spor</Text>
             <Text style={styles.subText}>20 min</Text>
           </View>
-          {/* <Ionicons name="heart-outline" size={20} color="#264653" /> */}
-          {/* <HeartIcon width={20} height={20}/> */}
-          <Pressable onPress={handleDonePress}>
-            <Ionicons name="checkmark" size={24} color="#264653" />
+          <Pressable style={{ height: 30, justifyContent: "center" }}>
+            <Ionicons
+              name={isDone ? "checkmark-circle" : "checkmark-circle-outline"}
+              size={24}
+              color="#264653"
+            />
           </Pressable>
         </>
       );
     } else if (variant === "Book") {
       return (
         <>
-          <View style={styles.leftView}>
+          <View style={leftViewStyle}>
             <Ionicons name="book" size={20} color="#264653" />
             <Text style={styles.text}>Book</Text>
           </View>
-          {/* <HeartIcon width={20} height={20}/> */}
-          <Pressable onPress={handleDonePress}>
-            <Ionicons name="checkmark" size={24} color="#264653" />
+          <Pressable style={{ height: 30, justifyContent: "center" }}>
+            <Ionicons
+              name={isDone ? "checkmark-circle" : "checkmark-circle-outline"}
+              size={24}
+              color="#264653"
+            />
           </Pressable>
         </>
       );
     } else if (variant === "Water") {
       return (
         <>
-          <View style={styles.leftView}>
+          <View style={leftViewStyle}>
             <View style={styles.waterRow}>
               {Array.from({ length: totalWater }).map((_, index) => (
                 <View key={index} style={{ marginRight: 8 }}>
@@ -140,22 +164,29 @@ export default function CardHabit({ variant }: Props) {
   };
 
   return (
-    <>
-      <View
-        style={[
-          isDone ? styles.doneHabit : styles.container,
-          { width: variant === "Water" ? 370 : 182 },
-        ]}
-      >
-        {createHabitCard()}
-      </View>
+    <View>
+      {variant !== "Water" ? (
+        <Pressable
+          onPress={handleDonePress}
+          style={[isDone ? styles.doneHabit : styles.container, { width: 182 }]}
+        >
+          {createHabitCard()}
+        </Pressable>
+      ) : (
+        <View
+          style={[isDone ? styles.doneHabit : styles.container, { width: 370 }]}
+        >
+          {createHabitCard()}
+        </View>
+      )}
+
       <CardFeedback
         isVisible={isFeedbackVisible}
         text="Tebrikler, su hedefini tamamladınız!"
         type="celebration"
         onComplete={() => setIsFeedbackVisible(false)}
       />
-    </>
+    </View>
   );
 }
 
@@ -186,7 +217,7 @@ const styles = StyleSheet.create({
   subText: {
     color: "#264653",
     marginLeft: 10,
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "200",
     overflow: "visible",
   },

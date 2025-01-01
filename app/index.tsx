@@ -9,13 +9,7 @@ import {
   Text,
 } from "react-native";
 import TopBar from "@/components/cards/TopBar";
-import DailyText from "@/components/cards/DailyText";
-import DateTodos from "@/components/DateTodos";
 import CustomButton from "@/components/CustomButton";
-import SectionHeader from "@/components/headers/SectionHeader";
-import CardTodo from "@/components/cards/CardTodo";
-import CardGoal from "@/components/cards/CardGoal";
-import CardHabit from "@/components/cards/CardHabit";
 import HomeSection from "@/components/HomeSection";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";

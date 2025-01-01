@@ -9,6 +9,7 @@ type Props = {
   variant: "goals" | "habits" | "todos";
 };
 export default function HomeSection({ variant }: Props) {
+  console.log(variant);
   const createHomeSection = () => {
     if (variant === "goals") {
       return (
@@ -25,6 +26,7 @@ export default function HomeSection({ variant }: Props) {
         </>
       );
     } else if (variant === "habits") {
+      console.log(variant);
       return (
         <>
           <SectionHeader text="Habits" percentDone={60} />
