@@ -42,19 +42,6 @@ export default function CardFeedback({
     }
   };
 
-  // const getTextColor = () => {
-  //   switch (type) {
-  //     case "celebration":
-  //       return "blue";
-  //     case "success":
-  //       return "green";
-  //     case "warning":
-  //       return "red";
-  //     default:
-  //       return "white";
-  //   }
-  // };
-
   return (
     <Modal visible={isVisible} transparent animationType="fade">
       <View style={styles.overlay}>

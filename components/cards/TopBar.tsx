@@ -1,7 +1,5 @@
-import { View, StyleSheet, Text, Dimensions, Pressable, TouchableOpacity } from "react-native";
-import FillGlassIcon from "@/components/icons/FillGlassIcon";
-import CalendarIcon from "@/components/icons/CalendarIcon";
-import UserIcon from "@/components/icons/UserIcon";
+import { View, StyleSheet, Dimensions, Pressable, TouchableOpacity } from "react-native";
+import { CustomText } from "@/CustomText";
 import { Ionicons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
@@ -14,8 +12,8 @@ export default function TopBar({ onDiamondPress }: { onDiamondPress: () => void}
   return (
     <View style={styles.container}>
       <View style={styles.date}>
-        <Text style={styles.dateMonth}>Dec 26</Text>
-        <Text style={styles.dateDay}>Wed</Text>
+        <CustomText style={styles.dateMonth}>Dec 26</CustomText>
+        <CustomText style={styles.dateDay}>Wed</CustomText>
       </View>
       <View style={styles.topMenu}>
         <TouchableOpacity style={styles.topMenuItem}>

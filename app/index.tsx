@@ -103,10 +103,15 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 12,
     elevation: 5,
-    display: "flex", // Flexbox ile düzenleme yapıyoruz
-    flexDirection: "column", // İçeriği dikey olarak hizalayacağız
-    justifyContent: "center", // Dikeyde ortalama
-    alignItems: "center", // Yatayda ortalama
+    display: "flex", 
+    flexDirection: "column",
+    justifyContent: "center", 
+    alignItems: "center",
+    height: 400,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   topMemoryCard: {
     display: "flex",
