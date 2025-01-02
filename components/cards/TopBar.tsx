@@ -18,9 +18,9 @@ export default function TopBar({ onDiamondPress }: { onDiamondPress: () => void}
         <Text style={styles.dateDay}>Wed</Text>
       </View>
       <View style={styles.topMenu}>
-        <View style={styles.topMenuItem}>
+        <TouchableOpacity style={styles.topMenuItem}>
           <Ionicons name="diamond" size={24} color="#FCFCFC" onPress={onDiamondPress} />
-        </View>
+        </TouchableOpacity>
         <View style={styles.topMenuItem}>
           <Ionicons name="calendar" size={24} color="#FCFCFC" />
         </View>

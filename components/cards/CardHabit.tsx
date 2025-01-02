@@ -89,9 +89,29 @@ export default function CardHabit({ variant }: Props) {
           text: "Yes",
           onPress: () => {
             setIsDone((prev) => !prev);
+            setIsFeedbackVisible(true);
           },
         },
       ]);
+    }
+  };
+
+  const getFeedbackProps = () => {
+    switch (variant) {
+      case "Book":
+        return {
+          text: "Congragulations! You have complete the Book Goal...",
+        };
+      case "Water":
+        return {
+          text: "Congragulations! You have complete the Water Goal...",
+        };
+      case "Sport":
+        return {
+          text: "Congragulations! You have complete the Sport Goal",
+        };
+      default:
+        return { text: "", type: "celebration" };
     }
   };
 
@@ -182,7 +202,7 @@ export default function CardHabit({ variant }: Props) {
 
       <CardFeedback
         isVisible={isFeedbackVisible}
-        text="Tebrikler, su hedefini tamamladınız!"
+        text={getFeedbackProps().text}
         type="celebration"
         onComplete={() => setIsFeedbackVisible(false)}
       />

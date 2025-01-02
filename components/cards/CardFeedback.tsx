@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Dimensions, Modal } from "react-native";
+import Lottie from "lottie-react-native";
 
 type Props = {
   isVisible: boolean;
@@ -7,6 +8,8 @@ type Props = {
   type: "celebration" | "success" | "warning";
   onComplete: () => void;
 };
+
+const { width } = Dimensions.get("window");
 
 export default function CardFeedback({
   isVisible,
@@ -18,7 +21,7 @@ export default function CardFeedback({
     if (isVisible) {
       const timer = setTimeout(() => {
         onComplete();
-      }, 5000);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
@@ -26,53 +29,55 @@ export default function CardFeedback({
 
   if (!isVisible) return null;
 
-  // animation source
-  //   const animationSource = () => {
-  //     switch (type) {
-  //       case "celebration":
-  //         return require("@/assets/animations/firework.lottie");
-  //       case "success":
-  //         return require("@/assets/animations/firework.lottie");
-  //       default:
-  //         return require("@/assets/animations/fireworks.json");
-  //     }
-  //   };
-
-  const getTextColor = () => {
+  const getAnimationSource = () => {
     switch (type) {
       case "celebration":
-        return "blue";
+        return require("@/assets/animations/firework_animate.json");
       case "success":
-        return "green";
+        return require("@/assets/animations/firework_animate.json");
       case "warning":
-        return "red";
+        return require("@/assets/animations/firework_animate.json");
       default:
-        return "white";
+        return require("@/assets/animations/firework_animate.json");
     }
   };
 
+  // const getTextColor = () => {
+  //   switch (type) {
+  //     case "celebration":
+  //       return "blue";
+  //     case "success":
+  //       return "green";
+  //     case "warning":
+  //       return "red";
+  //     default:
+  //       return "white";
+  //   }
+  // };
+
   return (
-    <View style={styles.overlay}>
-      <View style={styles.messageCard}>
-        <Text style={[styles.messageText, { color: getTextColor() }]}>
-          {text}
-        </Text>
+    <Modal visible={isVisible} transparent animationType="fade">
+      <View style={styles.overlay}>
+        <View style={styles.messageCard}>
+          <Lottie
+            source={getAnimationSource()}
+            autoPlay
+            loop={false}
+            style={styles.animation}
+          />
+          <Text style={styles.messageText}>{text}</Text>
+        </View>
       </View>
-    </View>
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
   overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 10,
   },
   animation: {
     width: 200,
@@ -83,15 +88,24 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    width: 300,
-    height: 200,
+    width: width - 80,
+    padding: 40,
+    height: 400,
     backgroundColor: "#EFF4FF",
     borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
+
   messageText: {
     marginTop: 20,
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
+    fontFamily: "Montserrat",
     textAlign: "center",
+    color: "#264653", // can change later
   },
 });
