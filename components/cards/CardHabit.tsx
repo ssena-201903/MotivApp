@@ -12,8 +12,8 @@ import { Ionicons } from "@expo/vector-icons";
 import FillGlassIcon from "@/components/icons/FillGlassIcon";
 import EmptyGlassIcon from "@/components/icons/EmptyGlassIcon";
 import PlusIcon from "@/components/icons/PlusIcon";
-import HeartIcon from "@/components/icons/HeartIcon";
 import CardFeedback from "@/components/cards/CardFeedback";
+import { CustomText } from "@/CustomText";
 
 const { width } = Dimensions.get("window");
 
@@ -125,13 +125,13 @@ export default function CardHabit({ variant }: Props) {
       return (
         <>
           <View style={leftViewStyle}>
-            <Ionicons name="barbell" size={20} color="#264653" />
-            <Text style={styles.text}>Spor</Text>
-            <Text style={styles.subText}>20 min</Text>
+            <Ionicons name={isDone ? "barbell" : "barbell-outline"} size={22} color="#264653" />
+            <CustomText style={styles.text}>Spor</CustomText>
+            {/* <CustomText style={styles.subText}>20 min</CustomText> */}
           </View>
           <Pressable style={{ height: 30, justifyContent: "center" }}>
             <Ionicons
-              name={isDone ? "checkmark-circle" : "checkmark-circle-outline"}
+              name={isDone ? "checkmark-circle" : "add"}
               size={24}
               color="#264653"
             />
@@ -142,12 +142,12 @@ export default function CardHabit({ variant }: Props) {
       return (
         <>
           <View style={leftViewStyle}>
-            <Ionicons name="book" size={20} color="#264653" />
-            <Text style={styles.text}>Book</Text>
+            <Ionicons name={isDone ? "book" : "book-outline"} size={22} color="#264653" />
+            <CustomText style={styles.text}>Book</CustomText>
           </View>
           <Pressable style={{ height: 30, justifyContent: "center" }}>
             <Ionicons
-              name={isDone ? "checkmark-circle" : "checkmark-circle-outline"}
+              name={isDone ? "checkmark-circle" : "add"}
               size={24}
               color="#264653"
             />
@@ -173,10 +173,16 @@ export default function CardHabit({ variant }: Props) {
                 </View>
               ))}
             </View>
-            <Text style={styles.subText}>{`${filledGlass}/${totalWater}`}</Text>
+            <CustomText
+              style={styles.subText}
+            >{`${filledGlass}/${totalWater}`}</CustomText>
           </View>
-          <Pressable onPress={handlePlusPress}>
-            <PlusIcon width={20} height={20} />
+          <Pressable style={{ height: 30, justifyContent: "center" }}>
+            <Ionicons
+              name={isDone ? "checkmark-circle" : "add"}
+              size={24}
+              color="#264653"
+            />
           </Pressable>
         </>
       );
@@ -230,9 +236,9 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#264653",
-    marginLeft: 10,
+    marginLeft: 12,
     fontWeight: "400",
-    fontSize: 16,
+    fontSize: 14,
   },
   subText: {
     color: "#264653",

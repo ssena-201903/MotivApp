@@ -7,7 +7,7 @@ import {
   Pressable,
   Linking,
 } from "react-native";
-// import FillGlass from '../icons/FillGlassIcon';
+import { CustomText } from "@/CustomText";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 
@@ -65,9 +65,9 @@ export default function CardTodo({ type, inlineText, variant }: Props) {
     <Pressable onPress={handlePress}>
       <View style={isConfirmed ? styles.confirmed : styles.container}>
         <Ionicons name={getIconName()} size={24} color="#264653" />
-        <Text style={isConfirmed ? styles.confirmedText : styles.text}>
+        <CustomText style={isConfirmed ? styles.confirmedText : styles.text}>
           {inlineText}
-        </Text>
+        </CustomText>
       </View>
     </Pressable>
   );

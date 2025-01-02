@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
+import { CustomText } from "@/CustomText";
 import { useEffect, useRef } from "react";
 import { Animated } from "react-native";
 
@@ -22,8 +23,7 @@ export default function SectionHeader({ text, percentDone }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{text}</Text>
-      {/* <Text style={styles.percentText}>{percentDone}</Text> */}
+      <CustomText style={styles.text}>{text}</CustomText>
       <View style={styles.progressBarContainer}>
         <View style={styles.progressBarBackground}>
           <Animated.View
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   text: {
     color: "#FCFCFC",
     fontSize: 14,
-    fontWeight: "800",
+    fontWeight: "700",
     backgroundColor: "#264653",
     paddingHorizontal: 14,
     paddingVertical: 2,
