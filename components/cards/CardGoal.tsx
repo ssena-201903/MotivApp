@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { View, StyleSheet, Text, Pressable } from "react-native";
+import { CustomText } from "@/CustomText";
 
 type Props = {
   type: string;
@@ -10,7 +11,7 @@ export default function CardGoal({ type, inlineText }: Props) {
   return (
     <Pressable style={styles.container}>
       <Ionicons name={type} size={28} color="#264653" />
-      <Text style={styles.inlineText}>{inlineText}</Text>
+      <CustomText style={styles.inlineText}>{inlineText}</CustomText>
     </Pressable>
   );
 }

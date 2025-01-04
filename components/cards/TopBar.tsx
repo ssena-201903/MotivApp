@@ -1,26 +1,36 @@
 import { View, StyleSheet, Dimensions, Pressable, TouchableOpacity } from "react-native";
 import { CustomText } from "@/CustomText";
 import { Ionicons } from "@expo/vector-icons";
+import { router, useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
-export default function TopBar({ onDiamondPress }: { onDiamondPress: () => void}) {
+type Props = {
+  onDiamondPress: () => void;
+  onDatePress: () => void;
+}
+
+export default function TopBar ({ onDiamondPress, onDatePress } : Props) {
   const handleToast = () => {
 
+  };
+
+  const handleCalendarPress = () => {
+    router.push("/calendar");
   };
   
   return (
     <View style={styles.container}>
-      <View style={styles.date}>
+      <Pressable style={styles.date} onPress={onDatePress}>
         <CustomText style={styles.dateMonth}>Dec 26</CustomText>
         <CustomText style={styles.dateDay}>Wed</CustomText>
-      </View>
+      </Pressable>
       <View style={styles.topMenu}>
         <TouchableOpacity style={styles.topMenuItem}>
           <Ionicons name="diamond" size={24} color="#FCFCFC" onPress={onDiamondPress} />
         </TouchableOpacity>
         <View style={styles.topMenuItem}>
-          <Ionicons name="calendar" size={24} color="#FCFCFC" />
+          <Ionicons name="calendar" size={24} color="#FCFCFC" onPress={handleCalendarPress} />
         </View>
         <View style={styles.topMenuItem}>
           <Ionicons name="person" size={24} color="#FCFCFC" />

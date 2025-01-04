@@ -177,7 +177,7 @@ export default function CardHabit({ variant }: Props) {
               style={styles.subText}
             >{`${filledGlass}/${totalWater}`}</CustomText>
           </View>
-          <Pressable style={{ height: 30, justifyContent: "center" }}>
+          <Pressable onPress={handlePlusPress} style={{ height: 30, justifyContent: "center" }}>
             <Ionicons
               name={isDone ? "checkmark-circle" : "add"}
               size={24}

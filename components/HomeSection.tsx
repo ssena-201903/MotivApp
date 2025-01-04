@@ -9,6 +9,22 @@ type Props = {
   variant: "goals" | "habits" | "todos";
 };
 export default function HomeSection({ variant }: Props) {
+  const todos = [
+    { id: "1", text: "Water Plant", completed: false },
+    { id: "2", text: "Study React Native", completed: true },
+    { id: "3", text: "Do Project", completed: false },
+    { id: "4", text: "Dental Appointment", completed: true },
+    { id: "5", text: "Meet Friends", completed: false },
+  ];
+
+  const toggleTodo = (id: string) => {
+    console.log(`Todo ${id} tamamlandı!`);
+  };
+
+  const deleteTodo = (id: string) => {
+    console.log(`Todo ${id} silindi!`);
+  };
+
   console.log(variant);
   const createHomeSection = () => {
     if (variant === "goals") {
@@ -42,26 +58,17 @@ export default function HomeSection({ variant }: Props) {
         <>
           <SectionHeader text="To-Do" percentDone={85} />
           <ScrollView style={styles.todoView}>
-            <CardTodo
-              type="gift"
-              inlineText="Anna's birthday! Haven't you celebrated?"
-              variant="birthday"
-            />
-            <CardTodo
-              type="checkmark-circle"
-              inlineText="Dental Appointment"
-              variant="todo"
-            />
-            <CardTodo
-              type="checkmark-circle"
-              inlineText="Meeting Friends"
-              variant="todo"
-            />
-            <CardTodo
-              type="checkmark-circle"
-              inlineText="Do Project"
-              variant="todo"
-            />
+            {todos.map((todo) => (
+              <CardTodo
+                key={todo.id}
+                id={todo.id}
+                text={todo.text}
+                isCompleted={todo.completed}
+                variant="todo"
+                onToggle={(id) => toggleTodo(id)}
+                onDelete={(id) => deleteTodo(id)}
+              />
+            ))}
           </ScrollView>
         </>
       );

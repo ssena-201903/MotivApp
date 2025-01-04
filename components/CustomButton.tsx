@@ -37,18 +37,18 @@ const styles = StyleSheet.create({
     button: {
         padding: 12,
         margin: 4,
-        borderRadius: 30,
+        borderRadius: 5,
         alignItems: "center",
         justifyContent: "center",
-        width: 280,
+        width: 180,
     },
     text: {
         fontSize: 16,
-        fontWeight: 400,
-        color: "white",
+        fontWeight: 600,
+        color: "#264653",
     },
     fill: {
-        backgroundColor: "#FF8462", // can change later
+        backgroundColor: "#FFA38F", // can change later
     },
     outlined: {
         borderWidth: 2,

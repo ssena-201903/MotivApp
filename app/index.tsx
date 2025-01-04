@@ -13,12 +13,15 @@ import CustomButton from "@/components/CustomButton";
 import HomeSection from "@/components/HomeSection";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import AddTodoModal from "@/components/modals/AddTodoModal";
 
 const { width } = Dimensions.get("window");
 
 export default function Index() {
   const [isMemoryModalVisible, setIsMemoryModalVisible] = useState(false);
+  const [isAddTodoModalVisible, setIsAddTodoModalVisible] = useState(false);
   const [entryMemory, setEntryMemory] = useState("");
+  const [todoText, setTodoText] = useState("");
 
   const handleSaveMemory = () => {
     console.log("memory: ", entryMemory);
@@ -26,10 +29,23 @@ export default function Index() {
     setEntryMemory("");
   };
 
+  const handleAddTodo = (todo: string) => {
+    console.log("new todo", todo);
+    setIsAddTodoModalVisible(true);
+    setTodoText
+  };
+
+  const handleTodoTextChange = (text: string) => {
+    setTodoText(text);
+  };
+
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
-        <TopBar onDiamondPress={() => setIsMemoryModalVisible(true)} />
+        <TopBar 
+        onDiamondPress={() => setIsMemoryModalVisible(true)} 
+        onDatePress={() => setIsAddTodoModalVisible(true)}
+          />
         <HomeSection variant="goals" />
         <HomeSection variant="habits" />
         <HomeSection variant="todos" />
@@ -75,6 +91,13 @@ export default function Index() {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+      <AddTodoModal
+        visible={isAddTodoModalVisible}
+        onClose={() => setIsAddTodoModalVisible(true)}
+        onAdd={handleAddTodo}
+        todoText={todoText}
+        onTodoTextChange={handleTodoTextChange}
+      />
     </ScrollView>
   );
 }
@@ -98,7 +121,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    width: 350,
+    width: "80%",
     backgroundColor: "#FCFCFC", // can change later
     padding: 20,
     borderRadius: 12,
@@ -135,6 +158,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     display: "flex",
+    backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "rgba(38, 70, 83, 0.3)", // can change later
     opacity: 0.6,

@@ -9,6 +9,12 @@ export default function RootLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="calendar"
+        options={{
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }

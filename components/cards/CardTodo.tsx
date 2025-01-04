@@ -1,115 +1,80 @@
+import React from "react";
 import {
   View,
-  Text,
   StyleSheet,
   Dimensions,
-  Alert,
   Pressable,
-  Linking,
+  Text,
 } from "react-native";
-import { CustomText } from "@/CustomText";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
-
-type Props = {
-  type: string;
-  inlineText: string;
-  variant: "birthday" | "todo";
-};
 
 const { width } = Dimensions.get("window");
 
-export default function CardTodo({ type, inlineText, variant }: Props) {
-  const [isConfirmed, setIsConfirmed] = useState(false);
-  const [text, setText] = useState(inlineText);
+type Props = {
+  id: string;
+  text: string;
+  variant: "todo" | "birthday";
+  isCompleted: boolean;
+  onToggle: (id: string) => void; 
+  onDelete: (id: string) => void; 
+};
 
-  const handlePress = () => {
-    if (variant === "todo") {
-      Alert.alert("Confirm Action", "Do you confirm this action?", [
-        {
-          text: "No",
-          style: "cancel",
-        },
-        {
-          text: "Yes",
-          onPress: () => {
-            setIsConfirmed((prev) => !prev);
-            setText((prev) => (isConfirmed ? inlineText : "İşlem Onaylandı"));
-          },
-        },
-      ]);
-    } else if (variant === "birthday") {
-      Alert.alert("Reminder", "Do you want to celebrate via contacts?", [
-        {
-          text: "No",
-          style: "cancel",
-        },
-        {
-          text: "Yes",
-          onPress: () => {
-            setIsConfirmed((prev) => !prev);
-            Linking.openURL("content://contacts");
-            setText((prev) => (isConfirmed ? inlineText : "İşlem Onaylandı"));
-          },
-          style: "default",
-        },
-      ]);
-    }
-  };
-
-  const getIconName = () => {
-    return isConfirmed ? type : `${type}-outline`;
-  };
-
+export default function CardTodo({
+  id,
+  text,
+  isCompleted,
+  variant,
+  onToggle,
+  onDelete,
+}: Props) {
   return (
-    <Pressable onPress={handlePress}>
-      <View style={isConfirmed ? styles.confirmed : styles.container}>
-        <Ionicons name={getIconName()} size={24} color="#264653" />
-        <CustomText style={isConfirmed ? styles.confirmedText : styles.text}>
-          {inlineText}
-        </CustomText>
-      </View>
-    </Pressable>
+    <View style={[styles.container, isCompleted && styles.completedContainer]}>
+      <Pressable style={styles.checkbox} onPress={() => onToggle(id)}>
+        <Ionicons
+          name={isCompleted ? "checkmark-circle" : "ellipse-outline"}
+          size={24}
+          color="#264653"
+        />
+      </Pressable>
+
+      <Text style={[styles.text, isCompleted && styles.strikethrough]}>
+        {text}
+      </Text>
+
+      <Pressable onPress={() => onDelete(id)} style={styles.deleteButton}>
+        <Ionicons name="trash-outline" size={20} color="#264653" />
+      </Pressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 20,
-    marginBottom: 8,
     backgroundColor: "#E5EEFF",
-    width: width - 40,
-    height: 50,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.07,
-    shadowRadius: 4,
+    marginBottom: 8,
+    width: width - 40,
+  },
+  completedContainer: {
+    backgroundColor: "#FFA38F",
+  },
+  checkbox: {
+    marginRight: 12,
   },
   text: {
+    flex: 1,
+    fontSize: 16,
     color: "#264653",
-    marginLeft: 20,
-    fontWeight: 400,
   },
-  confirmed: {
-    display: "flex",
-    flexDirection: "row",
-    padding: 16,
-    marginBottom: 8,
-    backgroundColor: "#FFA38F", // I can change later
-    width: width - 40,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.07,
-    shadowRadius: 4,
-  },
-  confirmedText: {
+  strikethrough: {
+    textDecorationLine: "line-through",
     color: "#264653",
-    marginLeft: 20,
-    fontWeight: 500,
+  },
+  deleteButton: {
+    marginLeft: 12,
   },
 });
