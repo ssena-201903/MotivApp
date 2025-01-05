@@ -14,6 +14,7 @@ import EmptyGlassIcon from "@/components/icons/EmptyGlassIcon";
 import PlusIcon from "@/components/icons/PlusIcon";
 import CardFeedback from "@/components/cards/CardFeedback";
 import { CustomText } from "@/CustomText";
+import LottieView from "lottie-react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -27,6 +28,7 @@ export default function CardHabit({ variant }: Props) {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isDone, setIsDone] = useState(false);
   const [isFeedbackVisible, setIsFeedbackVisible] = useState(false);
+  const [animationKey, setAnimationKey] = useState(0);
 
   // load water sound
   const loadWaterSound = async () => {
@@ -62,6 +64,8 @@ export default function CardHabit({ variant }: Props) {
         // Alert.alert("Tebrikler, hedefi tamamladın!");
         setIsFeedbackVisible(true);
       }
+
+      setAnimationKey((prev) => prev + 1);
     }
   };
 
@@ -125,7 +129,11 @@ export default function CardHabit({ variant }: Props) {
       return (
         <>
           <View style={leftViewStyle}>
-            <Ionicons name={isDone ? "barbell" : "barbell-outline"} size={22} color="#264653" />
+            <Ionicons
+              name={isDone ? "barbell" : "barbell-outline"}
+              size={22}
+              color="#264653"
+            />
             <CustomText style={styles.text}>Spor</CustomText>
             {/* <CustomText style={styles.subText}>20 min</CustomText> */}
           </View>
@@ -142,7 +150,11 @@ export default function CardHabit({ variant }: Props) {
       return (
         <>
           <View style={leftViewStyle}>
-            <Ionicons name={isDone ? "book" : "book-outline"} size={22} color="#264653" />
+            <Ionicons
+              name={isDone ? "book" : "book-outline"}
+              size={22}
+              color="#264653"
+            />
             <CustomText style={styles.text}>Book</CustomText>
           </View>
           <Pressable style={{ height: 30, justifyContent: "center" }}>
@@ -164,10 +176,16 @@ export default function CardHabit({ variant }: Props) {
                   {index < filledGlass ? (
                     <View style={{ marginRight: 2 }}>
                       <FillGlassIcon height={21} width={20} />
+                      {/* <LottieView
+                        source={require("@/assets/animations/pouring_water.json")} // replace with your Lottie file
+                        autoPlay
+                        loop={false}
+                        style={{ height: 21, width: 20 }} // adjust the size as needed
+                      /> */}
                     </View>
                   ) : (
                     <View style={{ marginRight: 2 }}>
-                      <EmptyGlassIcon height={21} width={20} />
+                      <EmptyGlassIcon height={21} width={20}/>
                     </View>
                   )}
                 </View>
@@ -177,7 +195,10 @@ export default function CardHabit({ variant }: Props) {
               style={styles.subText}
             >{`${filledGlass}/${totalWater}`}</CustomText>
           </View>
-          <Pressable onPress={handlePlusPress} style={{ height: 30, justifyContent: "center" }}>
+          <Pressable
+            onPress={handlePlusPress}
+            style={{ height: 30, justifyContent: "center" }}
+          >
             <Ionicons
               name={isDone ? "checkmark-circle" : "add"}
               size={24}

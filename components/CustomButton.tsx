@@ -36,8 +36,8 @@ export default function CustomButton ({ label, onPress, variant } : Props) {
 const styles = StyleSheet.create({
     button: {
         padding: 12,
-        margin: 4,
-        borderRadius: 5,
+        margin: 2,
+        borderRadius: 32,
         alignItems: "center",
         justifyContent: "center",
         width: 180,
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 16,
         fontWeight: 600,
-        color: "#264653",
+        color: "#F9F9F9",
     },
     fill: {
         backgroundColor: "#FFA38F", // can change later
