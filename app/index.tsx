@@ -1,173 +1,113 @@
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-  Modal,
-  TouchableWithoutFeedback,
-  TextInput,
-  Text,
-} from "react-native";
-import TopBar from "@/components/cards/TopBar";
+import React, { useEffect } from "react";
+import { View, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import LottieView from "lottie-react-native";
 import CustomButton from "@/components/CustomButton";
-import HomeSection from "@/components/HomeSection";
-import { useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
-import AddTodoModal from "@/components/modals/AddTodoModal";
-
-const { width } = Dimensions.get("window");
+import { CustomText } from "@/CustomText";
+import { useAuth } from "./_layout";
 
 export default function Index() {
-  const [isMemoryModalVisible, setIsMemoryModalVisible] = useState(false);
-  const [isAddTodoModalVisible, setIsAddTodoModalVisible] = useState(false);
-  const [entryMemory, setEntryMemory] = useState("");
-  const [todoText, setTodoText] = useState("");
+  const router = useRouter();
+  const { user } = useAuth();
 
-  const handleSaveMemory = () => {
-    console.log("memory: ", entryMemory);
-    setIsMemoryModalVisible(false);
-    setEntryMemory("");
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // if user already login
+      if (user) {
+        router.replace("/home");
+      } else {
+        router.replace("/(auth)/login");
+      }
+    }, 3000);
+  })
 
-  const handleAddTodo = (todo: string) => {
-    console.log("new todo", todo);
-    setIsAddTodoModalVisible(true);
-    setTodoText
-  };
+  // const handleLogin = () => {
+  //   router.push("/(auth)/login");
+  // };
 
-  const handleTodoTextChange = (text: string) => {
-    setTodoText(text);
-  };
+  // const handleRegister = () => {
+  //   router.push("/(auth)/register");
+  // };
 
   return (
-    <ScrollView style={styles.scrollView}>
-      <View style={styles.container}>
-        <TopBar 
-        onDiamondPress={() => setIsMemoryModalVisible(true)} 
-        onDatePress={() => setIsAddTodoModalVisible(true)}
-          />
-        <HomeSection variant="goals" />
-        <HomeSection variant="habits" />
-        <HomeSection variant="todos" />
+    <View style={styles.container}>
+      <View style={styles.topSection}>
+        <CustomText style={styles.appTitle}>MotivApp</CustomText>
       </View>
 
-      <Modal
-        transparent={true}
-        visible={isMemoryModalVisible}
-        animationType="fade"
-        onRequestClose={() => setIsMemoryModalVisible(false)}
-      >
-        <TouchableWithoutFeedback
-          onPress={() => setIsMemoryModalVisible(false)}
-        >
-          <View style={styles.overlay}>
-            <TouchableWithoutFeedback>
-              <View style={styles.modalContent}>
-                <View style={styles.topMemoryCard}>
-                  <Ionicons name="diamond" color="#FF8462" size={20} />
-                  <Text style={styles.headerMemoryCard}>
-                    Save Your Diamond Moment
-                  </Text>
-                </View>
-                <Text style={styles.textMemoryCard}>
-                  We'll show your saved memories at the end of each month and
-                  year in a timeline
-                </Text>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Write your memory..."
-                  value={entryMemory}
-                  onChangeText={setEntryMemory}
-                  multiline={true}
-                />
-                {/* <Button title="Save" onPress={handleSaveMemory}/> */}
-                <CustomButton
-                  label="Save"
-                  onPress={handleSaveMemory}
-                  variant="fill"
-                />
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-      <AddTodoModal
-        visible={isAddTodoModalVisible}
-        onClose={() => setIsAddTodoModalVisible(true)}
-        onAdd={handleAddTodo}
-        todoText={todoText}
-        onTodoTextChange={handleTodoTextChange}
-      />
-    </ScrollView>
+      <View style={styles.patternBackground}>
+        <LottieView
+          source={require("@/assets/animations/clock_animate.json")} // JSON animasyon dosyasının yolu
+          autoPlay
+          loop
+          style={styles.animation}
+        />
+      </View>
+
+      {/* <View style={styles.bottomSection}>
+          <CustomButton label="Login" onPress={handleLogin} variant="fill"/>
+          <CustomButton label="Create Account" onPress={handleRegister} variant="outlined"/>
+      </View> */}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flexGrow: 1,
-    backgroundColor: "#FCFCFC",
-  },
   container: {
     flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    flexDirection: "column",
-    backgroundColor: "#FCFCFC", // can change later
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // can change later
-    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
     alignItems: "center",
   },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "#FCFCFC", // can change later
+  topSection: {
     padding: 20,
-    borderRadius: 12,
-    elevation: 5,
-    display: "flex", 
-    flexDirection: "column",
-    justifyContent: "center", 
     alignItems: "center",
-    height: 400,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    marginTop: 120,
   },
-  topMemoryCard: {
-    display: "flex",
-    flexDirection: "row",
+  appTitle: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#264653",
+    // fontFamily: "VarelaRound",
+  },
+  patternBackground: {
     alignItems: "center",
-    marginBottom: 10,
+    flex: 1,
+    // width: 300,
+    // height: 300,
   },
-  headerMemoryCard: {
-    color: "264653", // can change later
-    fontSize: 18,
-    fontWeight: 600,
-    marginLeft: 10,
+  animation: {
+    width: 300,
+    height: 300,
+    position: 'absolute',
   },
-  textMemoryCard: {
-    color: "264653", // can change later
-    opacity: 0.5,
-    fontSize: 12,
-    fontWeight: 400,
-    marginBottom: 20,
-    textAlign: "center",
+  bottomSection: {
+    padding: 20,
+    gap: 10,
+    marginBottom: 30,
+    width: 340,
   },
-  textInput: {
-    display: "flex",
-    backgroundColor: "#fff",
+  primaryButton: {
+    backgroundColor: "#FFA69E",
+    padding: 15,
+    borderRadius: 25,
+    alignItems: "center",
+  },
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  secondaryButton: {
+    backgroundColor: "#FFFFFF",
+    padding: 15,
+    borderRadius: 25,
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(38, 70, 83, 0.3)", // can change later
-    opacity: 0.6,
-    borderRadius: 8,
-    marginBottom: 20,
-    padding: 10,
-    height: 180, // can change later
-    width: "100%",
-    textAlign: "left",
-    textAlignVertical: "top",
+    borderColor: "#FFA69E",
+  },
+  secondaryButtonText: {
+    color: "#FFA69E",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
