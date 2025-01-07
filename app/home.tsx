@@ -2,40 +2,30 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  Dimensions,
-  Modal,
-  TouchableWithoutFeedback,
-  TextInput,
-  Text,
 } from "react-native";
 import TopBar from "@/components/cards/TopBar";
 import CustomButton from "@/components/CustomButton";
 import HomeSection from "@/components/HomeSection";
 import { useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
 import AddTodoModal from "@/components/modals/AddTodoModal";
-import { auth } from "@/firebase.config"; // Firebase auth import
-
-const { width } = Dimensions.get("window");
+import { auth } from "@/firebase.config";
+import AddMemoryModal from "@/components/modals/AddMemoryModal";
 
 export default function Home() {
   const [isMemoryModalVisible, setIsMemoryModalVisible] = useState(false);
   const [isAddTodoModalVisible, setIsAddTodoModalVisible] = useState(false);
-  const [entryMemory, setEntryMemory] = useState("");
   
-  // Kullanıcı ID'sini auth'dan alıyoruz
+  // getting current user id from auth
   const userId = auth.currentUser?.uid;
 
-  const handleSaveMemory = () => {
-    console.log("memory: ", entryMemory);
-    setIsMemoryModalVisible(false);
-    setEntryMemory("");
-  };
-
-  // AddTodoModal'ı kapatmak için handler
+  // handle close modals
   const handleCloseTodoModal = () => {
     setIsAddTodoModalVisible(false);
   };
+
+  const handleCloseMemoryModal = () => {
+    setIsMemoryModalVisible(false);
+  }
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -49,48 +39,14 @@ export default function Home() {
         <HomeSection variant="todos" />
       </View>
 
-      <Modal
-        transparent={true}
-        visible={isMemoryModalVisible}
-        animationType="fade"
-        onRequestClose={() => setIsMemoryModalVisible(false)}
-      >
-        <TouchableWithoutFeedback
-          onPress={() => setIsMemoryModalVisible(false)}
-        >
-          <View style={styles.overlay}>
-            <TouchableWithoutFeedback>
-              <View style={styles.modalContent}>
-                <View style={styles.topMemoryCard}>
-                  <Ionicons name="diamond" color="#264653" size={20} />
-                  <Text style={styles.headerMemoryCard}>
-                    Save Your Diamond Moment
-                  </Text>
-                </View>
-                <Text style={styles.textMemoryCard}>
-                  We'll show your saved memories at the end of each month and
-                  year in a timeline
-                </Text>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Write your memory..."
-                  value={entryMemory}
-                  onChangeText={setEntryMemory}
-                  multiline={true}
-                />
-                <CustomButton
-                  label="Save"
-                  onPress={handleSaveMemory}
-                  variant="fill"
-                  width={480}
-                  height={40}
-                />
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-
+      {/* when user press diamond icon to add new memory */}
+      {userId && (
+        <AddMemoryModal
+          visible={isMemoryModalVisible}
+          onClose={handleCloseMemoryModal}
+          userId={userId}
+        />
+      )}
       {/* when user press date card to add new todo */}
       {userId && (
         <AddTodoModal
