@@ -1,34 +1,31 @@
-import React from 'react';
+import React from "react";
 import {
   Modal,
   View,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-} from 'react-native';
+} from "react-native";
 import { CustomText } from "@/CustomText";
+import CustomButton from "../CustomButton";
 
 interface AddTodoModalProps {
   visible: boolean;
-  onClose: () => void;
-  onAdd: (todo: string) => void;
   selectedDate?: string;
   todoText: string;
   onTodoTextChange: (text: string) => void;
 }
 
-export default function AddTodoModal ({
+export default function AddTodoModal({
   visible,
-  onClose,
-  onAdd,
   selectedDate,
   todoText,
-  onTodoTextChange
+  onTodoTextChange,
 }: AddTodoModalProps) {
   const handleAdd = () => {
     if (todoText.trim()) {
       onAdd(todoText);
-      onTodoTextChange('');
+      onTodoTextChange("");
     }
   };
 
@@ -42,33 +39,39 @@ export default function AddTodoModal ({
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <CustomText style={styles.modalHeader}>
-            {selectedDate ? `${selectedDate} için yeni görev` : 'Yeni görev ekle'}
+            {selectedDate ? `${selectedDate}` : "Add New Todo"}
           </CustomText>
           <TextInput
             style={styles.modalInput}
             value={todoText}
             onChangeText={onTodoTextChange}
-            placeholder="Görev ekle"
+            placeholder="Write New Todo"
           />
           <View style={styles.modalButtons}>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.cancelButton]}
-              onPress={onClose}
-            >
-              <CustomText style={styles.modalButtonText}>İptal</CustomText>
+          <TouchableOpacity style={styles.modalButton}>
+              <CustomButton
+                label="Cancel"
+                onPress={onClose}
+                variant="cancel"
+                width={80}
+                height={40}
+              />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.confirmButton]}
-              onPress={handleAdd}
-            >
-              <CustomText style={styles.modalButtonText}>Ekle</CustomText>
+            <TouchableOpacity style={styles.modalButton}>
+              <CustomButton
+                label="Add"
+                onPress={handleAdd}
+                variant="fill"
+                width={80}
+                height={40}
+              />
             </TouchableOpacity>
           </View>
         </View>
       </View>
     </Modal>
   );
-};
+}
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -103,9 +106,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   modalButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
     marginLeft: 10,
   },
   cancelButton: {

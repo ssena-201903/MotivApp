@@ -11,9 +11,17 @@ const { width } = Dimensions.get("window");
 type Props = {
   label: string;
   onPress: () => void;
-  variant: "outlined" | "fill" | "disabled";
+  variant: "outlined" | "fill" | "disabled" | "cancel";
+  width: number;
+  height: number;
 };
-export default function CustomButton({ label, onPress, variant }: Props) {
+export default function CustomButton({
+  label,
+  onPress,
+  variant,
+  width,
+  height,
+}: Props) {
   const getButtonStyle = () => {
     switch (variant) {
       case "outlined":
@@ -22,6 +30,8 @@ export default function CustomButton({ label, onPress, variant }: Props) {
         return styles.fill;
       case "disabled":
         return styles.disabled;
+      case "cancel":
+        return styles.cancel;
       default:
         return styles.fill;
     }
@@ -30,7 +40,7 @@ export default function CustomButton({ label, onPress, variant }: Props) {
   return (
     <TouchableOpacity
       onPress={variant !== "disabled" ? onPress : undefined}
-      style={[styles.button, getButtonStyle()]}
+      style={[styles.button, { width }, { height }, getButtonStyle()]}
       disabled={variant === "disabled"}
     >
       <Text
@@ -38,6 +48,8 @@ export default function CustomButton({ label, onPress, variant }: Props) {
           styles.text,
           variant === "disabled" && styles.disabledText,
           variant === "outlined" && styles.outlinedText,
+          variant === "fill" && styles.text,
+          variant === "cancel" && styles.cancelText,
         ]}
       >
         {label}
@@ -51,7 +63,6 @@ const styles = StyleSheet.create({
     margin: 0,
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
     backgroundColor: "#007AFF",
     padding: 15,
     borderRadius: 10,
@@ -59,10 +70,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     color: "#F9F9F9",
-    fontWeight: 'bold',
+    fontWeight: "semibold",
   },
   fill: {
-    backgroundColor: "#FFA38F", // can change later
+    backgroundColor: "#264653", // can change later
   },
   outlined: {
     borderWidth: 2,
@@ -80,5 +91,11 @@ const styles = StyleSheet.create({
   disabledText: {
     color: "white",
     opacity: 0.8,
+  },
+  cancel: {
+    backgroundColor: "#E5EEFF", // can change later
+  },
+  cancelText: {
+    color: "#264653",
   },
 });

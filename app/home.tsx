@@ -64,7 +64,7 @@ import {
               <TouchableWithoutFeedback>
                 <View style={styles.modalContent}>
                   <View style={styles.topMemoryCard}>
-                    <Ionicons name="diamond" color="#FF8462" size={20} />
+                    <Ionicons name="diamond" color="#3EAEFF" size={20} />
                     <Text style={styles.headerMemoryCard}>
                       Save Your Diamond Moment
                     </Text>

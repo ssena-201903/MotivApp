@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   registerLinkText: {
-    color: "#FFA38F",
+    color: "#3EAEFF", // can change later
     fontWeight: 'bold',
   },
   error: {

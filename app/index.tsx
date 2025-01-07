@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import LottieView from "lottie-react-native";
-import CustomButton from "@/components/CustomButton";
 import { CustomText } from "@/CustomText";
 import { useAuth } from "./_layout";
 
@@ -21,14 +20,6 @@ export default function Index() {
     }, 3000);
   })
 
-  // const handleLogin = () => {
-  //   router.push("/(auth)/login");
-  // };
-
-  // const handleRegister = () => {
-  //   router.push("/(auth)/register");
-  // };
-
   return (
     <View style={styles.container}>
       <View style={styles.topSection}>
@@ -43,11 +34,6 @@ export default function Index() {
           style={styles.animation}
         />
       </View>
-
-      {/* <View style={styles.bottomSection}>
-          <CustomButton label="Login" onPress={handleLogin} variant="fill"/>
-          <CustomButton label="Create Account" onPress={handleRegister} variant="outlined"/>
-      </View> */}
     </View>
   );
 }

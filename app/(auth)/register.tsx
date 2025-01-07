@@ -20,25 +20,24 @@ export default function Register() {
       setError('Passwords do not match');
       return;
     }
-
+  
     try {
-      // register user with firestore authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
-      // adding user infos to firestore
-      const userRef = doc(db, 'users', user.uid);  // Kullanıcı kimliğine göre belge oluştur
-
-      // creating doc that contains user infos
-      await setDoc(userRef, {
-        name: name,  
-        email: email,
-        habits: [],  
-        todos: [],  
-        goals: [],  
-      });
-
-      // Ana sayfaya yönlendir
+  
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(userRef, { name, email });
+  
+      const goalCollections = ['movies', 'places', 'foods', 'buy', 'books', 'activity'];
+      for (const collection of goalCollections) {
+        await setDoc(doc(userRef, 'goals', collection), {});
+      }
+  
+      await setDoc(doc(userRef, 'habits', 'placeholder'), {});
+      await setDoc(doc(userRef, 'todos', 'placeholder'), {});
+      await setDoc(doc(userRef, 'friends', 'placeholder'), {});
+      await setDoc(doc(userRef, 'memories', 'placeholder'), {});
+  
       router.replace('/home');
     } catch (error) {
       setError('Registration failed: ' + error.message);
@@ -158,7 +157,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   loginLinkText: {
-    color: '#FFA38F',
+    color: '#3EAEFF',
     fontWeight: 'bold',
   },
   error: {
