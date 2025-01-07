@@ -3,29 +3,89 @@ import SectionHeader from "@/components/headers/SectionHeader";
 import CardGoal from "@/components/cards/CardGoal";
 import CardHabit from "@/components/cards/CardHabit";
 import CardTodo from "@/components/cards/CardTodo";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { db, auth } from "@/firebase.config";
+import {
+  collection,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  doc,
+} from "firebase/firestore";
+import { CustomText } from "@/CustomText";
 
 type Props = {
   variant: "goals" | "habits" | "todos";
 };
 export default function HomeSection({ variant }: Props) {
-  const todos = [
-    { id: "1", text: "Water Plant", completed: false },
-    { id: "2", text: "Study React Native", completed: true },
-    { id: "3", text: "Do Project", completed: false },
-    { id: "4", text: "Dental Appointment", completed: true },
-    { id: "5", text: "Meet Friends", completed: false },
-  ];
+  const userId = auth.currentUser?.uid;
+  const [currentTodos, setCurrentTodos] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const toggleTodo = (id: string) => {
-    console.log(`Todo ${id} tamamlandı!`);
+  // fetching current todos from firestore
+  const fetchTodos = async () => {
+    if (!userId) return; // userId yoksa işlemi durdur
+
+    try {
+      const todosRef = collection(db, "users", userId, "todos");
+
+      const todayDate = new Date();
+      const startOfDay = new Date(todayDate.setHours(0, 0, 0, 0));
+      const endOfDay = new Date(todayDate.setHours(23, 59, 59, 999));
+
+      const q = query(
+        todosRef,
+        where("createdAt", ">=", startOfDay),
+        where("createdAt", "<=", endOfDay)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      const todosData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setCurrentTodos(todosData);
+    } catch (error) {
+      console.log("error fetching todos", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const toggleTodo = async (id: string, currentStatus: boolean) => {
+    if (!userId) return; 
+
+    try {
+      const todoRef = doc(db, "users", userId, "todos", id);
+
+      await updateDoc(todoRef, {
+        isDone: !currentStatus,
+      });
+
+      // update state
+      setCurrentTodos((prevTodos) =>
+        prevTodos.map((todo) =>
+          todo.id === id ? { ...todo, isDone: !currentStatus } : todo
+        )
+      );
+    } catch (error) {
+      console.log("error toggling todo status", error);
+    }
+  };
+
+  useEffect(() => {
+    if (variant === "todos") {
+      fetchTodos();
+    }
+  }, [variant, userId]);
 
   const deleteTodo = (id: string) => {
     console.log(`Todo ${id} silindi!`);
   };
 
-  console.log(variant);
   const createHomeSection = () => {
     if (variant === "goals") {
       return (
@@ -54,19 +114,22 @@ export default function HomeSection({ variant }: Props) {
         </>
       );
     } else if (variant === "todos") {
+      if (loading) {
+        return <CustomText>Loading...</CustomText>; 
+      }
       return (
         <>
           <SectionHeader text="To-Do" percentDone={85} />
           <ScrollView style={styles.todoView}>
-            {todos.map((todo) => (
+            {currentTodos.map((todo) => (
               <CardTodo
                 key={todo.id}
                 id={todo.id}
                 text={todo.text}
-                isCompleted={todo.completed}
+                isCompleted={todo.isDone}
                 variant="todo"
-                onToggle={(id) => toggleTodo(id)}
-                onDelete={(id) => deleteTodo(id)}
+                onToggle={() => toggleTodo(todo.id, todo.isDone)}
+                onDelete={() => deleteTodo(todo.id)}
               />
             ))}
           </ScrollView>
