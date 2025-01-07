@@ -12,6 +12,7 @@ import {
   updateDoc,
   where,
   doc,
+  deleteDoc,
 } from "firebase/firestore";
 import { CustomText } from "@/CustomText";
 
@@ -82,8 +83,23 @@ export default function HomeSection({ variant }: Props) {
     }
   }, [variant, userId]);
 
-  const deleteTodo = (id: string) => {
-    console.log(`Todo ${id} silindi!`);
+  const deleteTodo = async (id: string) => {
+    if (!userId) return;
+
+    try {
+      // delete todo from firestore
+      const todoRef = doc(db, "users", userId, "todos", id);
+      await deleteDoc(todoRef);
+
+      // delete todo from screens
+      setCurrentTodos((prevTodos) => 
+        prevTodos.filter((todo) => todo.id !== id)
+      );
+
+      console.log(`deleted ${id} todo`);
+    } catch (error) {
+      
+    }
   };
 
   const createHomeSection = () => {

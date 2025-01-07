@@ -30,7 +30,7 @@ export default function AddTodoModal({
     if (todoText.trim()) {
       try {
         // current data
-        const dueDate = selectedDate || new Date().toISOString().split("T")[0]; // Bugünün tarihi veya seçilen tarih
+        const dueDate = selectedDate || new Date().toISOString().split("T")[0]; 
 
         // pushing data to firestore
         const todosRef = collection(db, "users", userId, "todos");
@@ -54,7 +54,7 @@ export default function AddTodoModal({
       visible={visible}
       transparent={true}
       animationType="fade"
-      onRequestClose={onClose} // Modal dışarıdan kapatılabilir
+      onRequestClose={onClose} 
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
@@ -64,7 +64,7 @@ export default function AddTodoModal({
           <TextInput
             style={styles.modalInput}
             value={todoText}
-            onChangeText={setTodoText} // Burada setTodoText fonksiyonu kullanılıyor
+            onChangeText={setTodoText} 
             placeholder="Write New Todo"
           />
           <View style={styles.modalButtons}>
@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 20,
     width: "80%",
+    height: "auto",
     elevation: 5,
   },
   modalHeader: {
