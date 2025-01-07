@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   View,
@@ -8,24 +8,44 @@ import {
 } from "react-native";
 import { CustomText } from "@/CustomText";
 import CustomButton from "../CustomButton";
+import { db } from "@/firebase.config";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"; 
 
 interface AddTodoModalProps {
   visible: boolean;
   selectedDate?: string;
-  todoText: string;
-  onTodoTextChange: (text: string) => void;
+  onClose: () => void;
+  userId: string; 
 }
 
 export default function AddTodoModal({
   visible,
   selectedDate,
-  todoText,
-  onTodoTextChange,
+  onClose,
+  userId,
 }: AddTodoModalProps) {
-  const handleAdd = () => {
+  const [todoText, setTodoText] = useState("");
+
+  const handleAdd = async () => {
     if (todoText.trim()) {
-      onAdd(todoText);
-      onTodoTextChange("");
+      try {
+        // current data
+        const dueDate = selectedDate || new Date().toISOString().split("T")[0]; // Bugünün tarihi veya seçilen tarih
+
+        // pushing data to firestore
+        const todosRef = collection(db, "users", userId, "todos");
+        await addDoc(todosRef, {
+          text: todoText,
+          dueDate: dueDate,
+          isDone: false, 
+          createdAt: serverTimestamp(), // created time
+        });
+
+        setTodoText(""); // clear input
+        onClose(); // to close modal
+      } catch (error) {
+        console.error("Error adding document: ", error);
+      }
     }
   };
 
@@ -33,8 +53,8 @@ export default function AddTodoModal({
     <Modal
       visible={visible}
       transparent={true}
-      animationType="slide"
-      onRequestClose={onClose}
+      animationType="fade"
+      onRequestClose={onClose} // Modal dışarıdan kapatılabilir
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
@@ -44,11 +64,11 @@ export default function AddTodoModal({
           <TextInput
             style={styles.modalInput}
             value={todoText}
-            onChangeText={onTodoTextChange}
+            onChangeText={setTodoText} // Burada setTodoText fonksiyonu kullanılıyor
             placeholder="Write New Todo"
           />
           <View style={styles.modalButtons}>
-          <TouchableOpacity style={styles.modalButton}>
+            <TouchableOpacity style={styles.modalButton}>
               <CustomButton
                 label="Cancel"
                 onPress={onClose}
@@ -107,15 +127,5 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     marginLeft: 10,
-  },
-  cancelButton: {
-    backgroundColor: "#E5EEFF",
-  },
-  confirmButton: {
-    backgroundColor: "#FFA38F",
-  },
-  modalButtonText: {
-    color: "#264653",
-    fontWeight: "bold",
   },
 });
