@@ -74,7 +74,7 @@ export default function AddTodoModal({
                 onPress={onClose}
                 variant="cancel"
                 width={80}
-                height={40}
+                height={55}
               />
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalButton}>
@@ -83,7 +83,7 @@ export default function AddTodoModal({
                 onPress={handleAdd}
                 variant="fill"
                 width={80}
-                height={40}
+                height={55}
               />
             </TouchableOpacity>
           </View>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 20,
     width: "80%",
-    height: "auto",
+    height: 200,
     elevation: 5,
   },
   modalHeader: {

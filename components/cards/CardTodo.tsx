@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Pressable,
-  Text,
-} from "react-native";
+import { View, StyleSheet, Dimensions, Pressable, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
@@ -15,8 +9,8 @@ type Props = {
   text: string;
   variant: "todo" | "birthday";
   isCompleted: boolean;
-  onToggle: (id: string) => void; 
-  onDelete: (id: string) => void; 
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
 };
 
 export default function CardTodo({
@@ -40,10 +34,11 @@ export default function CardTodo({
       <Text style={[styles.text, isCompleted && styles.strikethrough]}>
         {text}
       </Text>
-
-      <Pressable onPress={() => onDelete(id)} style={styles.deleteButton}>
-        <Ionicons name="trash-outline" size={20} color="#264653" />
-      </Pressable>
+      {!isCompleted && (
+        <Pressable onPress={() => onDelete(id)} style={styles.deleteButton}>
+          <Ionicons name="trash-outline" size={20} color="#264653" />
+        </Pressable>
+      )}
     </View>
   );
 }
