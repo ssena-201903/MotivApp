@@ -1,24 +1,44 @@
-import { View, StyleSheet, Dimensions, Pressable, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import { CustomText } from "@/CustomText";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useRouter } from "expo-router";
+import { useState } from "react";
+import ProfileModal from "../modals/ProfileModal";
+import { auth } from "@/firebase.config";
 
 const { width } = Dimensions.get("window");
 
 type Props = {
   onDiamondPress: () => void;
   onDatePress: () => void;
-}
+};
 
-export default function TopBar ({ onDiamondPress, onDatePress } : Props) {
-  const handleToast = () => {
+export default function TopBar({ onDiamondPress, onDatePress }: Props) {
+  const userId = auth.currentUser?.uid;
 
-  };
+  const [isProfileModalVisible, setIsProfileModalVisible] =
+    useState<boolean>(false);
+
+  const handleToast = () => {};
 
   const handleCalendarPress = () => {
     router.push("/calendar");
   };
-  
+
+  const handleProfileModals = () => {
+    setIsProfileModalVisible(true);
+  };
+
+  const handleProfileModalClose = () => {
+    setIsProfileModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <Pressable style={styles.date} onPress={onDatePress}>
@@ -27,15 +47,35 @@ export default function TopBar ({ onDiamondPress, onDatePress } : Props) {
       </Pressable>
       <View style={styles.topMenu}>
         <TouchableOpacity style={styles.topMenuItem}>
-          <Ionicons name="diamond" size={24} color="#FCFCFC" onPress={onDiamondPress} />
+          <Ionicons
+            name="diamond"
+            size={24}
+            color="#FCFCFC"
+            onPress={onDiamondPress}
+          />
         </TouchableOpacity>
         <View style={styles.topMenuItem}>
-          <Ionicons name="calendar" size={24} color="#FCFCFC" onPress={handleCalendarPress} />
+          <Ionicons
+            name="calendar"
+            size={24}
+            color="#FCFCFC"
+            onPress={handleCalendarPress}
+          />
         </View>
         <View style={styles.topMenuItem}>
-          <Ionicons name="person" size={24} color="#FCFCFC" />
+          <Ionicons
+            name="person"
+            size={24}
+            color="#FCFCFC"
+            onPress={handleProfileModals}
+          />
         </View>
       </View>
+      <ProfileModal
+        isModalVisible={isProfileModalVisible}
+        userId={userId}
+        onClose={handleProfileModalClose}
+      />
     </View>
   );
 }
