@@ -1,5 +1,5 @@
 import { CustomText } from "@/CustomText";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,70 +10,124 @@ import {
 } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
 import AddTodoModal from "@/components/modals/AddTodoModal";
-import { Ionicons } from "@expo/vector-icons";
 import CardTodo from "@/components/cards/CardTodo";
+import { db, auth } from "@/firebase.config";
+import {
+  collection,
+  query,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  doc,
+  where,
+  Timestamp,
+} from "firebase/firestore";
 
 const { width } = Dimensions.get("screen");
 
 interface Todo {
   id: string;
   text: string;
-  completed: boolean;
+  isDone: boolean;
+  createdAt: Timestamp;
+  dueDate: string;
 }
 
 export default function CalendarPage() {
+  const userId = auth.currentUser?.uid;
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
-  const [todos, setTodos] = useState<{ [key: string]: Todo[] }>({
-    "2025-01-10": [
-      { id: "1", text: "Alışveriş yap", completed: false },
-      { id: "2", text: "Köpeği gezdir", completed: true },
-    ],
-  });
+  const [todos, setTodos] = useState<{ [key: string]: Todo[] }>({});
   const [modalVisible, setModalVisible] = useState(false);
-  const [todoText, setTodoText] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const today = new Date().toISOString().split("T")[0];
+
+  // Fetch todos from Firebase
+  const fetchTodos = async () => {
+    if (!userId) return;
+
+    try {
+      const todosRef = collection(db, "users", userId, "todos");
+      const querySnapshot = await getDocs(todosRef);
+
+      const todosByDate: { [key: string]: Todo[] } = {};
+
+      querySnapshot.docs.forEach((doc) => {
+        const todoData = doc.data();
+        const dueDate =
+          todoData.dueDate ||
+          todoData.createdAt?.toDate().toISOString().split("T")[0];
+
+        if (!todosByDate[dueDate]) {
+          todosByDate[dueDate] = [];
+        }
+
+        todosByDate[dueDate].push({
+          id: doc.id,
+          text: todoData.text,
+          isDone: todoData.isDone,
+          createdAt: todoData.createdAt,
+          dueDate: dueDate,
+        });
+      });
+
+      setTodos(todosByDate);
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTodos();
+  }, [userId]);
 
   const handleDayPress = (day: DateData) => {
     setSelectedDay(day.dateString);
   };
 
-  const addTodo = (text: string) => {
-    const targetDay = selectedDay || today;
-    if (text.trim()) {
-      const newTodoItem = {
-        id: Date.now().toString(),
-        text: text.trim(),
-        completed: false,
-      };
+  // Toggle todo completion
+  const toggleTodo = async (todoId: string) => {
+    if (!userId || !selectedDay) return;
 
-      setTodos((prevTodos) => ({
-        ...prevTodos,
-        [targetDay]: [...(prevTodos[targetDay] || []), newTodoItem],
-      }));
-      setModalVisible(false);
+    try {
+      const todoRef = doc(db, "users", userId, "todos", todoId);
+      const currentTodo = todos[selectedDay].find((todo) => todo.id === todoId);
+
+      if (currentTodo) {
+        await updateDoc(todoRef, {
+          isDone: !currentTodo.isDone,
+        });
+
+        setTodos((prevTodos) => ({
+          ...prevTodos,
+          [selectedDay]: prevTodos[selectedDay].map((todo) =>
+            todo.id === todoId ? { ...todo, isDone: !todo.isDone } : todo
+          ),
+        }));
+      }
+    } catch (error) {
+      console.error("Error toggling todo:", error);
     }
   };
 
-  const toggleTodo = (todoId: string) => {
-    if (selectedDay) {
-      setTodos((prevTodos) => ({
-        ...prevTodos,
-        [selectedDay]: prevTodos[selectedDay].map((todo) =>
-          todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-        ),
-      }));
-    }
-  };
+  // Delete todo
+  const deleteTodo = async (todoId: string) => {
+    if (!userId || !selectedDay) return;
 
-  const deleteTodo = (todoId: string) => {
-    if (selectedDay) {
+    try {
+      const todoRef = doc(db, "users", userId, "todos", todoId);
+      await deleteDoc(todoRef);
+
       setTodos((prevTodos) => ({
         ...prevTodos,
         [selectedDay]: prevTodos[selectedDay].filter(
           (todo) => todo.id !== todoId
         ),
       }));
+    } catch (error) {
+      console.error("Error deleting todo:", error);
     }
   };
 
@@ -84,7 +138,14 @@ export default function CalendarPage() {
     return (
       <View style={styles.dayTodoList}>
         {dayTodos.slice(0, 2).map((todo, index) => (
-          <Text key={todo.id} style={styles.dayTodoText} numberOfLines={1}>
+          <Text
+            key={todo.id}
+            style={[
+              styles.dayTodoText,
+              todo.isDone && styles.completedDayTodoText,
+            ]}
+            numberOfLines={1}
+          >
             • {todo.text}
           </Text>
         ))}
@@ -140,17 +201,17 @@ export default function CalendarPage() {
       {selectedDay && todos[selectedDay]?.length > 0 && (
         <View style={styles.selectedDayTodos}>
           <CustomText style={styles.selectedDayTitle}>
-            {selectedDay} Görevleri
+            {selectedDay} Todos
           </CustomText>
           {todos[selectedDay]?.map((todo) => (
             <CardTodo
               key={todo.id}
               id={todo.id}
               text={todo.text}
-              isCompleted={todo.completed}
+              isCompleted={todo.isDone}
               variant="todo"
-              onToggle={(id) => toggleTodo(id)}
-              onDelete={(id) => deleteTodo(id)}
+              onToggle={() => toggleTodo(todo.id)}
+              onDelete={() => deleteTodo(todo.id)}
             />
           ))}
         </View>
@@ -163,14 +224,14 @@ export default function CalendarPage() {
         <CustomText style={styles.addButtonText}>+</CustomText>
       </TouchableOpacity>
 
-      <AddTodoModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onAdd={addTodo}
-        selectedDate={selectedDay || today}
-        todoText={todoText}
-        onTodoTextChange={setTodoText}
-      />
+      {userId && (
+        <AddTodoModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          userId={userId}
+          selectedDate={selectedDay || today}
+        />
+      )}
     </ScrollView>
   );
 }
@@ -231,7 +292,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "#1C3641", // can change later
+    backgroundColor: "#1C3641",
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
@@ -248,7 +309,7 @@ const styles = StyleSheet.create({
   selectedDayTodos: {
     marginTop: 20,
     marginHorizontal: 20,
-    paddingBottom: 100, // Artı butonuna alan bırakmak için
+    paddingBottom: 100,
   },
   selectedDayTitle: {
     fontSize: 18,
@@ -256,43 +317,8 @@ const styles = StyleSheet.create({
     color: "#264653",
     marginBottom: 10,
   },
-  todoItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: "#E5EEFF",
-  },
-  checkbox: {
-    width: 16,
-    height: 16,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "#FFA38F",
-    marginRight: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  checkboxInner: {
-    width: 6,
-    height: 6,
-    borderRadius: 7,
-    backgroundColor: "#FFA38F",
-  },
-  todoText: {
-    flex: 1,
-    fontSize: 16,
-    color: "#264653",
-  },
-  completedTodoText: {
+  completedDayTodoText: {
     textDecorationLine: "line-through",
-    color: "#264653",
     opacity: 0.6,
-  },
-  deleteButton: {
-    padding: 8,
   },
 });

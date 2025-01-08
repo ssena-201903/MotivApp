@@ -82,8 +82,8 @@ export default function AddMemoryModal({
                   label="Save"
                   onPress={handleSaveMemory}
                   variant="fill"
-                  width={480}
-                  height={40}
+                  width={120}
+                  height={50}
                 />
               </TouchableOpacity>
             </View>
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    width: "70%",
+    width: "80%",
     backgroundColor: "#FCFCFC",
     padding: 20,
     borderRadius: 12,
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    height: 400,
+    height: 450,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
