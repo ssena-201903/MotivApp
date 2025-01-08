@@ -19,14 +19,25 @@ import { CustomText } from "@/CustomText";
 type Props = {
   variant: "goals" | "habits" | "todos";
 };
+
 export default function HomeSection({ variant }: Props) {
   const userId = auth.currentUser?.uid;
   const [currentTodos, setCurrentTodos] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [todosPercentage, setTodosPercentage] = useState<number>(0);
+
+  // calculate percentage of completed todos
+  const calculateTodosPercentage = (todos: any[]) => {
+    const totalTodos = todos.length;
+    if (totalTodos === 0) return 0;
+
+    const completedTodos = todos.filter(todo => todo.isDone).length;
+    return Math.round((completedTodos / totalTodos) * 100);
+  };
 
   // fetching current todos from firestore
   const fetchTodos = async () => {
-    if (!userId) return; // userId yoksa işlemi durdur
+    if (!userId) return;
 
     try {
       const todosRef = collection(db, "users", userId, "todos");
@@ -49,6 +60,7 @@ export default function HomeSection({ variant }: Props) {
       }));
 
       setCurrentTodos(todosData);
+      setTodosPercentage(calculateTodosPercentage(todosData));
     } catch (error) {
       console.log("error fetching todos", error);
     } finally {
@@ -56,8 +68,9 @@ export default function HomeSection({ variant }: Props) {
     }
   };
 
+  // toggle todo
   const toggleTodo = async (id: string, currentStatus: boolean) => {
-    if (!userId) return; 
+    if (!userId) return;
 
     try {
       const todoRef = doc(db, "users", userId, "todos", id);
@@ -66,14 +79,32 @@ export default function HomeSection({ variant }: Props) {
         isDone: !currentStatus,
       });
 
-      // update state
-      setCurrentTodos((prevTodos) =>
-        prevTodos.map((todo) =>
-          todo.id === id ? { ...todo, isDone: !currentStatus } : todo
-        )
+      // update state and recalculate percentage
+      const updatedTodos = currentTodos.map((todo) =>
+        todo.id === id ? { ...todo, isDone: !currentStatus } : todo
       );
+      setCurrentTodos(updatedTodos);
+      setTodosPercentage(calculateTodosPercentage(updatedTodos));
     } catch (error) {
       console.log("error toggling todo status", error);
+    }
+  };
+
+  // deleted todos
+  const deleteTodo = async (id: string) => {
+    if (!userId) return;
+
+    try {
+      const todoRef = doc(db, "users", userId, "todos", id);
+      await deleteDoc(todoRef);
+
+      const updatedTodos = currentTodos.filter((todo) => todo.id !== id);
+      setCurrentTodos(updatedTodos);
+      setTodosPercentage(calculateTodosPercentage(updatedTodos));
+
+      console.log(`deleted ${id} todo`);
+    } catch (error) {
+      console.log("error deleting todo", error);
     }
   };
 
@@ -82,25 +113,6 @@ export default function HomeSection({ variant }: Props) {
       fetchTodos();
     }
   }, [variant, userId]);
-
-  const deleteTodo = async (id: string) => {
-    if (!userId) return;
-
-    try {
-      // delete todo from firestore
-      const todoRef = doc(db, "users", userId, "todos", id);
-      await deleteDoc(todoRef);
-
-      // delete todo from screens
-      setCurrentTodos((prevTodos) => 
-        prevTodos.filter((todo) => todo.id !== id)
-      );
-
-      console.log(`deleted ${id} todo`);
-    } catch (error) {
-      
-    }
-  };
 
   const createHomeSection = () => {
     if (variant === "goals") {
@@ -118,7 +130,6 @@ export default function HomeSection({ variant }: Props) {
         </>
       );
     } else if (variant === "habits") {
-      console.log(variant);
       return (
         <>
           <SectionHeader text="Habits" percentDone={60} />
@@ -131,11 +142,11 @@ export default function HomeSection({ variant }: Props) {
       );
     } else if (variant === "todos") {
       if (loading) {
-        return <CustomText>Loading...</CustomText>; 
+        return <CustomText>Loading...</CustomText>;
       }
       return (
         <>
-          <SectionHeader text="To-Do" percentDone={85} />
+          <SectionHeader text="To-Do" percentDone={todosPercentage} />
           <ScrollView style={styles.todoView}>
             {currentTodos.map((todo) => (
               <CardTodo
