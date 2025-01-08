@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    width: 370,
+    width: width - 40,
     marginHorizontal: 20,
     marginBottom: 20,
     marginTop: 20,
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     overflow: "hidden",
-    marginLeft: "auto",
+    marginLeft: 20,
   },
   progressBarBackground: {
     width: "100%",

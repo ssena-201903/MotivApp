@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Dimensions } from "react-native";
 import SectionHeader from "@/components/headers/SectionHeader";
 import CardGoal from "@/components/cards/CardGoal";
 import CardHabit from "@/components/cards/CardHabit";
@@ -15,6 +15,8 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { CustomText } from "@/CustomText";
+
+const { width } = Dimensions.get('window');
 
 type Props = {
   variant: "goals" | "habits" | "todos";
@@ -179,16 +181,16 @@ const styles = StyleSheet.create({
   },
   todoView: {
     flexGrow: 1,
-    width: 370,
-    height: 170,
+    width: width - 40,
+    height: 190,
     overflow: "hidden",
   },
   gridView: {
     display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
-    width: 370,
+    justifyContent: "flex-start",
+    width: width - 40,
     gap: 4,
   },
 });
