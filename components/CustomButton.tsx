@@ -12,8 +12,8 @@ type Props = {
   label: string;
   onPress: () => void;
   variant: "outlined" | "fill" | "disabled" | "cancel";
-  width: number;
-  height: number;
+  width: number | "100%";
+  height: number | "100%";
 };
 export default function CustomButton({
   label,

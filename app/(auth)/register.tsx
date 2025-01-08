@@ -1,46 +1,63 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase.config";
-import { getFirestore, doc, setDoc } from 'firebase/firestore'; 
-import { useRouter } from 'expo-router';
-import CustomButton from '@/components/CustomButton';
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { useRouter } from "expo-router";
+import CustomButton from "@/components/CustomButton";
 
 export default function Register() {
-  const [name, setName] = useState(''); 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
   const db = getFirestore();
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
-  
+
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
-  
-      const userRef = doc(db, 'users', user.uid);
+
+      const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, { name, email });
-  
-      const goalCollections = ['movies', 'places', 'foods', 'buy', 'books', 'activity'];
+
+      const goalCollections = [
+        "movies",
+        "places",
+        "foods",
+        "buy",
+        "books",
+        "activity",
+      ];
       for (const collection of goalCollections) {
-        await setDoc(doc(userRef, 'goals', collection), {});
+        await setDoc(doc(userRef, "goals", collection), {});
       }
-  
-      await setDoc(doc(userRef, 'habits', 'placeholder'), {});
-      await setDoc(doc(userRef, 'todos', 'placeholder'), {});
-      await setDoc(doc(userRef, 'friends', 'placeholder'), {});
-      await setDoc(doc(userRef, 'memories', 'placeholder'), {});
-  
-      router.replace('/home');
+
+      await setDoc(doc(userRef, "habits", "placeholder"), {});
+      await setDoc(doc(userRef, "todos", "placeholder"), {});
+      await setDoc(doc(userRef, "friends", "placeholder"), {});
+      await setDoc(doc(userRef, "memories", "placeholder"), {});
+
+      router.replace("/home");
     } catch (error) {
-      setError('Registration failed: ' + error.message);
+      setError("Registration failed: " + error.message);
     }
   };
 
@@ -57,6 +74,7 @@ export default function Register() {
         <TextInput
           style={styles.input}
           placeholder="Name"
+          placeholderTextColor="#827F7F"
           value={name}
           onChangeText={setName}
         />
@@ -64,6 +82,7 @@ export default function Register() {
         <TextInput
           style={styles.input}
           placeholder="Email"
+          placeholderTextColor="#827F7F"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -73,6 +92,7 @@ export default function Register() {
         <TextInput
           style={styles.input}
           placeholder="Password"
+          placeholderTextColor="#827F7F"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -81,33 +101,40 @@ export default function Register() {
         <TextInput
           style={styles.input}
           placeholder="Confirm Password"
+          placeholderTextColor="#827F7F"
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
         />
-        
-        <CustomButton label='Create Account' onPress={handleRegister} variant='fill'/>
-
-        <TouchableOpacity 
-          style={styles.loginLink}
-          onPress={() => router.push('/login')}
-        >
-          <Text style={styles.loginText}>
-            Already have an account? <Text style={styles.loginLinkText}>Login</Text>
-          </Text>
-        </TouchableOpacity>
       </View>
+      <CustomButton
+        label="Create Account"
+        onPress={handleRegister}
+        variant="fill"
+        width={370}
+      />
+      <TouchableOpacity
+        style={styles.loginLink}
+        onPress={() => router.push("/login")}
+      >
+        <Text style={styles.loginText}>
+          Already have an account?{" "}
+          <Text style={styles.loginLinkText}>Login</Text>
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#F9F9F9',
+    display: "flex",
+    backgroundColor: "#F9F9F9",
     padding: 20,
-    // alignItems: "center",
+    justifyContent: "center",
+    alignItems: "center",
     width: "100%",
+    height: "100%",
   },
   headerContainer: {
     marginTop: 100,
@@ -117,8 +144,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#264653',
+    fontWeight: "bold",
+    color: "#264653",
     marginBottom: 10,
   },
   subtitle: {
@@ -127,42 +154,44 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   formContainer: {
-    flex: 1,
+    display: "flex",
+    flexDirection: "column",
     width: 370,
+    marginBottom: 20,
   },
   input: {
-    backgroundColor: '#E5EEFF',
+    backgroundColor: "#E5EEFF",
     padding: 15,
     borderRadius: 10,
-    marginBottom: 15,
+    marginBottom: 10,
     fontSize: 16,
   },
-  registerButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  registerButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+  // registerButton: {
+  //   backgroundColor: "#007AFF",
+  //   padding: 15,
+  //   borderRadius: 10,
+  //   alignItems: "center",
+  // },
+  // registerButtonText: {
+  //   color: "white",
+  //   fontSize: 16,
+  //   fontWeight: "bold",
+  // },
   loginLink: {
     marginTop: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   loginText: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   loginLinkText: {
-    color: '#3EAEFF',
-    fontWeight: 'bold',
+    color: "#264653",
+    fontWeight: "bold",
   },
   error: {
-    color: 'red',
+    color: "red",
     marginBottom: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

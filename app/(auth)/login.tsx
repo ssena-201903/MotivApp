@@ -7,9 +7,11 @@ import CustomButton from '@/components/CustomButton';
 import { CustomText } from '@/CustomText';
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [emailFocus, setEmailFocus] = useState<boolean>(false);
+  const [passwordFocus, setPasswordFocus] = useState<boolean>(false);
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -31,21 +33,33 @@ export default function Login() {
       {error && <Text style={styles.error}>{error}</Text>}
 
       <View style={styles.formContainer}>
-        <TextInput
-          style={styles.input}
+      <TextInput
+          style={[
+            styles.input, 
+            { borderColor: emailFocus ? '#E5EEFF' : '#E5EEFF' } // Email input focus color
+          ]}
           placeholder="Email"
+          placeholderTextColor="#827F7F"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
+          onFocus={() => setEmailFocus(true)} 
+          onBlur={() => setEmailFocus(false)} 
         />
 
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input, 
+            { borderColor: passwordFocus ? '#E5EEFF' : '#E5EEFF' } // Password input focus color
+          ]}
           placeholder="Password"
+          placeholderTextColor="#827F7F"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          onFocus={() => setPasswordFocus(true)} 
+          onBlur={() => setPasswordFocus(false)} 
         />
 
         <TouchableOpacity 
@@ -72,10 +86,13 @@ export default function Login() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: '#F9F9F9',
     padding: 20,
     width: "100%",
+    height: "100%",
   },
   headerContainer: {
     marginTop: 100,
@@ -95,7 +112,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   formContainer: {
-    flex: 1,
+    display: "flex",
     justifyContent: "center",
     width: 370,
   },
@@ -137,7 +154,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   registerLinkText: {
-    color: "#3EAEFF", // can change later
+    color: "#264653", // can change later
     fontWeight: 'bold',
   },
   error: {
