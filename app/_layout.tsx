@@ -82,6 +82,13 @@ export default function RootLayout() {
             title: 'Takvim',
           }}
         />
+        <Stack.Screen
+          name="profile"
+          options={{
+            headerShown: true,
+            title: 'Profile',
+          }}
+        />
       </Stack>
     </AuthProvider>
   );

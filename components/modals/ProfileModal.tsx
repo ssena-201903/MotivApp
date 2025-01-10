@@ -28,6 +28,11 @@ export default function ProfileModal({
     }
   };
 
+  const handleProfileRoute = () => {
+    router.push('/profile');
+    onClose();
+  };
+
   return (
     <Modal
       visible={isModalVisible}
@@ -42,10 +47,10 @@ export default function ProfileModal({
             <Ionicons name="log-out-outline" size={32} color="#FFA38F" onPress={handleLogout} />
           </View>
           <View style={styles.menus}>
-            <View style={styles.menuItem}>
+            <Pressable style={styles.menuItem} onPress={handleProfileRoute}>
               <Ionicons name="person" size={20} color="#264653" />
               <CustomText style={styles.menuItemText}>Profile</CustomText>
-            </View>
+            </Pressable>
             <View style={styles.menuItem}>
               <Ionicons name="flag" size={20} color="#264653" />
               <CustomText style={styles.menuItemText}>Goals</CustomText>
