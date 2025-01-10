@@ -11,7 +11,6 @@ import { Audio } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
 import FillGlassIcon from "@/components/icons/FillGlassIcon";
 import EmptyGlassIcon from "@/components/icons/EmptyGlassIcon";
-import PlusIcon from "@/components/icons/PlusIcon";
 import CardFeedback from "@/components/cards/CardFeedback";
 import { CustomText } from "@/CustomText";
 import LottieView from "lottie-react-native";
@@ -23,12 +22,12 @@ type Props = {
 };
 
 export default function CardHabit({ variant }: Props) {
-  const [filledGlass, setFilledGlass] = useState(0);
+  const [filledGlass, setFilledGlass] = useState<number>(0);
   const totalWater = 8;
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isDone, setIsDone] = useState(false);
-  const [isFeedbackVisible, setIsFeedbackVisible] = useState(false);
-  const [animationKey, setAnimationKey] = useState(0);
+  const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
+  const [animationKey, setAnimationKey] = useState<number>(0);
 
   // load water sound
   const loadWaterSound = async () => {
@@ -137,10 +136,18 @@ export default function CardHabit({ variant }: Props) {
             <CustomText style={styles.text}>Spor</CustomText>
             {/* <CustomText style={styles.subText}>20 min</CustomText> */}
           </View>
-          <Pressable style={{ height: 30, justifyContent: "center" }}>
+          <Pressable
+            style={{
+              height: 50,
+              width: 30,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={handleDonePress}
+          >
             <Ionicons
               name={isDone ? "checkmark-circle" : "add"}
-              size={24}
+              size={28}
               color="#264653"
             />
           </Pressable>
@@ -157,10 +164,18 @@ export default function CardHabit({ variant }: Props) {
             />
             <CustomText style={styles.text}>Book</CustomText>
           </View>
-          <Pressable style={{ height: 30, justifyContent: "center" }}>
+          <Pressable
+            style={{
+              height: 50,
+              width: 30,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={handleDonePress}
+          >
             <Ionicons
               name={isDone ? "checkmark-circle" : "add"}
-              size={24}
+              size={28}
               color="#264653"
             />
           </Pressable>
@@ -185,7 +200,7 @@ export default function CardHabit({ variant }: Props) {
                     </View>
                   ) : (
                     <View style={{ marginRight: 2 }}>
-                      <EmptyGlassIcon height={21} width={20}/>
+                      <EmptyGlassIcon height={21} width={20} />
                     </View>
                   )}
                 </View>
@@ -201,7 +216,7 @@ export default function CardHabit({ variant }: Props) {
           >
             <Ionicons
               name={isDone ? "checkmark-circle" : "add"}
-              size={24}
+              size={28}
               color="#264653"
             />
           </Pressable>
@@ -215,7 +230,10 @@ export default function CardHabit({ variant }: Props) {
       {variant !== "Water" ? (
         <Pressable
           onPress={handleDonePress}
-          style={[isDone ? styles.doneHabit : styles.container, { width: 182 }]}
+          style={[
+            isDone ? styles.doneHabit : styles.container,
+            { width: width > 760 ? 266 : 182 },
+          ]}
         >
           {createHabitCard()}
         </Pressable>
@@ -246,14 +264,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 24,
     marginTop: 4,
-    height: 50,
+    height: 60,
     backgroundColor: "#E5EEFF",
     borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.07,
-    shadowRadius: 4,
-    overflow: "visible",
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 4 },
+    // shadowOpacity: 0.07,
+    // shadowRadius: 4,
+    // overflow: "visible",
   },
   text: {
     color: "#264653",
@@ -273,11 +291,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: "auto",
+    height: 60,
   },
   waterRow: {
+    width: 240,
     flexDirection: "row",
     flexWrap: "wrap",
-    flex: 1,
+    display: "flex",
   },
   doneHabit: {
     display: "flex",
@@ -287,7 +307,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 24,
     marginTop: 4,
-    height: 50,
+    height: 60,
     backgroundColor: "#FFA38F",
     borderRadius: 12,
     shadowColor: "#000",

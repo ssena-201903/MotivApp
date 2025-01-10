@@ -52,7 +52,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 12,
     marginBottom: 8,
-    width: width - 40,
+    width: width > 760 ? width - 600 : width - 40,
+    height: 60,
   },
   completedContainer: {
     backgroundColor: "#FFA38F",

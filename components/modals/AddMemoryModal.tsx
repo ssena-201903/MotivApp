@@ -7,11 +7,14 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  Dimensions
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "../CustomButton";
 import { db } from "@/firebase.config";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+
+const { width } = Dimensions.get('window');
 
 interface AddMemoryModalProps {
   visible: boolean;
@@ -40,7 +43,6 @@ export default function AddMemoryModal({
           createdAt: memoryDate,
         });
 
-        // Başarılı işlem sonrası state sıfırlama
         setMemoryText("");
         onClose();
       } catch (error) {
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    width: "80%",
+    width: width > 760 ? width - 700 : width - 40,
     backgroundColor: "#FCFCFC",
     padding: 20,
     borderRadius: 12,
@@ -111,7 +113,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    height: 450,
+    height: "auto",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
