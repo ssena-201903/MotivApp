@@ -10,6 +10,7 @@ import { CustomText } from "@/CustomText";
 import CustomButton from "../CustomButton";
 import { db } from "@/firebase.config";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -35,7 +36,10 @@ export default function AddTodoModal({
  const handleAdd = async () => {
    if (todoText.trim()) {
      try {
-       const dueDate = selectedDate || new Date().toISOString().split("T")[0];
+
+      const dueDate = selectedDate
+      ? Timestamp.fromDate(new Date(selectedDate))
+      : serverTimestamp();
 
        const todosRef = collection(db, "users", userId, "todos");
        await addDoc(todosRef, {
@@ -80,8 +84,8 @@ export default function AddTodoModal({
                  label="Cancel"
                  onPress={onClose}
                  variant="cancel"
-                 width={80}
-                 height={55}
+                 width={85}
+                 height={50}
                />
              </TouchableOpacity>
              <TouchableOpacity style={styles.modalButton}>
@@ -89,8 +93,8 @@ export default function AddTodoModal({
                  label="Add"
                  onPress={handleAdd}
                  variant="fill"
-                 width={80}
-                 height={55}
+                 width={85}
+                 height={50}
                />
              </TouchableOpacity>
            </View>

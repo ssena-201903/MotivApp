@@ -5,6 +5,7 @@ import CardHabit from "@/components/cards/CardHabit";
 import CardTodo from "@/components/cards/CardTodo";
 import React, { useEffect, useState } from "react";
 import { db, auth } from "@/firebase.config";
+import { Timestamp } from "firebase/firestore";
 import {
   collection,
   getDocs,
@@ -16,7 +17,7 @@ import {
 } from "firebase/firestore";
 import { CustomText } from "@/CustomText";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 type Props = {
   variant: "goals" | "habits" | "todos";
@@ -33,7 +34,7 @@ export default function HomeSection({ variant }: Props) {
     const totalTodos = todos.length;
     if (totalTodos === 0) return 0;
 
-    const completedTodos = todos.filter(todo => todo.isDone).length;
+    const completedTodos = todos.filter((todo) => todo.isDone).length;
     return Math.round((completedTodos / totalTodos) * 100);
   };
 
@@ -44,14 +45,20 @@ export default function HomeSection({ variant }: Props) {
     try {
       const todosRef = collection(db, "users", userId, "todos");
 
-      const todayDate = new Date();
-      const startOfDay = new Date(todayDate.setHours(0, 0, 0, 0));
-      const endOfDay = new Date(todayDate.setHours(23, 59, 59, 999));
+      const today = new Date();
+    const startOfDay = new Date(today);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const startOfDayTimestamp = Timestamp.fromDate(startOfDay);
+    const endOfDayTimestamp = Timestamp.fromDate(endOfDay);
 
       const q = query(
         todosRef,
-        where("createdAt", ">=", startOfDay),
-        where("createdAt", "<=", endOfDay)
+        where("dueDate", ">=", startOfDay),
+        where("dueDate", "<=", endOfDay)
       );
 
       const querySnapshot = await getDocs(q);
