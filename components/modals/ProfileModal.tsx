@@ -48,20 +48,20 @@ export default function ProfileModal({
           </View>
           <View style={styles.menus}>
             <Pressable style={styles.menuItem} onPress={handleProfileRoute}>
-              <Ionicons name="person" size={20} color="#264653" />
+              <Ionicons name="person" size={20} color="#1E3A5F" />
               <CustomText style={styles.menuItemText}>Profile</CustomText>
             </Pressable>
             <View style={styles.menuItem}>
-              <Ionicons name="flag" size={20} color="#264653" />
+              <Ionicons name="flag" size={20} color="#1E3A5F" />
               <CustomText style={styles.menuItemText}>Goals</CustomText>
             </View>
             <View style={styles.menuItem}>
-              <Ionicons name="footsteps" size={20} color="#264653" />
+              <Ionicons name="footsteps" size={20} color="#1E3A5F" />
               <CustomText style={styles.menuItemText}>Habits</CustomText>
             </View>
             <View style={styles.menuItem}>
-              <Ionicons name="settings" size={20} color="#264653" />
-              <CustomText style={styles.menuItemText}>Habits</CustomText>
+              <Ionicons name="settings" size={20} color="#1E3A5F" />
+              <CustomText style={styles.menuItemText}>Settings</CustomText>
             </View>
           </View>
         </Pressable>
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   topSectionHeader: {
     fontSize: 20,
     fontWeight: 700,
-    color: "#264653",
+    color: "#1E3A5F",
   },
   menus: {
     display: "flex",
@@ -122,6 +122,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 14,
     fontWeight: 500,
-    color: "#264653",
+    color: "#1E3A5F",
   },
 });

@@ -27,7 +27,7 @@ export default function CardTodo({
         <Ionicons
           name={isCompleted ? "checkmark-circle" : "ellipse-outline"}
           size={24}
-          color="#264653"
+          color="#1E3A5F"
         />
       </Pressable>
 
@@ -36,7 +36,7 @@ export default function CardTodo({
       </Text>
       {!isCompleted && (
         <Pressable onPress={() => onDelete(id)} style={styles.deleteButton}>
-          <Ionicons name="trash-outline" size={20} color="#264653" />
+          <Ionicons name="trash-outline" size={20} color="#1E3A5F" />
         </Pressable>
       )}
     </View>
@@ -53,10 +53,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 8,
     width: width > 760 ? width - 600 : width - 40,
-    height: 60,
+    height: 50,
   },
   completedContainer: {
-    backgroundColor: "#FFA38F",
+    backgroundColor: "#B5C4E4",
   },
   checkbox: {
     marginRight: 12,
@@ -64,11 +64,11 @@ const styles = StyleSheet.create({
   text: {
     flex: 1,
     fontSize: 16,
-    color: "#264653",
+    color: "#1E3A5F",
   },
   strikethrough: {
     textDecorationLine: "line-through",
-    color: "#264653",
+    color: "#1E3A5F",
   },
   deleteButton: {
     marginLeft: 12,

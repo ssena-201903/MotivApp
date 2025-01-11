@@ -165,9 +165,9 @@ export default function CalendarPage() {
           [today]: { selected: true, selectedColor: "#E5EEFF" },
         }}
         theme={{
-          todayTextColor: "#264653",
+          todayTextColor: "#1E3A5F",
           selectedDayBackgroundColor: "#FFA38F",
-          selectedDayTextColor: "#264653",
+          selectedDayTextColor: "#1E3A5F",
           arrowColor: "#FFA38F",
         }}
         dayComponent={({ date, state }) => {
@@ -257,19 +257,19 @@ const styles = StyleSheet.create({
   },
   todayContainer: {
     backgroundColor: "#E5EEFF",
-    borderColor: "#264653",
+    borderColor: "#1E3A5F",
   },
   dayText: {
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 4,
-    color: "#264653",
+    color: "#1E3A5F",
   },
   selectedDayText: {
-    color: "#264653",
+    color: "#1E3A5F",
   },
   todayText: {
-    color: "#264653",
+    color: "#1E3A5F",
   },
   dayTodoList: {
     width: "100%",
@@ -277,12 +277,12 @@ const styles = StyleSheet.create({
   },
   dayTodoText: {
     fontSize: 10,
-    color: "#264653",
+    color: "#1E3A5F",
     marginBottom: 2,
   },
   moreTodosText: {
     fontSize: 10,
-    color: "#264653",
+    color: "#1E3A5F",
     fontStyle: "italic",
   },
   addButton: {
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "#1C3641",
+    backgroundColor: "#1E3A5F",
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   selectedDayTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#264653",
+    color: "#1E3A5F",
     marginBottom: 10,
   },
   completedDayTodoText: {

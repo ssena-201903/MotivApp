@@ -64,7 +64,7 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
         </View>
         <View style={styles.topMenuItem}>
           <Ionicons
-            name="person"
+            name="menu"
             size={24}
             color="#FCFCFC"
             onPress={handleProfileModals}
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#264653",
+    backgroundColor: "#1E3A5F",
     borderRadius: 10,
     width: width > 760 ? width - 600 : width - 40,
     paddingHorizontal: 10,
@@ -105,20 +105,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#FCFCFC",
   },
   dateMonth: {
-    color: "#264653",
+    color: "#1E3A5F",
     fontSize: 24,
     fontWeight: 800,
     marginRight: 16,
   },
   dateDay: {
-    color: "#264653",
+    color: "#1E3A5F",
     opacity: 0.6,
     fontSize: 16,
     fontWeight: 400,
     marginRight: 16,
   },
   dateYear: {
-    color: "#264653",
+    color: "#1E3A5F",
     fontSize: 16,
     fontWeight: "400",
     marginRight: 10,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "#FCFCFC",
   },
   topMenuItemText: {
-    color: "#264653",
+    color: "#1E3A5F",
     fontSize: 8,
     fontWeight: "regular",
     marginTop: 6,

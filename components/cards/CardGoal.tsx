@@ -12,7 +12,7 @@ type Props = {
 export default function CardGoal({ type, inlineText }: Props) {
   return (
     <Pressable style={styles.container}>
-      <Ionicons name={type} size={28} color="#162F39" />
+      <Ionicons name={type} size={24} color="#1E3A5F" />
       <CustomText style={styles.inlineText}>{inlineText}</CustomText>
     </Pressable>
   );
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     // shadowRadius: 4,
   },
   inlineText: {
-    color: "#162F39",
+    color: "#1E3A5F",
     fontSize: 10,
     fontWeight: "semibold",
     marginTop: 6,

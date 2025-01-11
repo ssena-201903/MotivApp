@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     fontWeight: "semibold",
   },
   fill: {
-    backgroundColor: "#264653", // can change later
+    backgroundColor: "#1E3A5F", // can change later
   },
   outlined: {
     borderWidth: 2,

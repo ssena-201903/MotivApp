@@ -145,12 +145,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#264653",
+    color: "#1E3A5F",
     marginBottom: 10,
   },
   subtitle: {
     fontSize: 16,
-    color: "#264653",
+    color: "#1E3A5F",
     opacity: 0.8,
   },
   formContainer: {
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   loginLinkText: {
-    color: "#264653",
+    color: "#1E3A5F",
     fontWeight: "bold",
   },
   error: {

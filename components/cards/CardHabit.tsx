@@ -131,7 +131,7 @@ export default function CardHabit({ variant }: Props) {
             <Ionicons
               name={isDone ? "barbell" : "barbell-outline"}
               size={22}
-              color="#264653"
+              color="#1E3A5F"
             />
             <CustomText style={styles.text}>Spor</CustomText>
             {/* <CustomText style={styles.subText}>20 min</CustomText> */}
@@ -148,7 +148,7 @@ export default function CardHabit({ variant }: Props) {
             <Ionicons
               name={isDone ? "checkmark-circle" : "add"}
               size={28}
-              color="#264653"
+              color="#1E3A5F"
             />
           </Pressable>
         </>
@@ -160,7 +160,7 @@ export default function CardHabit({ variant }: Props) {
             <Ionicons
               name={isDone ? "book" : "book-outline"}
               size={22}
-              color="#264653"
+              color="#1E3A5F"
             />
             <CustomText style={styles.text}>Book</CustomText>
           </View>
@@ -176,7 +176,7 @@ export default function CardHabit({ variant }: Props) {
             <Ionicons
               name={isDone ? "checkmark-circle" : "add"}
               size={28}
-              color="#264653"
+              color="#1E3A5F"
             />
           </Pressable>
         </>
@@ -217,7 +217,7 @@ export default function CardHabit({ variant }: Props) {
             <Ionicons
               name={isDone ? "checkmark-circle" : "add"}
               size={28}
-              color="#264653"
+              color="#1E3A5F"
             />
           </Pressable>
         </>
@@ -262,9 +262,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingVertical: 24,
-    marginTop: 4,
-    height: 60,
+    paddingVertical: 10,
+    marginTop: 2,
+    height: 50,
     backgroundColor: "#E5EEFF",
     borderRadius: 12,
     // shadowColor: "#000",
@@ -274,13 +274,13 @@ const styles = StyleSheet.create({
     // overflow: "visible",
   },
   text: {
-    color: "#264653",
+    color: "#1E3A5F",
     marginLeft: 12,
     fontWeight: "400",
     fontSize: 14,
   },
   subText: {
-    color: "#264653",
+    color: "#1E3A5F",
     marginLeft: 10,
     fontSize: 10,
     fontWeight: "200",

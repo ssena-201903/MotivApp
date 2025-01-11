@@ -132,9 +132,9 @@ export default function HomeSection({ variant }: Props) {
             <CardGoal type="videocam" inlineText="Movie" />
             <CardGoal type="car" inlineText="Place" />
             <CardGoal type="fast-food" inlineText="Food" />
-            <CardGoal type="book" inlineText="Book" />
-            <CardGoal type="accessibility" inlineText="Activity" />
             <CardGoal type="cash" inlineText="Buy" />
+            <CardGoal type="accessibility" inlineText="Activity" />
+            <CardGoal type="book" inlineText="Book" />
           </View>
         </>
       );

@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     color: "#FCFCFC",
     fontSize: 14,
     fontWeight: "700",
-    backgroundColor: "#264653",
+    backgroundColor: "#1E3A5F",
     paddingHorizontal: 14,
     paddingVertical: 2,
     borderRadius: 6,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: "100%",
-    backgroundColor: "#FFA38F", // I can change later
+    backgroundColor: "#8FE247", // I can change later
   },
   remainingBar: {
     height: "100%",

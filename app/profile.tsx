@@ -1,49 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
   Pressable,
-  Alert,
   Modal,
   TextInput,
   Dimensions,
-} from 'react-native';
-import { router } from 'expo-router';
-import { 
-  auth, 
-  db 
-} from '@/firebase.config';
-import { 
+} from "react-native";
+import { router } from "expo-router";
+import { auth, db } from "@/firebase.config";
+import {
   collection,
   doc,
   getDoc,
   updateDoc,
-  deleteDoc
-} from 'firebase/firestore';
-import { 
+  deleteDoc,
+} from "firebase/firestore";
+import {
   updatePassword,
   deleteUser,
   EmailAuthProvider,
-  reauthenticateWithCredential
-} from 'firebase/auth';
-import { Ionicons } from '@expo/vector-icons';
-import CustomButton from '@/components/CustomButton';
+  reauthenticateWithCredential,
+} from "firebase/auth";
+import { Ionicons } from "@expo/vector-icons";
+import CustomButton from "@/components/CustomButton";
+import CustomAlert from "@/components/CustomAlert";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 export default function Profile() {
   const [userData, setUserData] = useState({
-    name: '',
-    email: '',
-    password: '••••••'
+    name: "",
+    email: "",
+    password: "••••••",
   });
   const [loading, setLoading] = useState(true);
   const [editModal, setEditModal] = useState({
     visible: false,
-    field: '',
-    value: ''
+    field: "",
+    value: "",
+  });
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [deleteModal, setDeleteModal] = useState({
+    visible: false,
+    password: "",
   });
 
   useEffect(() => {
@@ -54,22 +56,36 @@ export default function Profile() {
     try {
       const user = auth.currentUser;
       if (!user) {
-        router.replace('/(auth)/register');
+        router.replace("/(auth)/register");
         return;
       }
 
-      const userDocRef = doc(db, 'users', user.uid);
+      const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
       setUserData({
-        name: userDoc.data()?.name || '',
-        email: user.email || '',
-        password: '••••••'
+        name: userDoc.data()?.name || "",
+        email: user.email || "",
+        password: "••••••",
       });
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching user data:', error);
-      Alert.alert('Error', 'Failed to load user data');
+      console.error("Error fetching user data:", error);
+      CustomAlert("Error", "Failed to load user data");
+    }
+  };
+
+  const reauthenticateUser = async (password: string) => {
+    const user = auth.currentUser;
+    if (!user?.email) return false;
+
+    try {
+      const credential = EmailAuthProvider.credential(user.email, password);
+      await reauthenticateWithCredential(user, credential);
+      return true;
+    } catch (error) {
+      console.error("Reauthentication error:", error);
+      return false;
     }
   };
 
@@ -77,7 +93,7 @@ export default function Profile() {
     setEditModal({
       visible: true,
       field,
-      value: field === 'password' ? '' : currentValue
+      value: field === "password" ? "" : currentValue,
     });
   };
 
@@ -87,80 +103,96 @@ export default function Profile() {
       if (!user) return;
 
       switch (editModal.field) {
-        case 'Name':
-          const userDocRef = doc(db, 'users', user.uid);
+        case "Name":
+          const userDocRef = doc(db, "users", user.uid);
           await updateDoc(userDocRef, {
-            name: editModal.value
+            name: editModal.value,
           });
-          setUserData(prev => ({ ...prev, name: editModal.value }));
+          setUserData((prev) => ({ ...prev, name: editModal.value }));
           break;
 
-        case 'Password':
+        case "Password":
+          const isReauthenticated = await reauthenticateUser(currentPassword);
+          if (!isReauthenticated) {
+            CustomAlert("Error", "Current password is incorrect");
+            return;
+          }
+
           await updatePassword(user, editModal.value);
-          setUserData(prev => ({ ...prev, password: '••••••' }));
+          setUserData((prev) => ({ ...prev, password: "New Password" }));
           break;
       }
 
-      setEditModal({ visible: false, field: '', value: '' });
-      Alert.alert('Success', `${editModal.field} updated successfully`);
+      setEditModal({ visible: false, field: "", value: "" });
+      setCurrentPassword("");
+      CustomAlert("Success", `${editModal.field} updated successfully`);
     } catch (error) {
-      console.error('Error updating field:', error);
-      Alert.alert('Error', 'Failed to update. Please try again.');
+      console.error("Error updating field:", error);
+      CustomAlert("Error", "Failed to update. Please try again.");
     }
   };
 
   const handleDeleteAccount = async () => {
-    Alert.alert(
-      'Delete Account',
-      'Are you sure you want to delete your account? This action cannot be undone.',
+    CustomAlert(
+      "Delete Account",
+      "Are you sure you want to delete your account? This action cannot be undone.",
       [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const user = auth.currentUser;
-              if (!user) return;
-
-              // Delete user document from Firestore
-              await deleteDoc(doc(db, 'users', user.uid));
-              
-              // Delete user authentication
-              await deleteUser(user);
-              
-              router.replace('/(auth)/register');
-            } catch (error) {
-              console.error('Error deleting account:', error);
-              Alert.alert('Error', 'Failed to delete account. Please try again.');
-            }
-          }
-        }
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Continue",
+          style: "destructive",
+          onPress: () => setDeleteModal({ visible: true, password: "" }),
+        },
       ]
     );
   };
 
-  const ProfileField = ({ 
-    label, 
-    value, 
-    isPassword = false 
-  }: { 
-    label: string; 
-    value: string; 
+  const handleConfirmDelete = async () => {
+    if (!deleteModal.password) {
+      CustomAlert("Error", "Password is required");
+      return;
+    }
+
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const isReauthenticated = await reauthenticateUser(deleteModal.password);
+      if (!isReauthenticated) {
+        CustomAlert("Error", "Invalid password");
+        return;
+      }
+
+      await deleteDoc(doc(db, "users", user.uid));
+      await deleteUser(user);
+
+      setDeleteModal({ visible: false, password: "" });
+      router.replace("/(auth)/register");
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      CustomAlert("Error", "Failed to delete account. Please try again.");
+    }
+  };
+
+  const ProfileField = ({
+    label,
+    value,
+    isPassword = false,
+  }: {
+    label: string;
+    value: string;
     isPassword?: boolean;
   }) => (
     <View style={styles.fieldContainer}>
       <Text style={styles.fieldLabel}>{label}</Text>
       <View style={styles.fieldValueContainer}>
-        <Text style={styles.fieldValue}>
-          {isPassword ? '••••••' : value}
-        </Text>
-        {label !== 'User Name' && (
-          <TouchableOpacity 
+        <Text style={styles.fieldValue}>{isPassword ? "••••••" : value}</Text>
+        {label !== "Username" && (
+          <TouchableOpacity
             onPress={() => handleEditField(label, value)}
             style={styles.editButton}
           >
-            <Ionicons name='pencil' size={18} color="#666"/>
+            <Ionicons name="pencil" size={18} color="#666" />
           </TouchableOpacity>
         )}
       </View>
@@ -178,58 +210,107 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <ProfileField 
-          label="Name" 
-          value={userData.name} 
-        />
-        <ProfileField 
-          label="User Name" 
-          value={userData.email} 
-        />
-        <ProfileField 
-          label="Password" 
-          value={userData.password} 
-          isPassword 
-        />
+        <ProfileField label="Name" value={userData.name} />
+        <ProfileField label="Username" value={userData.email} />
+        <ProfileField label="Password" value={userData.password} isPassword />
       </View>
 
-      <TouchableOpacity 
-        style={styles.deleteButton} 
-        onPress={handleDeleteAccount}
-      >
-        <CustomButton label='Delete Account' variant='fill' width="100%" height={50}/>
+      <TouchableOpacity style={styles.deleteButton}>
+        <CustomButton
+          label="Delete Account"
+          variant="fill"
+          width="100%"
+          height={50}
+          onPress={handleDeleteAccount}
+        />
       </TouchableOpacity>
 
       {/* Edit Modal */}
-      <Modal
-        visible={editModal.visible}
-        transparent
-        animationType="slide"
-      >
+      <Modal visible={editModal.visible} transparent animationType="fade">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              Edit {editModal.field}
-            </Text>
+            <Text style={styles.modalTitle}>Edit {editModal.field}</Text>
+
+            {editModal.field === "Password" && (
+              <TextInput
+                style={styles.modalInput}
+                value={currentPassword}
+                onChangeText={setCurrentPassword}
+                secureTextEntry
+                placeholder="Enter current password"
+              />
+            )}
+
             <TextInput
               style={styles.modalInput}
               value={editModal.value}
-              onChangeText={(text) => setEditModal(prev => ({ ...prev, value: text }))}
-              secureTextEntry={editModal.field === 'Password'}
+              onChangeText={(text) =>
+                setEditModal((prev) => ({ ...prev, value: text }))
+              }
+              secureTextEntry={editModal.field === "Password"}
               placeholder={`Enter new ${editModal.field.toLowerCase()}`}
             />
+
             <View style={styles.modalButtons}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setEditModal({ visible: false, field: '', value: '' })}
+                onPress={() => {
+                  setEditModal({ visible: false, field: "", value: "" });
+                  setCurrentPassword("");
+                }}
               >
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.modalButton, styles.saveButton]}
                 onPress={handleSaveEdit}
               >
                 <Text style={styles.saveButtonText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal visible={deleteModal.visible} transparent animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Confirm Account Deletion</Text>
+            <Text style={styles.modalDescription}>
+              Please enter your password to confirm account deletion
+            </Text>
+
+            <TextInput
+              style={styles.modalInput}
+              value={deleteModal.password}
+              onChangeText={(text) =>
+                setDeleteModal((prev) => ({ ...prev, password: text }))
+              }
+              secureTextEntry
+              placeholder="Enter your password"
+            />
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity>
+                <CustomButton
+                  label="Cancel"
+                  onPress={() =>
+                    setDeleteModal({ visible: false, password: "" })
+                  }
+                  variant="cancel"
+                  width={80}
+                  height={50}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <CustomButton
+                  label="Delete"
+                  onPress={handleConfirmDelete}
+                  variant="fill"
+                  width={80}
+                  height={50}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -243,7 +324,7 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     justifyContent: "flex-start",
-    backgroundColor: '#fff',
+    backgroundColor: "#FCFCFC",
     width: width > 760 ? width - 700 : width - 40,
     height: "100%",
   },
@@ -256,83 +337,86 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     fontSize: 14,
-    color: '#333',
+    color: "#333",
     marginBottom: 8,
   },
   fieldValueContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#E5EEFF',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#E5EEFF",
     padding: 12,
     borderRadius: 8,
   },
   fieldValue: {
     fontSize: 16,
-    color: '#333',
-    flex: 1,
+    color: "#333",
   },
   editButton: {
     padding: 4,
   },
   deleteButton: {
     marginHorizontal: 20,
-    alignItems: 'center',
-    position: 'absolute',
+    alignItems: "center",
+    position: "absolute",
     bottom: 32,
     left: 0,
     right: 0,
   },
-  deleteButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#FCFCFC",
     padding: 20,
     borderRadius: 12,
-    width: '80%',
+    width: "80%",
   },
   modalTitle: {
+    color: "#264653",
     fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 16,
+    fontWeight: 600,
+    marginBottom: 20,
   },
   modalInput: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#333",
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
   },
   modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
   modalButton: {
     padding: 12,
     borderRadius: 8,
     minWidth: 80,
-    alignItems: 'center',
+    alignItems: "center",
     marginLeft: 8,
   },
   cancelButton: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#E5EEFF",
   },
   saveButton: {
-    backgroundColor: '#1e3a5f',
+    backgroundColor: "#1e3a5f",
   },
   cancelButtonText: {
-    color: '#333',
+    color: "#333",
   },
   saveButtonText: {
-    color: '#fff',
+    color: "#fff",
+  },
+  modalDescription: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 16,
+  },
+  deleteButtonText: {
+    color: "#fff",
   },
 });

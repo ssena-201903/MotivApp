@@ -62,7 +62,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   scrollView: {
     flexGrow: 1,
-    backgroundColor: "#FCFCFC",
+    backgroundColor: "white",
   },
   container: {
     flex: 1,
