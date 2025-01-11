@@ -1,10 +1,10 @@
+// Profile.tsx
 import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Pressable,
   Modal,
   TextInput,
   Dimensions,
@@ -12,7 +12,6 @@ import {
 import { router } from "expo-router";
 import { auth, db } from "@/firebase.config";
 import {
-  collection,
   doc,
   getDoc,
   updateDoc,
@@ -26,7 +25,8 @@ import {
 } from "firebase/auth";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
-import CustomAlert from "@/components/CustomAlert";
+import AlertModal from "@/components/modals/AlertModal";
+import { Platform } from "react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -47,10 +47,33 @@ export default function Profile() {
     visible: false,
     password: "",
   });
+  const [alert, setAlert] = useState({
+    visible: false,
+    title: "",
+    message: "",
+    buttons: [] as Array<{
+      text: string;
+      variant?: 'fill' | 'cancel' | 'outline';
+      onPress: () => void;
+    }>,
+  });
 
   useEffect(() => {
     fetchUserData();
   }, []);
+
+  const showAlert = (title: string, message: string, buttons: typeof alert.buttons) => {
+    setAlert({
+      visible: true,
+      title,
+      message,
+      buttons,
+    });
+  };
+
+  const closeAlert = () => {
+    setAlert(prev => ({ ...prev, visible: false }));
+  };
 
   const fetchUserData = async () => {
     try {
@@ -71,7 +94,10 @@ export default function Profile() {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching user data:", error);
-      CustomAlert("Error", "Failed to load user data");
+      showAlert("Error", "Failed to load user data", [{
+        text: "OK",
+        onPress: closeAlert
+      }]);
     }
   };
 
@@ -93,7 +119,7 @@ export default function Profile() {
     setEditModal({
       visible: true,
       field,
-      value: field === "password" ? "" : currentValue,
+      value: field === "Password" ? "" : currentValue,
     });
   };
 
@@ -114,42 +140,61 @@ export default function Profile() {
         case "Password":
           const isReauthenticated = await reauthenticateUser(currentPassword);
           if (!isReauthenticated) {
-            CustomAlert("Error", "Current password is incorrect");
+            showAlert("Error", "Current password is incorrect", [{
+              text: "OK",
+              onPress: closeAlert
+            }]);
             return;
           }
 
           await updatePassword(user, editModal.value);
-          setUserData((prev) => ({ ...prev, password: "New Password" }));
+          setUserData((prev) => ({ ...prev, password: "••••••" }));
           break;
       }
 
       setEditModal({ visible: false, field: "", value: "" });
       setCurrentPassword("");
-      CustomAlert("Success", `${editModal.field} updated successfully`);
+      showAlert("Success", `${editModal.field} updated successfully`, [{
+        text: "OK",
+        onPress: closeAlert
+      }]);
     } catch (error) {
       console.error("Error updating field:", error);
-      CustomAlert("Error", "Failed to update. Please try again.");
+      showAlert("Error", "Failed to update. Please try again.", [{
+        text: "OK",
+        onPress: closeAlert
+      }]);
     }
   };
 
-  const handleDeleteAccount = async () => {
-    CustomAlert(
+  const handleDeleteAccount = () => {
+    showAlert(
       "Delete Account",
       "Are you sure you want to delete your account? This action cannot be undone.",
       [
-        { text: "Cancel", style: "cancel" },
+        {
+          text: "Cancel",
+          variant: "cancel",
+          onPress: closeAlert
+        },
         {
           text: "Continue",
-          style: "destructive",
-          onPress: () => setDeleteModal({ visible: true, password: "" }),
-        },
+          variant: "fill",
+          onPress: () => {
+            closeAlert();
+            setDeleteModal({ visible: true, password: "" });
+          }
+        }
       ]
     );
   };
 
   const handleConfirmDelete = async () => {
     if (!deleteModal.password) {
-      CustomAlert("Error", "Password is required");
+      showAlert("Error", "Password is required", [{
+        text: "OK",
+        onPress: closeAlert
+      }]);
       return;
     }
 
@@ -159,7 +204,10 @@ export default function Profile() {
 
       const isReauthenticated = await reauthenticateUser(deleteModal.password);
       if (!isReauthenticated) {
-        CustomAlert("Error", "Invalid password");
+        showAlert("Error", "Invalid password", [{
+          text: "OK",
+          onPress: closeAlert
+        }]);
         return;
       }
 
@@ -170,7 +218,10 @@ export default function Profile() {
       router.replace("/(auth)/register");
     } catch (error) {
       console.error("Error deleting account:", error);
-      CustomAlert("Error", "Failed to delete account. Please try again.");
+      showAlert("Error", "Failed to delete account. Please try again.", [{
+        text: "OK",
+        onPress: closeAlert
+      }]);
     }
   };
 
@@ -252,20 +303,26 @@ export default function Profile() {
             />
 
             <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => {
-                  setEditModal({ visible: false, field: "", value: "" });
-                  setCurrentPassword("");
-                }}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+              <TouchableOpacity>
+                <CustomButton
+                  label="Cancel"
+                  onPress={() => {
+                    setEditModal({ visible: false, field: "", value: "" });
+                    setCurrentPassword("");
+                  }}
+                  variant="cancel"
+                  width={100}
+                  height={40}
+                />
               </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.saveButton]}
-                onPress={handleSaveEdit}
-              >
-                <Text style={styles.saveButtonText}>Save</Text>
+              <TouchableOpacity>
+                <CustomButton
+                  label="Save"
+                  onPress={handleSaveEdit}
+                  variant="fill"
+                  width={100}
+                  height={40}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -273,7 +330,7 @@ export default function Profile() {
       </Modal>
 
       {/* Delete Confirmation Modal */}
-      <Modal visible={deleteModal.visible} transparent animationType="slide">
+      <Modal visible={deleteModal.visible} transparent animationType="fade">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Confirm Account Deletion</Text>
@@ -295,12 +352,10 @@ export default function Profile() {
               <TouchableOpacity>
                 <CustomButton
                   label="Cancel"
-                  onPress={() =>
-                    setDeleteModal({ visible: false, password: "" })
-                  }
+                  onPress={() => setDeleteModal({ visible: false, password: "" })}
                   variant="cancel"
-                  width={80}
-                  height={50}
+                  width={100}
+                  height={40}
                 />
               </TouchableOpacity>
               <TouchableOpacity>
@@ -308,14 +363,22 @@ export default function Profile() {
                   label="Delete"
                   onPress={handleConfirmDelete}
                   variant="fill"
-                  width={80}
-                  height={50}
+                  width={100}
+                  height={40}
                 />
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
+
+      {/* Alert Modal */}
+      <AlertModal
+        visible={alert.visible}
+        title={alert.title}
+        message={alert.message}
+        buttons={alert.buttons}
+      />
     </View>
   );
 }
@@ -373,12 +436,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#FCFCFC",
     padding: 20,
     borderRadius: 12,
-    width: "80%",
+    width: Platform.select({
+      web: Math.min(400, width - 40),
+      default: width - 80,
+    }),
   },
   modalTitle: {
     color: "#264653",
     fontSize: 18,
-    fontWeight: 600,
+    fontWeight: "600",
     marginBottom: 20,
   },
   modalInput: {

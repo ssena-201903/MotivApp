@@ -11,7 +11,7 @@ const { width } = Dimensions.get("window");
 type Props = {
   label: string;
   onPress: () => void;
-  variant: "outlined" | "fill" | "disabled" | "cancel";
+  variant?: 'outlined' | 'fill' | 'disabled' | 'cancel';
   width: number | "100%";
   height: number | "100%";
 };
@@ -60,7 +60,7 @@ export default function CustomButton({
 
 const styles = StyleSheet.create({
   button: {
-    margin: 0,
+    marginLeft: 6,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#007AFF",
@@ -99,3 +99,5 @@ const styles = StyleSheet.create({
     color: "#264653",
   },
 });
+
+
