@@ -96,6 +96,13 @@ export default function RootLayout() {
             title: 'Habits',
           }}
         />
+        <Stack.Screen
+          name="goals"
+          options={{
+            headerShown: true,
+            title: 'Goals',
+          }}
+        />
       </Stack>
     </AuthProvider>
   );

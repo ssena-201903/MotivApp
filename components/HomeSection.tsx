@@ -16,6 +16,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { CustomText } from "@/CustomText";
+import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -28,46 +29,38 @@ export default function HomeSection({ variant }: Props) {
   const [currentTodos, setCurrentTodos] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [todosPercentage, setTodosPercentage] = useState<number>(0);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null); 
 
-  // calculate percentage of completed todos
   const calculateTodosPercentage = (todos: any[]) => {
     const totalTodos = todos.length;
     if (totalTodos === 0) return 0;
-
     const completedTodos = todos.filter((todo) => todo.isDone).length;
     return Math.round((completedTodos / totalTodos) * 100);
   };
 
-  // fetching current todos from firestore
   const fetchTodos = async () => {
     if (!userId) return;
 
     try {
       const todosRef = collection(db, "users", userId, "todos");
-
       const today = new Date();
-    const startOfDay = new Date(today);
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(today);
-    endOfDay.setHours(23, 59, 59, 999);
-
-    const startOfDayTimestamp = Timestamp.fromDate(startOfDay);
-    const endOfDayTimestamp = Timestamp.fromDate(endOfDay);
+      const startOfDay = new Date(today);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(today);
+      endOfDay.setHours(23, 59, 59, 999);
+      const startOfDayTimestamp = Timestamp.fromDate(startOfDay);
+      const endOfDayTimestamp = Timestamp.fromDate(endOfDay);
 
       const q = query(
         todosRef,
         where("dueDate", ">=", startOfDay),
         where("dueDate", "<=", endOfDay)
       );
-
       const querySnapshot = await getDocs(q);
-
       const todosData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-
       setCurrentTodos(todosData);
       setTodosPercentage(calculateTodosPercentage(todosData));
     } catch (error) {
@@ -77,18 +70,13 @@ export default function HomeSection({ variant }: Props) {
     }
   };
 
-  // toggle todo
   const toggleTodo = async (id: string, currentStatus: boolean) => {
     if (!userId) return;
-
     try {
       const todoRef = doc(db, "users", userId, "todos", id);
-
       await updateDoc(todoRef, {
         isDone: !currentStatus,
       });
-
-      // update state and recalculate percentage
       const updatedTodos = currentTodos.map((todo) =>
         todo.id === id ? { ...todo, isDone: !currentStatus } : todo
       );
@@ -99,23 +87,27 @@ export default function HomeSection({ variant }: Props) {
     }
   };
 
-  // deleted todos
   const deleteTodo = async (id: string) => {
     if (!userId) return;
-
     try {
       const todoRef = doc(db, "users", userId, "todos", id);
       await deleteDoc(todoRef);
-
       const updatedTodos = currentTodos.filter((todo) => todo.id !== id);
       setCurrentTodos(updatedTodos);
       setTodosPercentage(calculateTodosPercentage(updatedTodos));
-
-      console.log(`deleted ${id} todo`);
     } catch (error) {
       console.log("error deleting todo", error);
     }
   };
+
+  const handleCategoryPress = (categoryId: string) => {
+    setSelectedCategory(categoryId); 
+    router.push({
+      pathname: '/goals',
+      params: { categoryId },
+    });
+  };
+  
 
   useEffect(() => {
     if (variant === "todos") {
@@ -129,12 +121,42 @@ export default function HomeSection({ variant }: Props) {
         <>
           <SectionHeader text="Goals" percentDone={30} />
           <View style={styles.gridView}>
-            <CardGoal type="videocam" inlineText="Movie" />
-            <CardGoal type="car" inlineText="Place" />
-            <CardGoal type="fast-food" inlineText="Food" />
-            <CardGoal type="cash" inlineText="Buy" />
-            <CardGoal type="accessibility" inlineText="Activity" />
-            <CardGoal type="book" inlineText="Book" />
+            <CardGoal
+              type="videocam"
+              inlineText="Movie"
+              categoryId="Movie"
+              onCategoryPress={handleCategoryPress}
+            />
+            <CardGoal
+              type="car"
+              inlineText="Place"
+              categoryId="Place"
+              onCategoryPress={handleCategoryPress}
+            />
+            <CardGoal
+              type="fast-food"
+              inlineText="Food"
+              categoryId="Food"
+              onCategoryPress={handleCategoryPress}
+            />
+            <CardGoal
+              type="cash"
+              inlineText="Buy"
+              categoryId="Buy"
+              onCategoryPress={handleCategoryPress}
+            />
+            <CardGoal
+              type="accessibility"
+              inlineText="Activity"
+              categoryId="Activity"
+              onCategoryPress={handleCategoryPress}
+            />
+            <CardGoal
+              type="book"
+              inlineText="Book"
+              categoryId="Book"
+              onCategoryPress={handleCategoryPress}
+            />
           </View>
         </>
       );
@@ -184,7 +206,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     width: width > 760 ? width - 600 : width - 40,
-    // marginTop: 10,
     marginBottom: width > 760 ? 30 : 20,
   },
   todoView: {
