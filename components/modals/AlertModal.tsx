@@ -42,7 +42,7 @@ export default function AlertModal({
                   onPress={button.onPress}
                   variant={button.variant || "fill"}
                   width={100}
-                  height={40}
+                  height={45}
                 />
               </View>
             ))}
@@ -59,8 +59,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+    
   },
   content: {
+    height: "auto",
     backgroundColor: "#FCFCFC",
     borderRadius: 12,
     padding: 20,
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     color: "#1E3A5F",
-    marginBottom: 12,
+    marginBottom: 20,
   },
   message: {
     fontSize: 14,

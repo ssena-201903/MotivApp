@@ -312,7 +312,7 @@ export default function Profile() {
                   }}
                   variant="cancel"
                   width={100}
-                  height={40}
+                  height={50}
                 />
               </TouchableOpacity>
               <TouchableOpacity>
@@ -321,7 +321,7 @@ export default function Profile() {
                   onPress={handleSaveEdit}
                   variant="fill"
                   width={100}
-                  height={40}
+                  height={50}
                 />
               </TouchableOpacity>
             </View>
@@ -355,7 +355,7 @@ export default function Profile() {
                   onPress={() => setDeleteModal({ visible: false, password: "" })}
                   variant="cancel"
                   width={100}
-                  height={40}
+                  height={45}
                 />
               </TouchableOpacity>
               <TouchableOpacity>
@@ -364,7 +364,7 @@ export default function Profile() {
                   onPress={handleConfirmDelete}
                   variant="fill"
                   width={100}
-                  height={40}
+                  height={45}
                 />
               </TouchableOpacity>
             </View>
@@ -387,13 +387,14 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     justifyContent: "flex-start",
+    alignItems: "center",
     backgroundColor: "#FCFCFC",
-    width: width > 760 ? width - 700 : width - 40,
+    width: "100%",
     height: "100%",
   },
   content: {
-    padding: 20,
     marginTop: 20,
+    width: width > 760 ? width - 700 : width - 40,
   },
   fieldContainer: {
     marginBottom: 24,
@@ -452,37 +453,37 @@ const styles = StyleSheet.create({
     borderColor: "#333",
     borderRadius: 8,
     padding: 12,
-    marginBottom: 16,
+    marginBottom: 30,
   },
   modalButtons: {
     flexDirection: "row",
     justifyContent: "flex-end",
-  },
-  modalButton: {
-    padding: 12,
-    borderRadius: 8,
-    minWidth: 80,
-    alignItems: "center",
-    marginLeft: 8,
-  },
-  cancelButton: {
-    backgroundColor: "#E5EEFF",
-  },
-  saveButton: {
-    backgroundColor: "#1e3a5f",
-  },
-  cancelButtonText: {
-    color: "#333",
-  },
-  saveButtonText: {
-    color: "#fff",
   },
   modalDescription: {
     fontSize: 14,
     color: "#666",
     marginBottom: 16,
   },
-  deleteButtonText: {
-    color: "#fff",
-  },
+  // deleteButtonText: {
+  //   color: "#fff",
+  // },
+  // modalButton: {
+  //   padding: 12,
+  //   borderRadius: 8,
+  //   minWidth: 80,
+  //   alignItems: "center",
+  //   marginLeft: 8,
+  // },
+  // cancelButton: {
+  //   backgroundColor: "#E5EEFF",
+  // },
+  // saveButton: {
+  //   backgroundColor: "#1e3a5f",
+  // },
+  // cancelButtonText: {
+  //   color: "#333",
+  // },
+  // saveButtonText: {
+  //   color: "#fff",
+  // },
 });
