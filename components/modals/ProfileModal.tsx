@@ -33,6 +33,11 @@ export default function ProfileModal({
     onClose();
   };
 
+  const handleHabitsRoute = () => {
+    router.push('/habits');
+    onClose();
+  };
+
   return (
     <Modal
       visible={isModalVisible}
@@ -55,10 +60,10 @@ export default function ProfileModal({
               <Ionicons name="flag" size={20} color="#1E3A5F" />
               <CustomText style={styles.menuItemText}>Goals</CustomText>
             </View>
-            <View style={styles.menuItem}>
+            <Pressable style={styles.menuItem} onPress={handleHabitsRoute}>
               <Ionicons name="footsteps" size={20} color="#1E3A5F" />
               <CustomText style={styles.menuItemText}>Habits</CustomText>
-            </View>
+            </Pressable>
             <View style={styles.menuItem}>
               <Ionicons name="settings" size={20} color="#1E3A5F" />
               <CustomText style={styles.menuItemText}>Settings</CustomText>
