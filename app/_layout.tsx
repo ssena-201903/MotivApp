@@ -89,6 +89,13 @@ export default function RootLayout() {
             title: 'Profile',
           }}
         />
+        <Stack.Screen
+          name="habits"
+          options={{
+            headerShown: true,
+            title: 'Habits',
+          }}
+        />
       </Stack>
     </AuthProvider>
   );
