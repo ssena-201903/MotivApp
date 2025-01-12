@@ -48,28 +48,28 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
       <View style={styles.topMenu}>
         <TouchableOpacity style={styles.topMenuItem}>
           <Ionicons
-            name="diamond"
-            size={24}
-            color="#FCFCFC"
-            onPress={onDiamondPress}
-          />
-        </TouchableOpacity>
-        <View style={styles.topMenuItem}>
-          <Ionicons
             name="calendar"
             size={24}
             color="#FCFCFC"
             onPress={handleCalendarPress}
           />
-        </View>
-        <View style={styles.topMenuItem}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.topMenuItem}>
+          <Ionicons
+            name="sparkles"
+            size={24}
+            color="#FCFCFC"
+            onPress={onDiamondPress}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.topMenuItem}>
           <Ionicons
             name="menu"
             size={24}
             color="#FCFCFC"
             onPress={handleProfileModals}
           />
-        </View>
+        </TouchableOpacity>
       </View>
       <ProfileModal
         isModalVisible={isProfileModalVisible}

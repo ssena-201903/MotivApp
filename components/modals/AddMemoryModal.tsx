@@ -63,9 +63,9 @@ export default function AddMemoryModal({
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
               <View style={styles.topMemoryCard}>
-                <Ionicons name="diamond" color="#264653" size={20} />
+                <Ionicons name="sparkles" color="#264653" size={20} />
                 <Text style={styles.headerMemoryCard}>
-                  Save Your Diamond Moment
+                  Save Your Sparkle Moment
                 </Text>
               </View>
               <Text style={styles.textMemoryCard}>
