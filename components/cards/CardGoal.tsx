@@ -21,14 +21,14 @@ export default function CardGoal({ type, inlineText }: Props) {
 const styles = StyleSheet.create({
   container: {
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: "#E5EEFF",
     width: width > 760 ? 300 : 120,
-    height: width > 760 ? 90 : 90,
+    height: width > 760 ? 60 : 60,
     borderRadius: 20,
     // shadowColor: "#000",
     // shadowOffset: { width: 0, height: 4 },
@@ -39,6 +39,6 @@ const styles = StyleSheet.create({
     color: "#1E3A5F",
     fontSize: 10,
     fontWeight: "semibold",
-    marginTop: 6,
+    marginLeft: 10,
   },
 });
