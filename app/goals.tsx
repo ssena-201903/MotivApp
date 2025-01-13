@@ -1,47 +1,68 @@
-import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
-import { View, StyleSheet, Text, Dimensions } from 'react-native';
-import CustomButton from "@/components/CustomButton"; 
+import React, { useState, useRef } from "react";
+import { useLocalSearchParams } from 'expo-router';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+
 const categories = [
-  { id: 'Movie', label: 'Movie' },
-  { id: 'Book', label: 'Book' },
-  { id: 'Activity', label: 'Activity' },
-  { id: 'Place', label: 'Place' },
-  { id: 'Buy', label: 'Buy' },
-  { id: 'Food', label: 'Food' },
+  { id: "Movie", label: "Movie" },
+  { id: "Book", label: "Book" },
+  { id: "Activity", label: "Activity" },
+  { id: "Place", label: "Place" },
+  { id: "Buy", label: "Buy" },
+  { id: "Food", label: "Food" },
 ];
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
-export default function GoalsScreen() {
-    const router = useRouter();
-    const categoryId = router.params?.categoryId || 'Movie';
-    const [activeCategory, setActiveCategory] = useState(categoryId); // default active category
+export default function Goals () {
+  const { categoryId = "Movie" } = useLocalSearchParams(); 
+  const [activeCategory, setActiveCategory] = useState(categoryId);
 
-  // update active category
   const handleCategoryPress = (categoryId: string) => {
     setActiveCategory(categoryId);
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.menuContainer}>
+      <ScrollView 
+        horizontal 
+        style={styles.scrollView} 
+        contentContainerStyle={styles.menuContainer}
+        showsHorizontalScrollIndicator={false}
+      >
         {categories.map((category) => (
-          <CustomButton
+          <TouchableOpacity
             key={category.id}
-            label={activeCategory === category.id ? category.label : category.id} // active text
-            onPress={() => handleCategoryPress(category.id)} 
-            variant={activeCategory === category.id ? "fill" : "cancel"} // active variant
-            width={100}  
-            height={40}  
-          />
+            style={[
+              styles.button,
+              activeCategory === category.id
+                ? styles.activeButton
+                : styles.inactiveButton,
+            ]}
+            onPress={() => handleCategoryPress(category.id)}
+          >
+            <Text
+              style={[
+                activeCategory === category.id
+                  ? styles.activeButtonText
+                  : styles.inactiveButtonText,
+              ]}
+            >
+              {category.label}
+            </Text>
+          </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
       <View style={styles.contentContainer}>
         <Text style={styles.categoryContent}>
           {`Selected Category: ${activeCategory}`}
         </Text>
-        {/* special content for category */}
       </View>
     </View>
   );
@@ -49,18 +70,43 @@ export default function GoalsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
+    flex: 1,
     justifyContent: "center",
+    alignItems: "center",
     padding: 20,
     backgroundColor: "#FCFCFC",
-    height: "100%",
+  },
+  scrollView: {
+    marginBottom: 20,
   },
   menuContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-    marginHorizontal: width > 760 ? "auto" : 20,
-    width: width > 760 ? width - 800 : width - 40,
+    // paddingHorizontal: 10,
+  },
+  button: {
+    borderRadius: 30,
+    borderWidth: 1,
+    width: width > 760 ? 100 : 60,
+    height: width > 760 ? 40 : 30,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: width > 760 ? 20 : 4,
+  },
+  activeButton: {
+    backgroundColor: "#1E3A5F",
+    borderColor: "#1E3A5F",
+  },
+  inactiveButton: {
+    backgroundColor: "transparent",
+    borderColor: "#1E3A5F",
+  },
+  activeButtonText: {
+    fontSize: 12,
+    color: "#FCFCFC",
+  },
+  inactiveButtonText: {
+    fontSize: 12,
+    color: "#1E3A5F",
   },
   contentContainer: {
     flex: 1,
