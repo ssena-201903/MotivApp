@@ -1,5 +1,7 @@
-import React, { useState, useRef } from "react";
-import { useLocalSearchParams } from 'expo-router';
+import React, { useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import { CustomText } from "@/CustomText";
+import AddGoalModal from "@/components/modals/AddGoalModal";
 import {
   View,
   StyleSheet,
@@ -20,19 +22,24 @@ const categories = [
 
 const { width } = Dimensions.get("window");
 
-export default function Goals () {
-  const { categoryId = "Movie" } = useLocalSearchParams(); 
+export default function Goals() {
+  const { categoryId = "Movie" } = useLocalSearchParams();
   const [activeCategory, setActiveCategory] = useState(categoryId);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const handleCategoryPress = (categoryId: string) => {
     setActiveCategory(categoryId);
   };
 
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
   return (
     <View style={styles.container}>
-      <ScrollView 
-        horizontal 
-        style={styles.scrollView} 
+      <ScrollView
+        horizontal
+        style={styles.scrollView}
         contentContainerStyle={styles.menuContainer}
         showsHorizontalScrollIndicator={false}
       >
@@ -47,7 +54,7 @@ export default function Goals () {
             ]}
             onPress={() => handleCategoryPress(category.id)}
           >
-            <Text
+            <CustomText
               style={[
                 activeCategory === category.id
                   ? styles.activeButtonText
@@ -55,7 +62,7 @@ export default function Goals () {
               ]}
             >
               {category.label}
-            </Text>
+            </CustomText>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -63,7 +70,16 @@ export default function Goals () {
         <Text style={styles.categoryContent}>
           {`Selected Category: ${activeCategory}`}
         </Text>
+        <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
+          <Text style={styles.addButtonText}>+</Text>
+        </TouchableOpacity>
       </View>
+      <AddGoalModal
+        visible={isModalVisible}
+        categoryId={activeCategory}
+        onClose={toggleModal}
+        onAdd={(data) => console.log("Goal added:", data)}
+      />
     </View>
   );
 }
@@ -81,7 +97,6 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     flexDirection: "row",
-    // paddingHorizontal: 10,
   },
   button: {
     borderRadius: 30,
@@ -101,7 +116,7 @@ const styles = StyleSheet.create({
     borderColor: "#1E3A5F",
   },
   activeButtonText: {
-    fontSize: 12,
+    fontSize: width > 760 ? 14 : 12,
     color: "#FCFCFC",
   },
   inactiveButtonText: {
@@ -116,5 +131,19 @@ const styles = StyleSheet.create({
   categoryContent: {
     fontSize: 18,
     fontWeight: "400",
+  },
+  addButton: {
+    marginTop: 20,
+    backgroundColor: "#1E3A5F",
+    borderRadius: 25,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  addButtonText: {
+    color: "#FCFCFC",
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });
