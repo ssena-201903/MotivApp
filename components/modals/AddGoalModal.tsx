@@ -11,7 +11,7 @@ import {
 import { db, auth } from "@/firebase.config";
 import CustomButton from "@/components/CustomButton";
 import StarRating from "@/components/icons/StarRating";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 
 const { width } = Dimensions.get("window");
 
@@ -22,7 +22,12 @@ type AddGoalModalProps = {
   onAdd: (data: any) => void;
 };
 
-export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: AddGoalModalProps) {
+export default function AddGoalModal({
+  visible,
+  categoryId,
+  onClose,
+  onAdd,
+}: AddGoalModalProps) {
   const [goalData, setGoalData] = useState({
     name: "",
     author: "",
@@ -33,9 +38,10 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
   });
 
   const handleRatingChange = (rating: number) => {
-    setGoalData({ ...goalData, rating});
+    setGoalData({ ...goalData, rating });
   };
 
+  // pushing goal data to firestore
   const handleSave = async () => {
     try {
       const user = auth.currentUser;
@@ -44,15 +50,16 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
         return;
       }
 
-      // Base data structure
+      // base data structure
       const baseData = {
         name: goalData.name,
         rating: goalData.rating,
         isDone: false,
-        createdAt: serverTimestamp(),
+        createdAt: new Date(),
+        category: categoryId,
       };
 
-      // Category specific data
+      // category specific data
       const categorySpecificData = (() => {
         switch (categoryId) {
           case "Movie":
@@ -63,7 +70,7 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
           case "Book":
             return {
               author: goalData.author,
-              quotes: [],
+              quotes: goalData.quote ? [goalData.quote] : [], 
             };
           case "Activity":
           case "Buy":
@@ -77,19 +84,28 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
         }
       })();
 
-      // Combine base data with category specific data
+      // combine base data with category specific data
       const dataToSave = {
         ...baseData,
         ...categorySpecificData,
       };
 
-      // Create proper collection reference
-      const collectionRef = collection(db, `users/${user.uid}/goals/${categoryId.toLowerCase()}`);
-      const docRef = await addDoc(collectionRef, dataToSave);
-      
+      // adding document to the goals collection
+      const goalsCollectionRef = collection(db, "users", user.uid, "goals");
+      const docRef = await addDoc(goalsCollectionRef, dataToSave);
+
       if (docRef.id) {
         onAdd({ id: docRef.id, ...dataToSave });
         onClose();
+        // reset form
+        setGoalData({
+          name: "",
+          author: "",
+          director: "",
+          rating: 0,
+          quote: "",
+          note: "",
+        });
       }
     } catch (error) {
       console.error("Error adding goal: ", error);
@@ -111,17 +127,28 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
             <TextInput
               style={styles.input}
               placeholder="Author"
-              value={goalData.author}
-              onChangeText={(text) => setGoalData({ ...goalData, author: text })}
+              value={goalData.director}
+              onChangeText={(text) =>
+                setGoalData({ ...goalData, director: text })
+              }
             />
           )}
-          <StarRating rating={goalData.rating} onRatingChange={handleRatingChange}/>
+          {categoryId === "Book" && (
+            <TextInput
+              style={styles.input}
+              placeholder="Quote"
+              value={goalData.quote}
+              onChangeText={(text) => setGoalData({ ...goalData, quote: text })}
+            />
+          )}
           {categoryId === "Movie" && (
             <TextInput
               style={styles.input}
               placeholder="Director"
               value={goalData.director}
-              onChangeText={(text) => setGoalData({ ...goalData, director: text })}
+              onChangeText={(text) =>
+                setGoalData({ ...goalData, director: text })
+              }
             />
           )}
           {categoryId === "Movie" && (
@@ -132,7 +159,10 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
               onChangeText={(text) => setGoalData({ ...goalData, quote: text })}
             />
           )}
-          {(categoryId === "Activity" || categoryId === "Buy" || categoryId === "Food" || categoryId === "Place") && (
+          {(categoryId === "Activity" ||
+            categoryId === "Buy" ||
+            categoryId === "Food" ||
+            categoryId === "Place") && (
             <TextInput
               style={styles.input}
               placeholder="Note"
@@ -140,9 +170,13 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
               onChangeText={(text) => setGoalData({ ...goalData, note: text })}
             />
           )}
+          <StarRating
+            rating={goalData.rating}
+            onRatingChange={handleRatingChange}
+          />
           <View style={styles.buttonContainer}>
-            <CustomButton label="Cancel" onPress={onClose} variant="cancel" />
-            <CustomButton label="Add" onPress={handleSave} variant="fill" />
+            <CustomButton label="Cancel" onPress={onClose} variant="cancel" width={80} />
+            <CustomButton label="Add" onPress={handleSave} variant="fill" width={80} />
           </View>
         </View>
       </View>

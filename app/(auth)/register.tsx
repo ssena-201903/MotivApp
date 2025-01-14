@@ -26,7 +26,7 @@ export default function Register() {
       setError("Passwords do not match");
       return;
     }
-
+  
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -34,27 +34,16 @@ export default function Register() {
         password
       );
       const user = userCredential.user;
-
+  
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, { name, email });
-
-      const goalCollections = [
-        "movies",
-        "places",
-        "foods",
-        "buy",
-        "books",
-        "activity",
-      ];
-      for (const collection of goalCollections) {
-        await setDoc(doc(userRef, "goals", collection), {});
+  
+      // creating empty collections
+      const collections = ["goals", "habits", "memories", "todos", "friends"];
+      for (const collection of collections) {
+        await setDoc(doc(userRef, collection, "placeholder"), {}); 
       }
-
-      await setDoc(doc(userRef, "habits", "placeholder"), {});
-      await setDoc(doc(userRef, "todos", "placeholder"), {});
-      await setDoc(doc(userRef, "friends", "placeholder"), {});
-      await setDoc(doc(userRef, "memories", "placeholder"), {});
-
+  
       router.replace("/home");
     } catch (error) {
       setError("Registration failed: " + error.message);
