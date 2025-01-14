@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const categories = [
   { id: "Movie", label: "Movie" },
@@ -71,7 +72,7 @@ export default function Goals() {
           {`Selected Category: ${activeCategory}`}
         </Text>
         <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
-          <Text style={styles.addButtonText}>+</Text>
+          <Ionicons name="add" size={24} color="white"/>
         </TouchableOpacity>
       </View>
       <AddGoalModal
