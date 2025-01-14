@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { db, auth } from "@/firebase.config";
 import CustomButton from "@/components/CustomButton";
+import StarRating from "@/components/icons/StarRating";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 const { width } = Dimensions.get("window");
@@ -26,10 +27,14 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
     name: "",
     author: "",
     director: "",
-    rating: "",
+    rating: 0,
     quote: "",
     note: "",
   });
+
+  const handleRatingChange = (rating: number) => {
+    setGoalData({ ...goalData, rating});
+  };
 
   const handleSave = async () => {
     try {
@@ -39,13 +44,10 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
         return;
       }
 
-      // Convert rating to number or default to 0
-      const numericRating = goalData.rating ? parseFloat(goalData.rating) : 0;
-
       // Base data structure
       const baseData = {
         name: goalData.name,
-        rating: numericRating,
+        rating: goalData.rating,
         isDone: false,
         createdAt: serverTimestamp(),
       };
@@ -82,10 +84,7 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
       };
 
       // Create proper collection reference
-      const collectionPath = `users/${user.uid}/goals/${categoryId.toLowerCase()}`;
-      const collectionRef = collection(db, collectionPath);
-
-      // Save data
+      const collectionRef = collection(db, `users/${user.uid}/goals/${categoryId.toLowerCase()}`);
       const docRef = await addDoc(collectionRef, dataToSave);
       
       if (docRef.id) {
@@ -116,6 +115,7 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
               onChangeText={(text) => setGoalData({ ...goalData, author: text })}
             />
           )}
+          <StarRating rating={goalData.rating} onRatingChange={handleRatingChange}/>
           {categoryId === "Movie" && (
             <TextInput
               style={styles.input}
@@ -124,13 +124,6 @@ export default function AddGoalModal({ visible, categoryId, onClose, onAdd }: Ad
               onChangeText={(text) => setGoalData({ ...goalData, director: text })}
             />
           )}
-          <TextInput
-            style={styles.input}
-            placeholder="Rating"
-            keyboardType="numeric"
-            value={goalData.rating}
-            onChangeText={(text) => setGoalData({ ...goalData, rating: text })}
-          />
           {categoryId === "Movie" && (
             <TextInput
               style={styles.input}
