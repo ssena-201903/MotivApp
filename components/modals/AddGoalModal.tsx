@@ -175,8 +175,8 @@ export default function AddGoalModal({
             onRatingChange={handleRatingChange}
           />
           <View style={styles.buttonContainer}>
-            <CustomButton label="Cancel" onPress={onClose} variant="cancel" width={80} />
-            <CustomButton label="Add" onPress={handleSave} variant="fill" width={80} />
+            <CustomButton label="Cancel" onPress={onClose} variant="cancel" width={80} height={40} />
+            <CustomButton label="Add" onPress={handleSave} variant="fill" width={80} height={40} />
           </View>
         </View>
       </View>

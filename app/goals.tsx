@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import CardGoalTodo from "@/components/cards/CardGoalTodo";
 
 const categories = [
   { id: "Movie", label: "Movie" },
@@ -68,6 +69,8 @@ export default function Goals() {
         ))}
       </ScrollView>
       <View style={styles.contentContainer}>
+        <CardGoalTodo category="Book"/>
+        <CardGoalTodo category="Movie"/>
         <Text style={styles.categoryContent}>
           {`Selected Category: ${activeCategory}`}
         </Text>
