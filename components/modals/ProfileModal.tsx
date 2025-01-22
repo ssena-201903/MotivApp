@@ -18,23 +18,25 @@ export default function ProfileModal({
 }: ProfileModalProps) {
   if (!isModalVisible) return null;
 
+  const currentUser = auth.currentUser?.email;
+
   const handleLogout = async () => {
     try {
-        await signOut(auth);
-        router.push('/(auth)/login');
-        onClose();
+      await signOut(auth);
+      router.push("/(auth)/login");
+      onClose();
     } catch (error) {
-        console.log("logout error", error);
+      console.log("logout error", error);
     }
   };
 
   const handleProfileRoute = () => {
-    router.push('/profile');
+    router.push("/profile");
     onClose();
   };
 
   const handleHabitsRoute = () => {
-    router.push('/habits');
+    router.push("/habits");
     onClose();
   };
 
@@ -48,8 +50,19 @@ export default function ProfileModal({
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable style={styles.container}>
           <View style={styles.topSection}>
+            <View style={styles.topSectionSubHeaderContainer}>
             <CustomText style={styles.topSectionHeader}>MotivApp</CustomText>
-            <Ionicons name="log-out-outline" size={32} color="#FFA38F" onPress={handleLogout} />
+            <CustomText style={styles.topSectionSubHeader}>{currentUser}</CustomText>
+            </View>
+            <Pressable style={styles.logoutButton}>
+              <Ionicons
+                name="log-out-outline"
+                size={24}
+                color="#E5EEFF"
+                onPress={handleLogout}
+              />
+            </Pressable>
+            {/* <Ionicons name="log-out-outline" size={32} color="#FFA38F" onPress={handleLogout} /> */}
           </View>
           <View style={styles.menus}>
             <Pressable style={styles.menuItem} onPress={handleProfileRoute}>
@@ -101,10 +114,31 @@ const styles = StyleSheet.create({
     height: 40,
     marginBottom: 40,
   },
+  topSectionSubHeaderContainer: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
   topSectionHeader: {
     fontSize: 20,
     fontWeight: 700,
     color: "#1E3A5F",
+  },
+  topSectionSubHeader: {
+    fontSize: 12,
+    fontWeight: 500,
+    color: "#1E3A5F",
+    opacity: 0.8,
+  },
+  logoutButton: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#1E3A5F",
+    padding: 8,
+    borderRadius: 12,
   },
   menus: {
     display: "flex",
