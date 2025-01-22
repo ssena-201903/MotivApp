@@ -132,10 +132,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     width: width > 760 ? width - 900 : width - 40,
     height: width > 760 ? 50 : 110,
-    shadowColor: "#000", // Gölge rengi
-    shadowOffset: { width: 0, height: 2 }, // Gölge kaydırma miktarı
-    shadowOpacity: 0.1, // Gölgenin yoğunluğu
-    shadowRadius: 4, // Gölge yayılma yarıçapı
+    shadowColor: "#000", 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.1, 
+    shadowRadius: 4, 
   },
   start: {
     display: "flex",

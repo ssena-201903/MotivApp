@@ -71,11 +71,12 @@ export default function Goals() {
       <View style={styles.contentContainer}>
         <CardGoalTodo category="Book"/>
         <CardGoalTodo category="Movie"/>
+        <CardGoalTodo category="Movie"/>
         <Text style={styles.categoryContent}>
           {`Selected Category: ${activeCategory}`}
         </Text>
         <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
-          <Ionicons name="add" size={24} color="white"/>
+          <Ionicons name="add" size={28} color="white"/>
         </TouchableOpacity>
       </View>
       <AddGoalModal
@@ -90,8 +91,10 @@ export default function Goals() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+    justifyContent: "flex-start",
     alignItems: "center",
     padding: 20,
     backgroundColor: "#FCFCFC",
@@ -128,8 +131,9 @@ const styles = StyleSheet.create({
     color: "#1E3A5F",
   },
   contentContainer: {
-    flex: 1,
-    justifyContent: "center",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   categoryContent: {
@@ -139,11 +143,14 @@ const styles = StyleSheet.create({
   addButton: {
     marginTop: 20,
     backgroundColor: "#1E3A5F",
-    borderRadius: 25,
-    width: 50,
-    height: 50,
+    borderRadius: "50%",
+    width: 60,
+    height: 60,
     justifyContent: "center",
     alignItems: "center",
+    position: "absolute",
+    bottom: 10,
+    right: 10,
   },
   addButtonText: {
     color: "#FCFCFC",
