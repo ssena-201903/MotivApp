@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: "100%",
-    backgroundColor: "#8FE247", // I can change later
+    backgroundColor: "#FFA38F", // I can change later
   },
   remainingBar: {
     height: "100%",

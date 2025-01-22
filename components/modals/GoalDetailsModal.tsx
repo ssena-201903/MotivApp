@@ -1,61 +1,72 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React from "react";
+import { Modal, View, Text, StyleSheet, Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-type GoalDetailsProps = {
-  goal: {
-    createdAt?: string;
-    author?: string;
-    notes?: string[];
-  };
+type GoalDetailsModalProps = {
+  visible: boolean;
   onClose: () => void;
+  goal: any;
 };
 
-export default function GoalDetailsModal({ goal, onClose }: GoalDetailsProps) {
+export default function GoalDetailsModal({
+  visible,
+  onClose,
+  goal,
+}: GoalDetailsModalProps) {
   return (
-    <View style={styles.modal}>
-      <Text style={styles.text}>Created At: {goal.createdAt || 'Unknown'}</Text>
-      {goal.author && <Text style={styles.text}>Author/Director: {goal.author}</Text>}
-      <Text style={styles.text}>Notes/Quotes:</Text>
-      {goal.notes?.length ? (
-        goal.notes.map((note, index) => (
-          <Text key={index} style={styles.note}>{note}</Text>
-        ))
-      ) : (
-        <Text style={styles.note}>No notes available</Text>
-      )}
-      <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-        <Text style={styles.closeText}>Close</Text>
-      </TouchableOpacity>
-    </View>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <View style={styles.overlay}>
+        <View style={styles.modalContent}>
+          <View style={styles.header}>
+            <Text style={styles.title}>{goal.name}</Text>
+            <Pressable onPress={onClose}>
+              <Ionicons name="close" size={24} color="#1E3A5F" />
+            </Pressable>
+          </View>
+          <Text style={styles.description}>
+            {goal.description || "No details available."}
+          </Text>
+        </View>
+      </View>
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  modal: {
+  overlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
     padding: 20,
+    width: "90%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
-  text: {
-    fontSize: 16,
-    color: '#FFF',
-    marginBottom: 10,
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
   },
-  note: {
+  title: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#1E3A5F",
+  },
+  description: {
     fontSize: 14,
-    color: '#CCC',
-    marginBottom: 5,
-  },
-  closeButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#1E3A5F',
-    borderRadius: 5,
-  },
-  closeText: {
-    color: '#FFF',
-    fontSize: 16,
+    color: "#4A5568",
   },
 });

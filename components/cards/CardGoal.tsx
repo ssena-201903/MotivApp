@@ -14,7 +14,7 @@ type Props = {
 export default function CardGoal({ type, inlineText, categoryId, onCategoryPress }: Props) {
   return (
     <Pressable style={styles.container} onPress={() => onCategoryPress(categoryId)}>
-      <Ionicons name={type} size={24} color="#1E3A5F" />
+      <Ionicons name={type} size={22} color="#1E3A5F" />
       <CustomText style={styles.inlineText}>{inlineText}</CustomText>
     </Pressable>
   );

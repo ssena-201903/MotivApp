@@ -14,7 +14,7 @@ export default function StarRating ({ rating, onRatingChange }: StarRatingProps)
           <Ionicons
             name={index < rating ? "star" : "star-outline"}
             size={20}
-            color={index < rating ? "#8FE247" : "#1E3A5F"}
+            color={index < rating ? "#FFA38F" : "#1E3A5F"}
             style={styles.icon}
           />
         </TouchableOpacity>

@@ -3,6 +3,7 @@ import { View, StyleSheet, Dimensions, Pressable } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
 import { CustomText } from "@/CustomText";
+import GoalDetailsModal from "@/components/modals/GoalDetailsModal";
 import StarRating from "../icons/StarRating";
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase.config";
@@ -25,6 +26,7 @@ export default function CardGoalTodo({
     goal.readingStatus || "not started"
   );
   const [rating, setRating] = useState(goal.rating || 0);
+  const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
 
   const toggleCard = async () => {
     try {
@@ -87,6 +89,10 @@ export default function CardGoalTodo({
     }
   };
 
+  const handleViewDetails = () => {
+    setIsDetailsModalVisible(true);
+  };
+
   return (
     <View style={isDone ? styles.completed : styles.container}>
       <View style={styles.start}>
@@ -126,6 +132,7 @@ export default function CardGoalTodo({
             size={20}
             color="#1E3A5F"
             style={styles.infoIcon}
+            onPress={handleViewDetails}
           />
         </View>
       </View>

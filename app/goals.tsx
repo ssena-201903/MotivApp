@@ -13,14 +13,15 @@ import { Ionicons } from "@expo/vector-icons";
 import CardGoalTodo from "@/components/cards/CardGoalTodo";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from "@/firebase.config";
+import SectionHeader from "@/components/headers/SectionHeader";
 
 const categories = [
-  { id: "Movie", label: "Movie" },
-  { id: "Book", label: "Book" },
-  { id: "Activity", label: "Activity" },
-  { id: "Place", label: "Place" },
-  { id: "Buy", label: "Buy" },
-  { id: "Food", label: "Food" },
+  { id: "Movie", label: "Movie", name: "videocam" },
+  { id: "Book", label: "Book", name: "book" },
+  { id: "Activity", label: "Activity", name: "accessibility" },
+  { id: "Place", label: "Place", name: "car" },
+  { id: "Buy", label: "Buy", name: "cash" },
+  { id: "Food", label: "Food", name: "fast-food" },
 ];
 
 const { width } = Dimensions.get("window");
@@ -30,7 +31,9 @@ export default function Goals() {
   const [activeCategory, setActiveCategory] = useState(categoryId);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [goals, setGoals] = useState<any[]>([]);
+  const [percentDone, setPercentDone] = useState(0);
 
+  // fetch goals
   const fetchGoals = async () => {
     try {
       const userId = auth.currentUser?.uid;
@@ -61,12 +64,23 @@ export default function Goals() {
     setActiveCategory(categoryId);
   };
 
+  // toggle modal
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
 
+  // handle goal add
   const handleGoalAdd = async (data: any) => {
     await fetchGoals(); // update list after adding a new goal
+  };
+
+  // handleCalculatePercentDone
+  const calculatePercentDone = (category: string) => {
+    const filteredGoals = goals.filter((goal) => goal.category === category);
+    const totalGoals = filteredGoals.length;
+    if (totalGoals === 0) return 0;
+    const completedGoals = filteredGoals.filter((goal) => goal.isDone).length;
+    return Math.round((completedGoals / totalGoals) * 100);
   };
 
   return (
@@ -79,7 +93,6 @@ export default function Goals() {
       >
         {categories.map((category) => (
           <TouchableOpacity
-            key={category.id}
             style={[
               styles.button,
               activeCategory === category.id
@@ -88,19 +101,16 @@ export default function Goals() {
             ]}
             onPress={() => handleCategoryPress(category.id)}
           >
-            <CustomText
-              style={[
-                activeCategory === category.id
-                  ? styles.activeButtonText
-                  : styles.inactiveButtonText,
-              ]}
-            >
-              {category.label}
-            </CustomText>
+            <Ionicons
+              name={category.name}
+              size={20}
+              color={activeCategory === category.id ? "#FCFCFC" : "#1E3A5F"}
+            />
           </TouchableOpacity>
         ))}
       </ScrollView>
-  
+      <SectionHeader text={activeCategory} percentDone={calculatePercentDone(activeCategory)} />
+      {/* content container */}
       <ScrollView
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
@@ -114,11 +124,11 @@ export default function Goals() {
           />
         ))}
       </ScrollView>
-  
+
       <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
         <Ionicons name="add" size={28} color="white" />
       </TouchableOpacity>
-  
+
       <AddGoalModal
         visible={isModalVisible}
         categoryId={activeCategory}
@@ -137,7 +147,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FCFCFC",
     paddingTop: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     height: "100%",
   },
   scrollView: {
@@ -149,13 +159,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     height: 40,
     paddingHorizontal: 10,
-    // backgroundColor: "blue",
   },
   button: {
     borderRadius: 30,
     borderWidth: 1,
     width: width > 760 ? 100 : 60,
-    height: width > 760 ? 40 : 30,
+    height: width > 760 ? 40 : 40,
     justifyContent: "center",
     alignItems: "center",
     marginRight: width > 760 ? 20 : 4,
@@ -168,20 +177,12 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderColor: "#1E3A5F",
   },
-  activeButtonText: {
-    fontSize: width > 760 ? 14 : 12,
-    color: "#FCFCFC",
-  },
-  inactiveButtonText: {
-    fontSize: 12,
-    color: "#1E3A5F",
-  },
   contentContainer: {
     display: "flex",
     flexDirection: "column",
     width: width > 760 ? width - 600 : width - 40,
     height: "80%",
-    marginTop: 0,
+    marginTop: 10,
     overflow: "hidden",
   },
   addButton: {
