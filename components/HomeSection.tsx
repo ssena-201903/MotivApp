@@ -29,6 +29,7 @@ export default function HomeSection({ variant }: Props) {
   const [currentTodos, setCurrentTodos] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [todosPercentage, setTodosPercentage] = useState<number>(0);
+  const [goals, setGoals] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null); 
 
   const calculateTodosPercentage = (todos: any[]) => {
@@ -36,6 +37,13 @@ export default function HomeSection({ variant }: Props) {
     if (totalTodos === 0) return 0;
     const completedTodos = todos.filter((todo) => todo.isDone).length;
     return Math.round((completedTodos / totalTodos) * 100);
+  };
+
+  const calculateGoalsPercentage = (goals: any[]) => {
+    const totalGoals = goals.length - 1;
+    if (totalGoals === 0) return 0;
+    const completedGoals = goals.filter((goal) => goal.isDone).length;
+    return Math.round((completedGoals / totalGoals) * 100);
   };
 
   const fetchTodos = async () => {
@@ -67,6 +75,21 @@ export default function HomeSection({ variant }: Props) {
       console.log("error fetching todos", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchGoals = async () => {
+    if (!userId) return;
+    try {
+      const goalsRef = collection(db, "users", userId, "goals");
+      const querySnapshot = await getDocs(goalsRef);
+      const goalsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setGoals(goalsData);
+    } catch (error) {
+      console.log("error fetching goals", error);
     }
   };
 
@@ -113,13 +136,16 @@ export default function HomeSection({ variant }: Props) {
     if (variant === "todos") {
       fetchTodos();
     }
+    if (variant === "goals") {
+      fetchGoals();
+    }
   }, [variant, userId]);
 
   const createHomeSection = () => {
     if (variant === "goals") {
       return (
         <>
-          <SectionHeader text="Goals" percentDone={30} />
+          <SectionHeader text="Goals" percentDone={calculateGoalsPercentage(goals)} />
           <View style={styles.gridView}>
             <CardGoal
               type="videocam"
