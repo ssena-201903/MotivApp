@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { CustomText } from "@/CustomText";
 import AddGoalModal from "@/components/modals/AddGoalModal";
 import {
   View,
   StyleSheet,
-  Text,
   Dimensions,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CardGoalTodo from "@/components/cards/CardGoalTodo";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { auth, db } from "@/firebase.config";
 
 const categories = [
   { id: "Movie", label: "Movie" },
@@ -28,6 +29,33 @@ export default function Goals() {
   const { categoryId = "Movie" } = useLocalSearchParams();
   const [activeCategory, setActiveCategory] = useState(categoryId);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [goals, setGoals] = useState<any[]>([]);
+
+  const fetchGoals = async () => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        console.log("user did not login");
+        return;
+      }
+
+      const goalsRef = collection(db, "users", userId, "goals");
+      const q = query(goalsRef, where("category", "==", activeCategory));
+      const querySnapshot = await getDocs(q);
+
+      const fetchedGoals = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setGoals(fetchedGoals);
+    } catch (error) {
+      console.error("Error fetching goals: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGoals();
+  }, [activeCategory]);
 
   const handleCategoryPress = (categoryId: string) => {
     setActiveCategory(categoryId);
@@ -35,6 +63,10 @@ export default function Goals() {
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
+  };
+
+  const handleGoalAdd = async (data: any) => {
+    await fetchGoals(); // update list after adding a new goal
   };
 
   return (
@@ -68,22 +100,31 @@ export default function Goals() {
           </TouchableOpacity>
         ))}
       </ScrollView>
-      <View style={styles.contentContainer}>
-        <CardGoalTodo category="Book"/>
-        <CardGoalTodo category="Movie"/>
-        <CardGoalTodo category="Movie"/>
-        <Text style={styles.categoryContent}>
-          {`Selected Category: ${activeCategory}`}
-        </Text>
-        <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
-          <Ionicons name="add" size={28} color="white"/>
-        </TouchableOpacity>
-      </View>
+  
+      <ScrollView
+        style={styles.scrollViewContent}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {goals.map((goal) => (
+          <CardGoalTodo
+            key={goal.id}
+            goal={goal}
+            category={activeCategory}
+            onUpdate={fetchGoals}
+          />
+        ))}
+      </ScrollView>
+  
+      <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
+        <Ionicons name="add" size={28} color="white" />
+      </TouchableOpacity>
+  
       <AddGoalModal
         visible={isModalVisible}
         categoryId={activeCategory}
         onClose={toggleModal}
-        onAdd={(data) => console.log("Goal added:", data)}
+        onAdd={handleGoalAdd}
       />
     </View>
   );
@@ -93,17 +134,23 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "column",
-    height: "100%",
     justifyContent: "flex-start",
     alignItems: "center",
-    padding: 20,
     backgroundColor: "#FCFCFC",
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    height: "100%",
   },
   scrollView: {
-    marginBottom: 20,
+    width: "100%",
   },
   menuContainer: {
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    height: 40,
+    paddingHorizontal: 10,
+    // backgroundColor: "blue",
   },
   button: {
     borderRadius: 30,
@@ -133,28 +180,21 @@ const styles = StyleSheet.create({
   contentContainer: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  categoryContent: {
-    fontSize: 18,
-    fontWeight: "400",
+    width: width > 760 ? width - 600 : width - 40,
+    height: "80%",
+    marginTop: 30,
+    overflow: "hidden",
+    // backgroundColor: "purple",
   },
   addButton: {
-    marginTop: 20,
     backgroundColor: "#1E3A5F",
-    borderRadius: "50%",
+    borderRadius: 30,
     width: 60,
     height: 60,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    bottom: 10,
-    right: 10,
-  },
-  addButtonText: {
-    color: "#FCFCFC",
-    fontSize: 24,
-    fontWeight: "bold",
+    bottom: 20,
+    right: 20,
   },
 });
