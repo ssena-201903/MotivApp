@@ -102,7 +102,6 @@ export default function Goals() {
       </ScrollView>
   
       <ScrollView
-        style={styles.scrollViewContent}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
@@ -182,9 +181,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     width: width > 760 ? width - 600 : width - 40,
     height: "80%",
-    marginTop: 30,
+    marginTop: 0,
     overflow: "hidden",
-    // backgroundColor: "purple",
   },
   addButton: {
     backgroundColor: "#1E3A5F",

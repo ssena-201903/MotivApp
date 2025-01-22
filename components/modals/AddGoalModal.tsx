@@ -12,6 +12,7 @@ import { db, auth } from "@/firebase.config";
 import CustomButton from "@/components/CustomButton";
 import StarRating from "@/components/icons/StarRating";
 import { addDoc, collection } from "firebase/firestore";
+import { CustomText } from "@/CustomText";
 
 const { width } = Dimensions.get("window");
 
@@ -70,7 +71,7 @@ export default function AddGoalModal({
           case "Book":
             return {
               author: goalData.author,
-              quotes: goalData.quote ? [goalData.quote] : [], 
+              quotes: goalData.quote ? [goalData.quote] : [],
             };
           case "Activity":
           case "Buy":
@@ -170,13 +171,28 @@ export default function AddGoalModal({
               onChangeText={(text) => setGoalData({ ...goalData, note: text })}
             />
           )}
-          <StarRating
-            rating={goalData.rating}
-            onRatingChange={handleRatingChange}
-          />
+          <View style={styles.ratingContainer}>
+            <CustomText style={styles.ratingText}>Rate:</CustomText>
+            <StarRating
+              rating={goalData.rating}
+              onRatingChange={handleRatingChange}
+            />
+          </View>
           <View style={styles.buttonContainer}>
-            <CustomButton label="Cancel" onPress={onClose} variant="cancel" width={80} height={40} />
-            <CustomButton label="Add" onPress={handleSave} variant="fill" width={80} height={40} />
+            <CustomButton
+              label="Cancel"
+              onPress={onClose}
+              variant="cancel"
+              width={80}
+              height={45}
+            />
+            <CustomButton
+              label="Add"
+              onPress={handleSave}
+              variant="fill"
+              width={80}
+              height={45}
+            />
           </View>
         </View>
       </View>
@@ -215,9 +231,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#FFFFFF",
   },
+  ratingContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    width: "60%",
+  },
+  ratingText: {
+    color: "#1E3A5F",
+    opacity: 0.8,
+    marginRight: 10,
+  },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
     gap: 10,
+    marginTop: 20,
   },
 });

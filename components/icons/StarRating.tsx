@@ -26,7 +26,7 @@ export default function StarRating ({ rating, onRatingChange }: StarRatingProps)
 const styles = StyleSheet.create({
   starContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     marginVertical: 10,
   },
   icon: {
