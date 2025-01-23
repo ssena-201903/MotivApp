@@ -14,6 +14,7 @@ import CustomButton from "@/components/CustomButton";
 
 export default function Register() {
   const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,7 +27,7 @@ export default function Register() {
       setError("Passwords do not match");
       return;
     }
-  
+
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -34,16 +35,16 @@ export default function Register() {
         password
       );
       const user = userCredential.user;
-  
+
       const userRef = doc(db, "users", user.uid);
-      await setDoc(userRef, { name, email });
-  
+      await setDoc(userRef, { name, email, nickname });
+
       // creating empty collections
       const collections = ["goals", "habits", "memories", "todos", "friends"];
       for (const collection of collections) {
-        await setDoc(doc(userRef, collection, "placeholder"), {}); 
+        await setDoc(doc(userRef, collection, "placeholder"), {});
       }
-  
+
       router.replace("/home");
     } catch (error) {
       setError("Registration failed: " + error.message);
@@ -62,10 +63,18 @@ export default function Register() {
       <View style={styles.formContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Name"
+          placeholder="Name-Surname"
           placeholderTextColor="#827F7F"
           value={name}
           onChangeText={setName}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Nickname"
+          placeholderTextColor="#827F7F"
+          value={nickname}
+          onChangeText={setNickname}
         />
 
         <TextInput

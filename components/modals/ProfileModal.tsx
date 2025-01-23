@@ -58,11 +58,10 @@ export default function ProfileModal({
               <Ionicons
                 name="log-out-outline"
                 size={24}
-                color="#E5EEFF"
+                color="#FCFCFC"
                 onPress={handleLogout}
               />
             </Pressable>
-            {/* <Ionicons name="log-out-outline" size={32} color="#FFA38F" onPress={handleLogout} /> */}
           </View>
           <View style={styles.menus}>
             <Pressable style={styles.menuItem} onPress={handleProfileRoute}>
