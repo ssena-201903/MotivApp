@@ -11,12 +11,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { auth, db } from "@/firebase.config";
-import {
-  doc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
+import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import {
   updatePassword,
   deleteUser,
@@ -27,14 +22,17 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 import AlertModal from "@/components/modals/AlertModal";
 import { Platform } from "react-native";
+import { CustomText } from "@/CustomText";
 
 const { width } = Dimensions.get("window");
 
 export default function Profile() {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [userData, setUserData] = useState({
     name: "",
     email: "",
-    password: "••••••",
+    password: "",
+    nickname: "",
   });
   const [loading, setLoading] = useState(true);
   const [editModal, setEditModal] = useState({
@@ -53,7 +51,7 @@ export default function Profile() {
     message: "",
     buttons: [] as Array<{
       text: string;
-      variant?: 'fill' | 'cancel' | 'outline';
+      variant?: "fill" | "cancel" | "outline";
       onPress: () => void;
     }>,
   });
@@ -62,7 +60,11 @@ export default function Profile() {
     fetchUserData();
   }, []);
 
-  const showAlert = (title: string, message: string, buttons: typeof alert.buttons) => {
+  const showAlert = (
+    title: string,
+    message: string,
+    buttons: typeof alert.buttons
+  ) => {
     setAlert({
       visible: true,
       title,
@@ -72,7 +74,7 @@ export default function Profile() {
   };
 
   const closeAlert = () => {
-    setAlert(prev => ({ ...prev, visible: false }));
+    setAlert((prev) => ({ ...prev, visible: false }));
   };
 
   const fetchUserData = async () => {
@@ -90,14 +92,17 @@ export default function Profile() {
         name: userDoc.data()?.name || "",
         email: user.email || "",
         password: "••••••",
+        nickname: userDoc.data()?.nickname || "",
       });
       setLoading(false);
     } catch (error) {
       console.error("Error fetching user data:", error);
-      showAlert("Error", "Failed to load user data", [{
-        text: "OK",
-        onPress: closeAlert
-      }]);
+      showAlert("Error", "Failed to load user data", [
+        {
+          text: "OK",
+          onPress: closeAlert,
+        },
+      ]);
     }
   };
 
@@ -127,43 +132,55 @@ export default function Profile() {
     try {
       const user = auth.currentUser;
       if (!user) return;
-
+  
       switch (editModal.field) {
         case "Name":
-          const userDocRef = doc(db, "users", user.uid);
-          await updateDoc(userDocRef, {
+          const userDocRef1 = doc(db, "users", user.uid);
+          await updateDoc(userDocRef1, {
             name: editModal.value,
           });
           setUserData((prev) => ({ ...prev, name: editModal.value }));
           break;
-
+        case "Nickname":
+          const userDocRef2 = doc(db, "users", user.uid);
+          await updateDoc(userDocRef2, {
+            nickname: editModal.value,
+          });
+          setUserData((prev) => ({ ...prev, nickname: editModal.value }));
+          break;
         case "Password":
-          const isReauthenticated = await reauthenticateUser(currentPassword);
-          if (!isReauthenticated) {
-            showAlert("Error", "Current password is incorrect", [{
-              text: "OK",
-              onPress: closeAlert
-            }]);
+          const isReauthenticatedPassword = await reauthenticateUser(currentPassword);
+          if (!isReauthenticatedPassword) {
+            showAlert("Error", "Current password is incorrect", [
+              {
+                text: "OK",
+                onPress: closeAlert,
+              },
+            ]);
             return;
           }
-
+  
           await updatePassword(user, editModal.value);
           setUserData((prev) => ({ ...prev, password: "••••••" }));
           break;
       }
-
+  
       setEditModal({ visible: false, field: "", value: "" });
       setCurrentPassword("");
-      showAlert("Success", `${editModal.field} updated successfully`, [{
-        text: "OK",
-        onPress: closeAlert
-      }]);
+      showAlert("Success", `${editModal.field} updated successfully`, [
+        {
+          text: "OK",
+          onPress: closeAlert,
+        },
+      ]);
     } catch (error) {
       console.error("Error updating field:", error);
-      showAlert("Error", "Failed to update. Please try again.", [{
-        text: "OK",
-        onPress: closeAlert
-      }]);
+      showAlert("Error", "Failed to update. Please try again.", [
+        {
+          text: "OK",
+          onPress: closeAlert,
+        },
+      ]);
     }
   };
 
@@ -175,7 +192,7 @@ export default function Profile() {
         {
           text: "Cancel",
           variant: "cancel",
-          onPress: closeAlert
+          onPress: closeAlert,
         },
         {
           text: "Continue",
@@ -183,18 +200,20 @@ export default function Profile() {
           onPress: () => {
             closeAlert();
             setDeleteModal({ visible: true, password: "" });
-          }
-        }
+          },
+        },
       ]
     );
   };
 
   const handleConfirmDelete = async () => {
     if (!deleteModal.password) {
-      showAlert("Error", "Password is required", [{
-        text: "OK",
-        onPress: closeAlert
-      }]);
+      showAlert("Error", "Password is required", [
+        {
+          text: "OK",
+          onPress: closeAlert,
+        },
+      ]);
       return;
     }
 
@@ -204,10 +223,12 @@ export default function Profile() {
 
       const isReauthenticated = await reauthenticateUser(deleteModal.password);
       if (!isReauthenticated) {
-        showAlert("Error", "Invalid password", [{
-          text: "OK",
-          onPress: closeAlert
-        }]);
+        showAlert("Error", "Invalid password", [
+          {
+            text: "OK",
+            onPress: closeAlert,
+          },
+        ]);
         return;
       }
 
@@ -218,10 +239,12 @@ export default function Profile() {
       router.replace("/(auth)/register");
     } catch (error) {
       console.error("Error deleting account:", error);
-      showAlert("Error", "Failed to delete account. Please try again.", [{
-        text: "OK",
-        onPress: closeAlert
-      }]);
+      showAlert("Error", "Failed to delete account. Please try again.", [
+        {
+          text: "OK",
+          onPress: closeAlert,
+        },
+      ]);
     }
   };
 
@@ -235,10 +258,29 @@ export default function Profile() {
     isPassword?: boolean;
   }) => (
     <View style={styles.fieldContainer}>
-      <Text style={styles.fieldLabel}>{label}</Text>
+      <CustomText style={styles.fieldLabel}>{label}</CustomText>
+      {label === "Nickname" && (
+        <CustomText style={styles.fieldDescription}>
+          Your nickname will be visible to your friends
+        </CustomText>
+      )}
       <View style={styles.fieldValueContainer}>
-        <Text style={styles.fieldValue}>{isPassword ? "••••••" : value}</Text>
-        {label !== "Username" && (
+        <CustomText style={styles.fieldValue}>
+          {isPassword ? (isPasswordVisible ? value : "••••••") : value}
+        </CustomText>
+        {isPassword && (
+          <TouchableOpacity
+            onPress={() => setIsPasswordVisible((prev) => !prev)}
+            style={styles.editButton}
+          >
+            <Ionicons
+              name={isPasswordVisible ? "eye-off" : "eye"}
+              size={18}
+              color="#666"
+            />
+          </TouchableOpacity>
+        )}
+        {label !== "Email" && (
           <TouchableOpacity
             onPress={() => handleEditField(label, value)}
             style={styles.editButton}
@@ -262,7 +304,8 @@ export default function Profile() {
     <View style={styles.container}>
       <View style={styles.content}>
         <ProfileField label="Name" value={userData.name} />
-        <ProfileField label="Username" value={userData.email} />
+        <ProfileField label="Nickname" value={userData.nickname} />
+        <ProfileField label="Email" value={userData.email} />
         <ProfileField label="Password" value={userData.password} isPassword />
       </View>
 
@@ -280,7 +323,7 @@ export default function Profile() {
       <Modal visible={editModal.visible} transparent animationType="fade">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Edit {editModal.field}</Text>
+            <CustomText style={styles.modalTitle}>Edit {editModal.field}</CustomText>
 
             {editModal.field === "Password" && (
               <TextInput
@@ -352,7 +395,9 @@ export default function Profile() {
               <TouchableOpacity>
                 <CustomButton
                   label="Cancel"
-                  onPress={() => setDeleteModal({ visible: false, password: "" })}
+                  onPress={() =>
+                    setDeleteModal({ visible: false, password: "" })
+                  }
                   variant="cancel"
                   width={100}
                   height={45}
@@ -401,7 +446,13 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     fontSize: 14,
-    color: "#333",
+    color: "#1E3A5F",
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  fieldDescription: {
+    fontSize: 12,
+    color: "#999",
     marginBottom: 8,
   },
   fieldValueContainer: {
@@ -414,7 +465,7 @@ const styles = StyleSheet.create({
   },
   fieldValue: {
     fontSize: 16,
-    color: "#333",
+    color: "#1E3A5F",
   },
   editButton: {
     padding: 4,
