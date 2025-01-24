@@ -23,6 +23,11 @@ export default function Login() {
     }
   };
 
+  // forget password
+  const handleForgotPassword = () => {
+    router.push('../emailVerification');
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -64,7 +69,7 @@ export default function Login() {
 
         <TouchableOpacity 
           style={styles.forgotPassword}
-          onPress={() => console.log('Forgot password')}
+          onPress={handleForgotPassword}
         >
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>

@@ -103,6 +103,13 @@ export default function RootLayout() {
             title: 'Goals',
           }}
         />
+        <Stack.Screen
+          name="emailVerification"
+          options={{
+            headerShown: true,
+            title: 'Go Back To Login',
+          }}
+        />
       </Stack>
     </AuthProvider>
   );
