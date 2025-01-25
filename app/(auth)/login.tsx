@@ -1,10 +1,19 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/firebase.config';
-import { useRouter } from 'expo-router';
-import CustomButton from '@/components/CustomButton';
-import { CustomText } from '@/CustomText';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase.config";
+import { useRouter } from "expo-router";
+import CustomButton from "@/components/CustomButton";
+import { CustomText } from "@/CustomText";
+import InputField from "@/components/cards/InputField";
+
+const { width } = Dimensions.get("window");
 
 export default function Login() {
   const [email, setEmail] = useState<string>("");
@@ -17,71 +26,75 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.replace('/home');
+      router.replace("/home");
     } catch (error) {
-      setError('could not login: ' + error.message);
+      setError("could not login, invalid email or password");
     }
   };
 
   // forget password
   const handleForgotPassword = () => {
-    router.push('/(auth)/createHabitCard');
-  }
+    router.push("/(auth)/createHabitCard");
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <CustomText style={styles.title}>Welcome Back!</CustomText>
-        <CustomText style={styles.subtitle}>Please sign in to continue</CustomText>
+        <CustomText style={styles.subtitle}>
+          Please sign in to continue
+        </CustomText>
       </View>
 
       {error && <Text style={styles.error}>{error}</Text>}
 
       <View style={styles.formContainer}>
-      <TextInput
-          style={[
-            styles.input, 
-            { borderColor: emailFocus ? '#E5EEFF' : '#E5EEFF' } // Email input focus color
-          ]}
-          placeholder="Email"
-          placeholderTextColor="#827F7F"
+        <InputField
+          label="Email"
+          placeholder="Enter your email"
           value={email}
           onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          onFocus={() => setEmailFocus(true)} 
-          onBlur={() => setEmailFocus(false)} 
+          secureTextEntry={false}
+          errorMessage={error}
+          inputStyle={{ borderColor: emailFocus ? "#E5EEFF" : "#E5EEFF" }}
+          containerStyle={{ marginTop: 20 }}
+          variant="email"
         />
-
-        <TextInput
-          style={[
-            styles.input, 
-            { borderColor: passwordFocus ? '#E5EEFF' : '#E5EEFF' } // Password input focus color
-          ]}
-          placeholder="Password"
-          placeholderTextColor="#827F7F"
+        <InputField
+          label="Password"
+          placeholder="Enter your password"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry
-          onFocus={() => setPasswordFocus(true)} 
-          onBlur={() => setPasswordFocus(false)} 
+          secureTextEntry={true}
+          errorMessage={error}
+          inputStyle={{ borderColor: passwordFocus ? "#E5EEFF" : "#E5EEFF" }}
+          variant="password"
         />
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.forgotPassword}
           onPress={handleForgotPassword}
         >
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <CustomButton label='Login' onPress={handleLogin} variant='fill'/>
+        <CustomButton
+          label="Login"
+          onPress={handleLogin}
+          variant="fill"
+          width={370}
+          height={50}
+        />
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.registerLink}
-          onPress={() => router.push('/register')}
+          onPress={() => router.push("/register")}
         >
           <Text style={styles.registerText}>
-            Don't have an account? <CustomText style={styles.registerLinkText}>Create Account</CustomText>
+            Don't have an account?{" "}
+            <CustomText style={styles.registerLinkText}>
+              Create Account
+            </CustomText>
           </Text>
         </TouchableOpacity>
       </View>
@@ -94,7 +107,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: '#F9F9F9',
+    backgroundColor: "#F9F9F9",
     padding: 20,
     width: "100%",
     height: "100%",
@@ -107,8 +120,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#1E3A5F',
+    fontWeight: "bold",
+    color: "#1E3A5F",
     marginBottom: 10,
   },
   subtitle: {
@@ -120,6 +133,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     width: 370,
+    marginBottom: width > 760 ? 150 : 0,
   },
   input: {
     backgroundColor: "#E5EEFF",
@@ -129,42 +143,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   forgotPassword: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginBottom: 40,
     fontSize: 12,
     color: "#1E3A5F",
     opacity: 0.6,
   },
   forgotPasswordText: {
-    color: '#666',
+    color: "#666",
     fontSize: 12,
-  },
-  loginButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  loginButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   registerLink: {
     marginTop: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   registerText: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   registerLinkText: {
     color: "#1E3A5F", // can change later
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   error: {
-    color: 'red',
+    color: "red",
     marginBottom: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

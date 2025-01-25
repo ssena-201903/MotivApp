@@ -60,12 +60,13 @@ export default function CustomButton({
 
 const styles = StyleSheet.create({
   button: {
-    marginLeft: 6,
+    marginLeft: 10,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#007AFF",
-    padding: 12,
-    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
   },
   text: {
     fontSize: 16,
@@ -74,6 +75,14 @@ const styles = StyleSheet.create({
   },
   fill: {
     backgroundColor: "#1E3A5F", // can change later
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   outlined: {
     borderWidth: 2,
@@ -94,9 +103,11 @@ const styles = StyleSheet.create({
   },
   cancel: {
     backgroundColor: "#E5EEFF", // can change later
+    borderWidth: 1,
+    borderColor: "#1E3A5F",
   },
   cancelText: {
-    color: "#264653",
+    color: "#1E3A5F",
   },
 });
 

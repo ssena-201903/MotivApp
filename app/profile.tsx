@@ -314,7 +314,7 @@ export default function Profile() {
 
             {editModal.field === "Password" && (
               <TextInput
-                style={styles.modalInput}
+                style={styles.fieldValueContainer}
                 value={currentPassword}
                 onChangeText={setCurrentPassword}
                 secureTextEntry
@@ -323,7 +323,7 @@ export default function Profile() {
             )}
 
             <TextInput
-              style={styles.modalInput}
+              style={styles.fieldValueContainer}
               value={editModal.value}
               onChangeText={(text) =>
                 setEditModal((prev) => ({ ...prev, value: text }))
@@ -369,7 +369,7 @@ export default function Profile() {
             </Text>
 
             <TextInput
-              style={styles.modalInput}
+              style={styles.fieldValueContainer}
               value={deleteModal.password}
               onChangeText={(text) =>
                 setDeleteModal((prev) => ({ ...prev, password: text }))
@@ -429,30 +429,48 @@ const styles = StyleSheet.create({
     width: width > 760 ? width - 700 : width - 40,
   },
   fieldContainer: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   fieldLabel: {
     fontSize: 14,
     color: "#1E3A5F",
-    fontWeight: "bold",
-    marginBottom: 8,
+    fontWeight: "700",
+    marginBottom: 10,
   },
   fieldDescription: {
     fontSize: 12,
-    color: "#999",
-    marginBottom: 8,
+    color: "#1E3A5F",
+    opacity: 0.8,
+    marginBottom: 10,
   },
   fieldValueContainer: {
+    position: "relative",
+    height: 50,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+    backgroundColor: "#F5F8FF",
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#E5EEFF",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#E5EEFF",
-    padding: 12,
-    borderRadius: 8,
   },
   fieldValue: {
-    fontSize: 16,
+    flex: 1,
+    padding: 14,
+    fontSize: 14,
     color: "#1E3A5F",
+    fontWeight: "medium",
+    borderRadius: 12,
   },
   editButton: {
     padding: 4,
@@ -481,17 +499,18 @@ const styles = StyleSheet.create({
     }),
   },
   modalTitle: {
-    color: "#264653",
+    color: "#1E3A5F",
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 20,
   },
   modalInput: {
-    borderWidth: 1,
-    borderColor: "#333",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 30,
+    flex: 1,
+    padding: 14,
+    fontSize: 14,
+    color: "#1E3A5F",
+    fontWeight: "medium",
+    borderRadius: 12,
   },
   modalButtons: {
     flexDirection: "row",
@@ -502,26 +521,4 @@ const styles = StyleSheet.create({
     color: "#666",
     marginBottom: 16,
   },
-  // deleteButtonText: {
-  //   color: "#fff",
-  // },
-  // modalButton: {
-  //   padding: 12,
-  //   borderRadius: 8,
-  //   minWidth: 80,
-  //   alignItems: "center",
-  //   marginLeft: 8,
-  // },
-  // cancelButton: {
-  //   backgroundColor: "#E5EEFF",
-  // },
-  // saveButton: {
-  //   backgroundColor: "#1e3a5f",
-  // },
-  // cancelButtonText: {
-  //   color: "#333",
-  // },
-  // saveButtonText: {
-  //   color: "#fff",
-  // },
 });

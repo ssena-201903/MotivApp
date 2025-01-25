@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,56 +9,63 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
-import { withDecay } from "react-native-reanimated";
+import AddHabitModal from "@/components/modals/AddHabitModal";
+import { CustomText } from "@/CustomText";
 
 const { width } = Dimensions.get("window");
 
 export default function CreateHabitCard() {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const handleHabitModalPress = () => {
+    console.log("Habit Modal Pressed");
+    setIsModalOpen(true);
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.top}>
-        <Text style={styles.title}>Create Habit Streak</Text>
+        <CustomText style={styles.title}>Create Habit Streak</CustomText>
 
         <View style={styles.habits}>
           <View style={styles.habitRow}>
-            <TouchableOpacity style={styles.plusButton}>
+            <TouchableOpacity style={styles.plusButton} onPress={handleHabitModalPress}>
               <Ionicons name="add" size={24} color="#fff" />
             </TouchableOpacity>
-            <Text style={styles.habitText}>Water</Text>
+            <CustomText style={styles.habitText}>Water</CustomText>
           </View>
 
           <View style={styles.habitRow}>
             <TouchableOpacity style={styles.plusButton}>
               <Ionicons name="add" size={24} color="#fff" />
             </TouchableOpacity>
-            <Text style={styles.habitText}>Book</Text>
+            <CustomText style={styles.habitText}>Book</CustomText>
           </View>
 
           <View style={styles.habitRow}>
             <TouchableOpacity style={styles.plusButton}>
               <Ionicons name="add" size={24} color="#fff" />
             </TouchableOpacity>
-            <Text style={styles.habitText}>Sport</Text>
+            <CustomText style={styles.habitText}>Sport</CustomText>
           </View>
 
           <View style={styles.habitRow}>
             <TouchableOpacity style={styles.plusButton}>
               <Ionicons name="add" size={24} color="#fff" />
             </TouchableOpacity>
-            <Text style={styles.habitText}>Vocabulary</Text>
+            <CustomText style={styles.habitText}>Vocabulary</CustomText>
           </View>
 
           <View style={styles.habitRow}>
             <TouchableOpacity style={styles.plusButton}>
               <Ionicons name="add" size={24} color="#fff" />
             </TouchableOpacity>
-            <Text style={styles.habitText}>Custom Habit</Text>
+            <CustomText style={styles.habitText}>Custom Habit</CustomText>
           </View>
         </View>
       </View>
       <View style={styles.buttonContainer}>
         <CustomButton
-          label="Later"
+          label="Maybe later"
           onPress={() => {}}
           variant="cancel"
           width={170}
@@ -72,6 +79,14 @@ export default function CreateHabitCard() {
           height={45}
         />
       </View>
+
+      {isModalOpen && (
+        <AddHabitModal
+          variant="Water"
+          visible={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </ScrollView>
   );
 }
@@ -89,9 +104,9 @@ const styles = StyleSheet.create({
   top: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-start",
     justifyContent: "flex-start",
-    width: width > 760 ? width - 400 : width - 40,
+    alignItems: width > 760 ? "flex-start" : "flex-start",
+    width: width > 760 ? width - 100 : width - 40,
   },
   title: {
     color: "#1E3A5F",
@@ -128,10 +143,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     display: "flex",
     flexDirection: "row",
-    width: width > 760 ? width - 1190 : width - 40,
+    width: width > 760 ? width - 1170 : width - 40,
     justifyContent: "space-between",
     marginTop: 30,
-    marginBottom: 20,
+    // marginBottom: 10,
   },
   laterButton: {
     alignItems: "center",
