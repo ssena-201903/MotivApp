@@ -14,7 +14,10 @@ type AuthProviderProps = {
   children: ReactNode;
 };
 
-const AuthContext = React.createContext<AuthContextType>({ user: null, isLoading: true });
+const AuthContext = React.createContext<AuthContextType>({
+  user: null,
+  isLoading: true,
+});
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
@@ -54,7 +57,7 @@ export default function RootLayout() {
           name="(auth)/login"
           options={{
             headerShown: false,
-            presentation: 'modal',
+            presentation: "modal",
             gestureEnabled: false,
           }}
         />
@@ -62,8 +65,15 @@ export default function RootLayout() {
           name="(auth)/register"
           options={{
             headerShown: false,
-            presentation: 'modal',
+            presentation: "modal",
             gestureEnabled: false,
+          }}
+        />
+        {/* onboarding */}
+        <Stack.Screen
+          name="(auth)/createHabitCard"
+          options={{
+            headerShown: false,
           }}
         />
 
@@ -79,35 +89,35 @@ export default function RootLayout() {
           name="calendar"
           options={{
             headerShown: true,
-            title: 'Takvim',
+            title: "Takvim",
           }}
         />
         <Stack.Screen
           name="profile"
           options={{
             headerShown: true,
-            title: 'Profile',
+            title: "Profile",
           }}
         />
         <Stack.Screen
           name="habits"
           options={{
             headerShown: true,
-            title: 'Habits',
+            title: "Habits",
           }}
         />
         <Stack.Screen
           name="goals"
           options={{
             headerShown: true,
-            title: 'Goals',
+            title: "Goals",
           }}
         />
         <Stack.Screen
           name="emailVerification"
           options={{
             headerShown: true,
-            title: 'Go Back To Login',
+            title: "Go Back To Login",
           }}
         />
       </Stack>

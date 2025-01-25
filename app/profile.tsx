@@ -1,4 +1,3 @@
-// Profile.tsx
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -268,18 +267,6 @@ export default function Profile() {
         <CustomText style={styles.fieldValue}>
           {isPassword ? (isPasswordVisible ? value : "••••••") : value}
         </CustomText>
-        {isPassword && (
-          <TouchableOpacity
-            onPress={() => setIsPasswordVisible((prev) => !prev)}
-            style={styles.editButton}
-          >
-            <Ionicons
-              name={isPasswordVisible ? "eye-off" : "eye"}
-              size={18}
-              color="#666"
-            />
-          </TouchableOpacity>
-        )}
         {label !== "Email" && (
           <TouchableOpacity
             onPress={() => handleEditField(label, value)}

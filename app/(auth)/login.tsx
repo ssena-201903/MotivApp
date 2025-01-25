@@ -25,7 +25,7 @@ export default function Login() {
 
   // forget password
   const handleForgotPassword = () => {
-    router.push('../emailVerification');
+    router.push('/(auth)/createHabitCard');
   }
 
   return (

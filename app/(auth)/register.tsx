@@ -45,7 +45,8 @@ export default function Register() {
         await setDoc(doc(userRef, collection, "placeholder"), {});
       }
 
-      router.replace("/home");
+      // router.replace("/home");
+      router.replace("/createHabitCard");
     } catch (error) {
       setError("Registration failed: " + error.message);
     }
