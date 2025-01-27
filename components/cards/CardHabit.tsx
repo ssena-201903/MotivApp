@@ -192,12 +192,12 @@ export default function CardHabit({ variant }: Props) {
                   {index < filledGlass ? (
                     <View style={{ marginRight: 2 }}>
                       {/* <FillGlassIcon height={21} width={20} /> */}
-                      <BottleIcon height={51} width={50} variant="full" litres={1500} position="horizontal" />
+                      <BottleIcon height={51} width={50} variant="full" litres={1000} position="horizontal" />
                     </View>
                   ) : (
                     <View style={{ marginRight: 2 }}>
                       {/* <EmptyGlassIcon height={21} width={20} /> */}
-                      <BottleIcon height={51} width={50} variant="empty" litres={1500} position="horizontal" />
+                      <BottleIcon height={51} width={50} variant="empty" litres={1000} position="horizontal" />
                     </View>
                   )}
                 </View>

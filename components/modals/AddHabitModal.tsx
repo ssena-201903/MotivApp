@@ -1,216 +1,411 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
-  Alert,
   View,
   StyleSheet,
-  TouchableOpacity,
   Text,
   Modal,
   Dimensions,
+  SafeAreaView,
+  Alert,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { CustomText } from "@/CustomText";
 import { ScrollView } from "react-native-gesture-handler";
 import InputField from "@/components/cards/InputField";
-import InputPicker from "../cards/InputPicker";
+import InputPicker from "@/components/cards/InputPicker";
 import CustomButton from "@/components/CustomButton";
+import MugIcon from "@/components/icons/MugIcon";
 
 type Props = {
   variant: "Book" | "Sport" | "Water" | "Vocabulary" | "Other";
   visible: boolean;
   onClose: () => void;
+  onSave?: (waterData: {
+    dailyWaterIntake: number;
+    cupsNeeded: number;
+    cupSize: number;
+  }) => void;
 };
 
-export default function AddHabitModal({ variant, visible, onClose }: Props) {
-  const [weight, setWeight] = useState<string>("");
-  const [height, setHeight] = useState<string>("");
-  const [age, setAge] = useState<string>("");
-  const [gender, setGender] = useState<string>("Female");
-  const [activityLevel, setActivityLevel] = useState<string>("Moderate");
-  const [activityTime, setActivityTime] = useState<string>("20");
-  const [workEnvironment, setWorkEnvironment] = useState<string>("Indoor");
-  const [livingEnvironment, setLivingEnvironment] = useState<string>("Cold");
-  const [healthIssues, setHealthIssues] = useState<string>("No Issue");
-  const [caffeineAlcohol, setCaffeineAlcohol] = useState<string>("Never");
+type CalculationStep = "input" | "cup-selection" | "result";
 
-  const calculateWaterIntake = () => {
-    if (!weight || !age) {
-      Alert.alert("Error", "Please fill in required fields.");
-      return;
+export default function AddHabitModal({ variant, visible, onClose, onSave }: Props) {
+  const [step, setStep] = useState<number>(1);
+  const [calculatedIntake, setCalculatedIntake] = useState<number>(0);
+  const [selectedCupSize, setSelectedCupSize] = useState<number>(250);
+  
+  const [formData, setFormData] = useState({
+    weight: "",
+    height: "",
+    age: "",
+    gender: "Male",
+    activityLevel: "Moderate",
+    climate: "Moderate",
+    activityTime: "20",
+    healthCondition: "Normal",
+    dietType: "Regular",
+    sleepHours: "8",
+  });
+
+  const handleNextStep = () => {
+    if (step < 5) {
+      setStep(step + 1);
+    }
+  };
+
+  const handleBackStep = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
+  const handleInputChange = useCallback((field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const validateInputs = (): boolean => {
+    const { weight, height, age } = formData;
+    
+    if (!weight || !height || !age) {
+      Alert.alert("Error", "Please fill in all required fields.");
+      return false;
     }
 
     const weightNum = parseFloat(weight);
-    const activityTimeNum = parseInt(activityTime, 10);
+    const heightNum = parseFloat(height);
+    const ageNum = parseFloat(age);
 
-    if (isNaN(weightNum)) {
-      Alert.alert("Error", "Invalid weight value.");
-      return;
+    if (isNaN(weightNum) || weightNum <= 0 || weightNum > 300) {
+      Alert.alert("Error", "Please enter a valid weight (0-300 kg).");
+      return false;
     }
 
-    let dailyWaterIntake = weightNum * 0.03;
-    if (activityLevel === "High") {
-      dailyWaterIntake += 0.5;
-    } else if (activityLevel === "Low") {
-      dailyWaterIntake -= 0.2;
+    if (isNaN(heightNum) || heightNum <= 0 || heightNum > 250) {
+      Alert.alert("Error", "Please enter a valid height (0-250 cm).");
+      return false;
     }
 
-    dailyWaterIntake += activityTimeNum * 0.01;
-    if (livingEnvironment === "Hot") {
-      dailyWaterIntake += 0.5;
-    } else if (livingEnvironment === "Cold") {
-      dailyWaterIntake -= 0.2;
+    if (isNaN(ageNum) || ageNum <= 0 || ageNum > 120) {
+      Alert.alert("Error", "Please enter a valid age (0-120 years).");
+      return false;
     }
 
-    dailyWaterIntake = Math.max(dailyWaterIntake, 1.5);
-
-    Alert.alert(
-      "Result",
-      `Your daily water intake is approximately ${dailyWaterIntake.toFixed(
-        2
-      )} liters.`
-    );
-    onClose();
+    return true;
   };
 
-  const createHabitCard = () => {
-    if (variant === "Water") {
-      return (
-        <ScrollView style={styles.modalContent}>
-          <CustomText style={styles.modalTitle}>Create {variant} Habit</CustomText>
+  const calculateWaterIntake = useCallback(() => {
+    if (!validateInputs()) return;
 
-          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+    const {
+      weight,
+      height,
+      age,
+      gender,
+      activityLevel,
+      climate,
+      activityTime,
+      healthCondition,
+      dietType,
+      sleepHours,
+    } = formData;
+
+    // Convert string values to numbers
+    const weightNum = parseFloat(weight);
+    const heightNum = parseFloat(height);
+    const ageNum = parseFloat(age);
+    const activityTimeNum = parseInt(activityTime, 10);
+    const sleepHoursNum = parseInt(sleepHours, 10);
+
+    // Base calculation using weight (30ml per kg)
+    let waterIntake = weightNum * 30;
+
+    // Adjust for height (taller people need more water)
+    const heightFactor = heightNum / 170; // 170cm as baseline
+    waterIntake *= heightFactor;
+
+    // Activity level adjustments
+    const activityMultipliers = {
+      Sedentary: 0.7,
+      Light: 0.9,
+      Moderate: 1.0,
+      High: 1.2,
+      Intense: 1.4,
+    };
+    waterIntake *= activityMultipliers[activityLevel as keyof typeof activityMultipliers];
+
+    // Climate adjustments
+    const climateMultipliers = {
+      Cold: 0.9,
+      Moderate: 1.0,
+      Hot: 1.2,
+      VeryHot: 1.4,
+    };
+    waterIntake *= climateMultipliers[climate as keyof typeof climateMultipliers];
+
+    // Additional activity time (10ml per minute of exercise)
+    waterIntake += activityTimeNum * 10;
+
+    // Age adjustment (older people need more reminders to drink)
+    if (ageNum > 60) waterIntake *= 1.1;
+
+    // Gender adjustment
+    if (gender === "Male") waterIntake *= 1.1;
+
+    // Health condition adjustments
+    const healthMultipliers = {
+      Normal: 1.0,
+      Pregnant: 1.3,
+      Breastfeeding: 1.4,
+      Athletic: 1.2,
+      HighBloodPressure: 1.1,
+      KidneyIssues: 0.8,
+    };
+    waterIntake *= healthMultipliers[healthCondition as keyof typeof healthMultipliers];
+
+    // Diet type adjustments
+    const dietMultipliers = {
+      Regular: 1.0,
+      HighProtein: 1.2,
+      HighSalt: 1.1,
+      Vegetarian: 0.9,
+      Keto: 1.2,
+    };
+    waterIntake *= dietMultipliers[dietType as keyof typeof dietMultipliers];
+
+    // Sleep adjustment (less sleep = more water needed)
+    const sleepFactor = 8 / sleepHoursNum;
+    waterIntake *= sleepFactor;
+
+    // Convert to liters
+    const waterIntakeLiters = waterIntake / 1000;
+
+    setCalculatedIntake(waterIntakeLiters);
+    renderResult();
+  }, [formData]);
+
+  const handleCupSelection = useCallback((cupSize: number) => {
+    setSelectedCupSize(cupSize); // Add this line
+    const cupsNeeded = Math.ceil((calculatedIntake * 1000) / cupSize);
+    
+    const waterData = {
+      dailyWaterIntake: calculatedIntake,
+      cupsNeeded,
+      cupSize,
+    };
+
+    if (onSave) {
+      onSave(waterData);
+    }
+
+  }, [calculatedIntake, onSave]);
+
+  const renderInputForm = () => {
+    const renderStepContent = () => {
+      switch (step) {
+        case 1:
+          return (
             <View style={styles.inputContainer}>
+              <Text style={styles.modalTitle}>Step 1: Personal Information</Text>
               <InputField
-                label="Weight"
-                placeholder="Enter your weight (kg)"
+                label="Weight (kg)"
+                placeholder="Enter your weight"
                 keyboardType="numeric"
-                value={weight}
-                onChangeText={setWeight}
-                inputStyle={{ width: width > 760 ? 200 : 230 }}
+                value={formData.weight}
+                onChangeText={(value) => handleInputChange("weight", value)}
               />
               <InputField
-                label="Height"
-                placeholder="Enter your height (cm)"
+                label="Height (cm)"
+                placeholder="Enter your height"
                 keyboardType="numeric"
-                value={height}
-                onChangeText={setHeight}
-                inputStyle={{ width: width > 760 ? 200 : 230 }}
-                variant="default"
+                value={formData.height}
+                onChangeText={(value) => handleInputChange("height", value)}
               />
             </View>
+          );
+        case 2:
+          return (
             <View style={styles.inputContainer}>
+              <Text style={styles.modalTitle}>Step 2: Age and Gender</Text>
               <InputField
                 label="Age"
                 placeholder="Enter your age"
                 keyboardType="numeric"
-                value={age}
-                onChangeText={setAge}
-                inputStyle={{ width: width > 760 ? 200 : 230 }}
+                value={formData.age}
+                onChangeText={(value) => handleInputChange("age", value)}
               />
               <InputPicker
                 label="Gender"
-                selectedValue={gender}
-                onValueChange={setGender}
+                selectedValue={formData.gender}
+                onValueChange={(value) => handleInputChange("gender", value)}
                 items={[
-                  { label: "Female", value: "Female" },
                   { label: "Male", value: "Male" },
+                  { label: "Female", value: "Female" },
                 ]}
-                pickerStyle={{ width: width > 760 ? 200 : 230 }}
               />
             </View>
+          );
+        case 3:
+          return (
             <View style={styles.inputContainer}>
+              <Text style={styles.modalTitle}>Step 3: Activity and Climate</Text>
               <InputPicker
                 label="Activity Level"
-                selectedValue={activityLevel}
-                onValueChange={setActivityLevel}
+                selectedValue={formData.activityLevel}
+                onValueChange={(value) => handleInputChange("activityLevel", value)}
                 items={[
-                  { label: "Low", value: "Low" },
+                  { label: "Sedentary", value: "Sedentary" },
+                  { label: "Light", value: "Light" },
                   { label: "Moderate", value: "Moderate" },
                   { label: "High", value: "High" },
+                  { label: "Intense", value: "Intense" },
                 ]}
-                pickerStyle={{ width: width > 760 ? 200 : 230 }}
-              />
-              <InputField
-                label="Activity Time"
-                placeholder="Enter activity time (minutes)"
-                keyboardType="numeric"
-                value={activityTime}
-                onChangeText={setActivityTime}
-                inputStyle={{ width: width > 760 ? 200 : 230 }}
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <InputPicker
-                label="Work Environment"
-                selectedValue={workEnvironment}
-                onValueChange={setWorkEnvironment}
-                items={[
-                  { label: "Indoor", value: "Indoor" },
-                  { label: "Outdoor", value: "Outdoor" },
-                ]}
-                pickerStyle={{ width: width > 760 ? 200 : 230 }}
               />
               <InputPicker
-                label="Living Environment"
-                selectedValue={livingEnvironment}
-                onValueChange={setLivingEnvironment}
+                label="Climate"
+                selectedValue={formData.climate}
+                onValueChange={(value) => handleInputChange("climate", value)}
                 items={[
                   { label: "Cold", value: "Cold" },
                   { label: "Moderate", value: "Moderate" },
                   { label: "Hot", value: "Hot" },
+                  { label: "Very Hot", value: "VeryHot" },
                 ]}
-                pickerStyle={{ width: width > 760 ? 200 : 230 }}
               />
             </View>
+          );
+        case 4:
+          return (
             <View style={styles.inputContainer}>
-              <InputPicker
-                label="Health Issues"
-                selectedValue={healthIssues}
-                onValueChange={setHealthIssues}
-                items={[
-                  { label: "No Issue", value: "No Issue" },
-                  { label: "Minor Issues", value: "Minor Issues" },
-                  { label: "Serious Issues", value: "Serious Issues" },
-                ]}
-                pickerStyle={{ width: width > 760 ? 200 : 230 }}
+              <Text style={styles.modalTitle}>Step 4: Health and Sleep</Text>
+              <InputField
+                label="Activity Time (min)"
+                placeholder="Daily exercise minutes"
+                keyboardType="numeric"
+                value={formData.activityTime}
+                onChangeText={(value) => handleInputChange("activityTime", value)}
               />
               <InputPicker
-                label="Caffine/Alcohol"
-                selectedValue={caffeineAlcohol}
-                onValueChange={setCaffeineAlcohol}
+                label="Health Condition"
+                selectedValue={formData.healthCondition}
+                onValueChange={(value) => handleInputChange("healthCondition", value)}
                 items={[
-                  { label: "Never", value: "Never" },
-                  { label: "Occasionally", value: "Occasionally" },
-                  { label: "Frequently", value: "Frequently" },
+                  { label: "Normal", value: "Normal" },
+                  { label: "Pregnant", value: "Pregnant" },
+                  { label: "Breastfeeding", value: "Breastfeeding" },
+                  { label: "Athletic", value: "Athletic" },
+                  { label: "High Blood Pressure", value: "HighBloodPressure" },
+                  { label: "Kidney Issues", value: "KidneyIssues" },
                 ]}
-                pickerStyle={{ width: width > 760 ? 200 : 230 }}
               />
             </View>
-
-            <View style={styles.buttonContainer}>
-              <CustomButton
-                label="Cancel"
-                onPress={onClose}
-                width={120}
-                height={45}
-                variant="cancel"
+          );
+        case 5:
+          return (
+            <View style={styles.inputContainer}>
+              <Text style={styles.modalTitle}>Step 5: Diet and Final Information</Text>
+              <InputPicker
+                label="Diet Type"
+                selectedValue={formData.dietType}
+                onValueChange={(value) => handleInputChange("dietType", value)}
+                items={[
+                  { label: "Regular", value: "Regular" },
+                  { label: "High Protein", value: "HighProtein" },
+                  { label: "High Salt", value: "HighSalt" },
+                  { label: "Vegetarian", value: "Vegetarian" },
+                  { label: "Keto", value: "Keto" },
+                ]}
               />
-              <CustomButton
-                label="Create"
-                onPress={calculateWaterIntake}
-                width={120}
-                height={45}
-                marginLeft={10}
-                variant="fill"
+              <InputField
+                label="Sleep Hours"
+                placeholder="Hours of sleep"
+                keyboardType="numeric"
+                value={formData.sleepHours}
+                onChangeText={(value) => handleInputChange("sleepHours", value)}
               />
             </View>
-          </ScrollView>
-        </ScrollView>
-      );
-    }
-    return null;
+          );
+        default:
+          return null;
+      }
+    };
+  
+    return (
+      <ScrollView style={styles.modalContent}>
+        {renderStepContent()}
+        <View style={styles.buttonContainer}>
+          {step > 1 && (
+            <CustomButton
+              label="Back"
+              onPress={() => setStep(step - 1)}
+              width={120}
+              height={45}
+              variant="cancel"
+            />
+          )}
+          {step < 5 ? (
+            <CustomButton
+              label="Next"
+              onPress={() => setStep(step + 1)}
+              width={120}
+              height={45}
+              variant="fill"
+            />
+          ) : (
+            <CustomButton
+              label="Calculate"
+              onPress={calculateWaterIntake}
+              width={120}
+              height={45}
+              variant="fill"
+            />
+          )}
+        </View>
+      </ScrollView>
+    );
   };
+  
+
+  const renderCupSelection = () => (
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Select Cup Size</Text>
+      <Text style={styles.resultText}>
+        Recommended daily water intake: {calculatedIntake.toFixed(1)} liters
+      </Text>
+      
+      <View style={styles.cupGrid}>
+        {[200, 250, 300, 500].map((size) => (
+          <CustomButton
+            key={size}
+            label={`${size}ml`}
+            onPress={() => handleCupSelection(size)}
+            width={140}
+            height={140}
+            variant="outlined"
+          />
+        ))}
+      </View>
+    </View>
+  );
+
+  const renderResult = () => (
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Your Daily Water Goal</Text>
+      <Text style={styles.resultText}>
+        Daily water intake: {calculatedIntake.toFixed(1)} liters
+      </Text>
+      <Text style={styles.resultText}>
+        Number of cups: {Math.ceil((calculatedIntake * 1000) / selectedCupSize)}
+      </Text>
+      <View style={styles.buttonContainer}>
+        <CustomButton
+          label="Done"
+          onPress={onClose}
+          width={200}
+          height={45}
+          variant="fill"
+        />
+      </View>
+    </View>
+  );
+
 
   return (
     <Modal
@@ -219,14 +414,16 @@ export default function AddHabitModal({ variant, visible, onClose }: Props) {
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modalView}>{createHabitCard()}</View>
-      </View>
+      <SafeAreaView style={styles.overlay}>
+        <View style={styles.modalView}>
+          {renderInputForm()}
+        </View>
+      </SafeAreaView>
     </Modal>
   );
 }
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   overlay: {
@@ -236,21 +433,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalView: {
-    width: width > 760 ? width - 1000 : width - 40,
-    height: 600,
+    width: width - 40,
     backgroundColor: "#FCFCFC",
-    paddingHorizontal: 40,
-    paddingVertical: 20,
+    padding: 20,
     borderRadius: 12,
     elevation: 5,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
+    maxHeight: "90%",
   },
   modalContent: {
     width: "100%",
@@ -258,45 +450,32 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 30,
-    color: "#1E3A5F",  
-  },
-  inputContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 12,
+    marginBottom: 20,
+    textAlign: "center",
   },
   scrollViewContent: {
     paddingBottom: 20,
   },
-  label: {
-    margin: 12,
-  },
-  picker: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
+  inputContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    margin: 12,
+    justifyContent: "space-between",
+    marginTop: 20,
   },
-  buttonCancel: {
-    backgroundColor: "red",
-    padding: 10,
-    borderRadius: 5,
+  cupGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    gap: 20,
+    marginTop: 20,
   },
-  buttonSubmit: {
-    backgroundColor: "green",
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
+  resultText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 15,
   },
 });
