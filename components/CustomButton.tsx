@@ -14,6 +14,7 @@ type Props = {
   variant?: 'outlined' | 'fill' | 'disabled' | 'cancel';
   width: number | "100%";
   height: number | "100%";
+  marginLeft?: number | 0;
 };
 export default function CustomButton({
   label,
@@ -21,6 +22,7 @@ export default function CustomButton({
   variant,
   width,
   height,
+  marginLeft,
 }: Props) {
   const getButtonStyle = () => {
     switch (variant) {
@@ -40,7 +42,7 @@ export default function CustomButton({
   return (
     <TouchableOpacity
       onPress={variant !== "disabled" ? onPress : undefined}
-      style={[styles.button, { width }, { height }, getButtonStyle()]}
+      style={[styles.button, { width }, { height }, { marginLeft }, getButtonStyle()]}
       disabled={variant === "disabled"}
     >
       <Text
@@ -60,7 +62,6 @@ export default function CustomButton({
 
 const styles = StyleSheet.create({
   button: {
-    // marginLeft: 10,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#007AFF",

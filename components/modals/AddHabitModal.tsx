@@ -201,6 +201,7 @@ export default function AddHabitModal({ variant, visible, onClose }: Props) {
                 onPress={calculateWaterIntake}
                 width={120}
                 height={45}
+                marginLeft={10}
                 variant="fill"
               />
             </View>
