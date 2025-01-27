@@ -1,32 +1,46 @@
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase.config";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "@/firebase.config"; 
 import CustomButton from "@/components/CustomButton";
+import InputField from "@/components/cards/InputField";
+
+const { width } = Dimensions.get("window");
 
 export default function Register() {
+  const [step, setStep] = useState(1); // Step state
   const [name, setName] = useState("");
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // loading state
   const router = useRouter();
-  const db = getFirestore();
+
+  const handleNext = () => {
+    if (step < 3) setStep(step + 1);
+  };
+
+  const handleBack = () => {
+    if (step > 1) setStep(step - 1);
+  };
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
+
+    if (!name || !nickname || !email || !password || !confirmPassword) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    setError("");
+    setLoading(true); // start loading
 
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -47,80 +61,93 @@ export default function Register() {
 
       // router.replace("/home");
       router.replace("/createHabitCard");
-    } catch (error) {
+    } catch (error: any) {
       setError("Registration failed: " + error.message);
     }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Please fill in the form to continue</Text>
-      </View>
+      <Text style={styles.title}>Create Account</Text>
+      <Text style={styles.subtitle}>Step {step} of 3</Text>
 
       {error && <Text style={styles.error}>{error}</Text>}
 
-      <View style={styles.formContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Name-Surname"
-          placeholderTextColor="#827F7F"
-          value={name}
-          onChangeText={setName}
-        />
+      {step === 1 && (
+        <View style={styles.formContainer}>
+          <InputField
+            label="Full Name"
+            placeholder="Enter your full name"
+            value={name}
+            onChangeText={setName}
+          />
+          <InputField
+            label="Nickname"
+            placeholder="Enter your nickname"
+            value={nickname}
+            onChangeText={setNickname}
+          />
+        </View>
+      )}
 
-        <TextInput
-          style={styles.input}
-          placeholder="Nickname"
-          placeholderTextColor="#827F7F"
-          value={nickname}
-          onChangeText={setNickname}
-        />
+      {step === 2 && (
+        <View style={styles.formContainer}>
+          <InputField
+            label="Email"
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+        </View>
+      )}
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#827F7F"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+      {step === 3 && (
+        <View style={styles.formContainer}>
+          <InputField
+            label="Password"
+            placeholder="Enter your password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            isPasswordField={true}
+          />
+          <InputField
+            label="Confirm Password"
+            placeholder="Confirm your password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            isPasswordField={true}
+          />
+        </View>
+      )}
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#827F7F"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          placeholderTextColor="#827F7F"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
+      <View style={styles.buttonRow}>
+        {step === 1 && (
+          <TouchableOpacity
+            style={[styles.linkButton, { marginRight: "auto" }]}
+            onPress={() => router.push("/login")}
+          >
+            <Text style={styles.linkButtonText}>Back to Login</Text>
+          </TouchableOpacity>
+        )}
+        {step > 1 && (
+          <CustomButton label="Back" onPress={handleBack} variant="cancel" width={180} height={45} />
+        )}
+        {step < 3 && (
+          <CustomButton label="Next" onPress={handleNext} variant="fill" width={180} height={45} />
+        )}
+        {step === 3 && (
+          <CustomButton
+            label={loading ? "Creating..." : "Create Account"}
+            onPress={handleRegister}
+            variant="fill"
+            width={180}
+            height={45}
+          />
+        )}
       </View>
-      <CustomButton
-        label="Create Account"
-        onPress={handleRegister}
-        variant="fill"
-        width={370}
-      />
-      <TouchableOpacity
-        style={styles.loginLink}
-        onPress={() => router.push("/login")}
-      >
-        <Text style={styles.loginText}>
-          Already have an account?{" "}
-          <Text style={styles.loginLinkText}>Login</Text>
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -135,12 +162,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  headerContainer: {
-    marginTop: 100,
-    marginBottom: 40,
-    alignItems: "center",
-    width: 370,
-  },
   title: {
     fontSize: 32,
     fontWeight: "bold",
@@ -151,41 +172,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#1E3A5F",
     opacity: 0.8,
-  },
-  formContainer: {
-    display: "flex",
-    flexDirection: "column",
-    width: 370,
     marginBottom: 20,
   },
-  input: {
-    backgroundColor: "#E5EEFF",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-    fontSize: 16,
+  formContainer: {
+    width: width > 760 ? 400 : width - 40,
+    marginBottom: 20,
   },
-  // registerButton: {
-  //   backgroundColor: "#007AFF",
-  //   padding: 15,
-  //   borderRadius: 10,
-  //   alignItems: "center",
-  // },
-  // registerButtonText: {
-  //   color: "white",
-  //   fontSize: 16,
-  //   fontWeight: "bold",
-  // },
-  loginLink: {
-    marginTop: 20,
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
+    width: width > 760 ? 400 : width - 40,
   },
-  loginText: {
-    fontSize: 14,
-    color: "#666",
+  linkButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
-  loginLinkText: {
+  linkButtonText: {
     color: "#1E3A5F",
+    fontSize: 16,
     fontWeight: "bold",
   },
   error: {

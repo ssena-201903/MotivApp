@@ -60,7 +60,7 @@ export default function CustomButton({
 
 const styles = StyleSheet.create({
   button: {
-    marginLeft: 10,
+    // marginLeft: 10,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#007AFF",
@@ -102,12 +102,13 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   cancel: {
-    backgroundColor: "#E5EEFF", // can change later
+    backgroundColor: "transparent", // can change later
     borderWidth: 1,
     borderColor: "#1E3A5F",
   },
   cancelText: {
     color: "#1E3A5F",
+    fontWeight: 400,
   },
 });
 

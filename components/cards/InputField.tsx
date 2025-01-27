@@ -18,6 +18,7 @@ type Props = {
   onSave?: (field: string, currentValue: string) => void;
   isEditable?: boolean;
   secureTextEntry?: boolean;
+  isPasswordField?: boolean;
   errorMessage?: string;
   inputStyle?: any;
   containerStyle?: any;
@@ -33,15 +34,20 @@ export default function InputField({
   onChangeText,
   onSave,
   isEditable = true,
-  secureTextEntry,
+  secureTextEntry =  false,
+  isPasswordField = false,
   errorMessage,
   inputStyle,
   containerStyle,
   keyboardType = "default",
   variant = "default",
 }: Props) {
-  const [isSecure, setIsSecure] = useState<boolean>(true);
+  const [isSecure, setIsSecure] = useState(secureTextEntry || false);
   const hasIcon = variant === "password" || variant === "email";
+
+  const toggleSecureEntry = () => {
+    setIsSecure(!isSecure);
+  };
 
   const handleSavePress = () => {
     if (onSave && label) {
@@ -97,7 +103,7 @@ export default function InputField({
           placeholderTextColor="#999"
           value={value}
           onChangeText={onChangeText}
-          secureTextEntry={secureTextEntry}
+          secureTextEntry={isPasswordField && isSecure}
           keyboardType={keyboardType}
           editable={isEditable && variant !== "edit"}
         />
@@ -107,7 +113,7 @@ export default function InputField({
             size={18}
             color="#666"
             style={styles.iconRight}
-            onPress={() => isEditable && setIsSecure(!isSecure)} // Sadece düzenlenebilirken
+            onPress={toggleSecureEntry} // Sadece düzenlenebilirken
           />
         )}
         {variant === "edit" && (

@@ -272,7 +272,7 @@ export default function Profile() {
             onPress={() => handleEditField(label, value)}
             style={styles.editButton}
           >
-            <Ionicons name="pencil" size={18} color="#666" />
+            <Ionicons name="pencil" size={18} color={"#1E3A5F"} />
           </TouchableOpacity>
         )}
       </View>

@@ -66,6 +66,7 @@ export default function Login() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry={true}
+          isPasswordField={true}
           errorMessage={error}
           inputStyle={{ borderColor: passwordFocus ? "#E5EEFF" : "#E5EEFF" }}
           variant="password"
@@ -82,7 +83,7 @@ export default function Login() {
           label="Login"
           onPress={handleLogin}
           variant="fill"
-          width={370}
+          width={width > 760 ? 370 : width - 40}
           height={50}
         />
 
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
   formContainer: {
     display: "flex",
     justifyContent: "center",
-    width: 370,
+    width: width > 760 ? 370 : width - 40,
     marginBottom: width > 760 ? 150 : 0,
   },
   input: {
