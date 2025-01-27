@@ -14,6 +14,7 @@ import EmptyGlassIcon from "@/components/icons/EmptyGlassIcon";
 import CardFeedback from "@/components/cards/CardFeedback";
 import { CustomText } from "@/CustomText";
 import LottieView from "lottie-react-native";
+import BottleIcon from "../icons/BottleIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -23,7 +24,7 @@ type Props = {
 
 export default function CardHabit({ variant }: Props) {
   const [filledGlass, setFilledGlass] = useState<number>(0);
-  const totalWater = 8;
+  const totalWater = 4;
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isDone, setIsDone] = useState(false);
   const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
@@ -190,17 +191,13 @@ export default function CardHabit({ variant }: Props) {
                 <View key={index} style={{ marginRight: 8 }}>
                   {index < filledGlass ? (
                     <View style={{ marginRight: 2 }}>
-                      <FillGlassIcon height={21} width={20} />
-                      {/* <LottieView
-                        source={require("@/assets/animations/pouring_water.json")} // replace with your Lottie file
-                        autoPlay
-                        loop={false}
-                        style={{ height: 21, width: 20 }} // adjust the size as needed
-                      /> */}
+                      {/* <FillGlassIcon height={21} width={20} /> */}
+                      <BottleIcon height={51} width={50} variant="full" litres={1500} position="horizontal" />
                     </View>
                   ) : (
                     <View style={{ marginRight: 2 }}>
-                      <EmptyGlassIcon height={21} width={20} />
+                      {/* <EmptyGlassIcon height={21} width={20} /> */}
+                      <BottleIcon height={51} width={50} variant="empty" litres={1500} position="horizontal" />
                     </View>
                   )}
                 </View>
