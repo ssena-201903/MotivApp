@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,20 +11,53 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 import AddWaterHabitModal from "@/components/modals/AddWaterHabitModal";
 import { CustomText } from "@/CustomText";
+import { auth, db } from "@/firebase.config";
+import { doc, getDoc } from "firebase/firestore";
 
 const { width } = Dimensions.get("window");
 
 export default function CreateHabitCard() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [userName, setUserName] = useState<string>("");
   const handleHabitModalPress = () => {
     console.log("Habit Modal Pressed");
     setIsModalOpen(true);
   };
 
+  const getUserInfos = async () => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        console.log("user did not login");
+        return;
+      }
+
+      const userDocRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setUserName(userData.name);
+        return userData.name;
+      } else {
+        console.log("User document does not exist");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => { getUserInfos(); }, []);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.top}>
+        <View style={styles.welcomeContainer}>
+          <CustomText style={styles.welcomeText}>Welcome !</CustomText>
+          <CustomText style={styles.userName}>{userName}</CustomText>
+        </View>
         <CustomText style={styles.title}>Create Habit Streak</CustomText>
+        <CustomText style={styles.subtitle}>Start a new habit and track your progress</CustomText>
 
         <View style={styles.habits}>
           <View style={styles.habitRow}>
@@ -105,12 +138,19 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: width > 760 ? "flex-start" : "flex-start",
-    width: width > 760 ? width - 100 : width - 40,
+    width: width > 760 ? width - 1200 : width - 40,
   },
   title: {
     color: "#1E3A5F",
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 700,
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  subtitle: {
+    color: "#1E3A5F",
+    opacity: 0.7,
+    fontSize: 16,
     marginBottom: 20,
     textAlign: "center",
   },
@@ -161,5 +201,27 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  welcomeContainer: {
+    marginBottom: 20,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  welcomeText: {
+    color: "#1E3A5F",
+    marginRight: 20,
+    fontSize: 28,
+    fontWeight: 400,
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  userName: {
+    color: "#1E3A5F",
+    opacity: 0.7,
+    fontSize: 20,
+    fontWeight: "semibold",
+    textAlign: "center",
   },
 });

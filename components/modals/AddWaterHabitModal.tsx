@@ -23,6 +23,12 @@ import { Ionicons } from "@expo/vector-icons";
 import CupIcon from "../icons/CupIcon";
 import { CustomText } from "@/CustomText";
 
+// firebase 
+import { db, auth } from "@/firebase.config";
+import { doc, setDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
+
 const { width } = Dimensions.get("window");
 
 const cupSizes = [
@@ -104,8 +110,18 @@ type Props = {
   onClose: () => void;
   onSave?: (waterData: {
     dailyWaterIntake: number;
-    cupsNeeded: number;
-    cupSize: number;
+    dailyCupsNeeded: number;
+    dailyCupSize: number;
+    weigth: number;
+    height: number;
+    age: number;
+    gender: string;
+    activityLevel: string;
+    climate: string;
+    activityTime: string;
+    healthCondition: string;
+    dietType: string;
+    sleepHours: string;
   }) => void;
 };
 
@@ -114,9 +130,13 @@ export default function AddWaterHabitModal({
   onClose,
   onSave,
 }: Props) {
+  // current user
+  const userId = auth.currentUser?.uid;
+
   const [step, setStep] = useState<number>(1);
   const [calculatedIntake, setCalculatedIntake] = useState<number>(0);
   const [selectedCupSize, setSelectedCupSize] = useState<number>(0);
+  const [cupsNeeded, setCupsNeeded] = useState<number>(0);
 
   const [formData, setFormData] = useState({
     weight: "",
@@ -129,6 +149,9 @@ export default function AddWaterHabitModal({
     healthCondition: "Normal",
     dietType: "Regular",
     sleepHours: "8",
+    dailyWaterIntake: 0,
+    dailyCupSize: 0,
+    dailyCupsNeeded: 0,
   });
 
   const handleInputChange = useCallback((field: string, value: string) => {
@@ -262,12 +285,23 @@ export default function AddWaterHabitModal({
     (cupSize: number) => {
       setTimeout(() => {
         setSelectedCupSize(cupSize); // set the choosen cup size
-        const cupsNeeded = Math.ceil((calculatedIntake * 1000) / cupSize); // calculate the number of cups
+        setCupsNeeded(Math.ceil((calculatedIntake * 1000) / cupSize));
+        // const cupsNeeded = Math.ceil((calculatedIntake * 1000) / cupSize); // calculate the number of cups
 
         const waterData = {
+          weight: formData.weight,
+          height: formData.height,
+          age: formData.age,
+          gender: formData.gender,
+          activityLevel: formData.activityLevel,
+          climate: formData.climate,
+          activityTime: formData.activityTime,
+          healthCondition: formData.healthCondition,
+          dietType: formData.dietType,
+          sleepHours: formData.sleepHours,
           dailyWaterIntake: calculatedIntake,
-          cupsNeeded,
-          cupSize,
+          dailyCupsNeeded: cupsNeeded,
+          dailyCupSize: cupSize,
         };
 
         if (onSave) {
@@ -279,6 +313,57 @@ export default function AddWaterHabitModal({
     },
     [calculatedIntake, onSave] 
   );
+
+  const handleSendDataToDb = useCallback(async() => {
+    try {
+      if (!userId) {
+        console.log("user did not find");
+        return;
+      }
+
+      // user doc referance 
+      const userDocRef = doc(db, "users", userId);
+      const goalsDocRef = collection(userDocRef, "goals");
+
+      // data to save to db
+      const waterData = {
+        dailyWaterIntake: calculatedIntake,
+        cupsNeeded: cupsNeeded || 0,
+        cupSize: selectedCupSize,
+        weigth: formData.weight,
+        height: formData.height,
+        age: formData.age,
+        gender: formData.gender,
+        activityLevel: formData.activityLevel,
+        climate: formData.climate,
+        activityTime: formData.activityTime,
+        healthCondition: formData.healthCondition,
+        dietType: formData.dietType,
+        sleepHours: formData.sleepHours,
+      };
+
+      const goalsData = {
+        type: "Water",
+        streakDays: 0,
+        dailyWaterIntake: calculatedIntake,
+        cupsNeeded: cupsNeeded || 0,
+        cupSize: selectedCupSize,
+        isDone: false,
+      };
+
+      await setDoc(userDocRef, waterData, { merge: true });
+      await addDoc(goalsDocRef, goalsData);
+
+      console.log("data saved to db successfully");
+      if (onSave) {
+        onSave(waterData);
+      }
+      onClose();
+
+    } catch (error) {
+      console.log("error saving data to db", error);
+    }
+  }, [userId, calculatedIntake, onSave, cupsNeeded, selectedCupSize]);
 
   const renderInputForm = () => {
     const renderStepContent = () => {
@@ -515,7 +600,7 @@ export default function AddWaterHabitModal({
       <View style={styles.buttonContainer}>
         <CustomButton
           label="Done"
-          onPress={onClose}
+          onPress={handleSendDataToDb}
           width={200}
           height={45}
           variant="fill"
