@@ -6,7 +6,7 @@ type Props = {
   variant: "empty" | "full";
 };
 
-export default function BottleIcon({ width, height, variant }: Props) {
+export default function MugIcon({ width, height, variant }: Props) {
   let svgData = ``;
 
   if (variant === "empty") {

@@ -7,15 +7,99 @@ import {
   Dimensions,
   SafeAreaView,
   Alert,
+  TouchableOpacity,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import {
+  GestureHandlerRootView,
+  ScrollView,
+} from "react-native-gesture-handler";
 import InputField from "@/components/cards/InputField";
 import InputPicker from "@/components/cards/InputPicker";
 import CustomButton from "@/components/CustomButton";
 import MugIcon from "@/components/icons/MugIcon";
+import EmptyGlassIcon from "../icons/EmptyGlassIcon";
+import BottleIcon from "../icons/BottleIcon";
+import { Ionicons } from "@expo/vector-icons";
+import CupIcon from "../icons/CupIcon";
+import { CustomText } from "@/CustomText";
+
+const { width } = Dimensions.get("window");
+
+const cupSizes = [
+  {
+    size: 200,
+    component: (
+      <EmptyGlassIcon
+        width={width > 760 ? 41 : 31}
+        height={width > 760 ? 40 : 30}
+      />
+    ),
+    name: "Glass",
+  },
+  {
+    size: 250,
+    component: (
+      <CupIcon
+        width={width > 760 ? 41 : 31}
+        height={width > 760 ? 40 : 30}
+        variant="empty"
+      />
+    ),
+    name: "Cup",
+  },
+  {
+    size: 300,
+    component: (
+      <MugIcon
+        width={width > 760 ? 41 : 31}
+        height={width > 760 ? 40 : 30}
+        variant="empty"
+      />
+    ),
+    name: "Mug",
+  },
+  {
+    size: 500,
+    component: (
+      <BottleIcon
+        width={width > 760 ? 51 : 41}
+        height={width > 760 ? 50 : 40}
+        variant="empty"
+        litres={500}
+        position="vertical"
+      />
+    ),
+    name: "Small Bottle",
+  },
+  {
+    size: 1000,
+    component: (
+      <BottleIcon
+        width={width > 760 ? 51 : 41}
+        height={width > 760 ? 50 : 40}
+        variant="empty"
+        litres={1000}
+        position="vertical"
+      />
+    ),
+    name: "Large Bottle",
+  },
+  {
+    size: 1500,
+    component: (
+      <BottleIcon
+        width={width > 760 ? 61 : 51}
+        height={width > 760 ? 60 : 50}
+        variant="empty"
+        litres={1500}
+        position="vertical"
+      />
+    ),
+    name: "Extra Large Bottle",
+  },
+];
 
 type Props = {
-  variant: "Book" | "Sport" | "Water" | "Vocabulary" | "Other";
   visible: boolean;
   onClose: () => void;
   onSave?: (waterData: {
@@ -25,13 +109,15 @@ type Props = {
   }) => void;
 };
 
-type CalculationStep = "input" | "cup-selection" | "result";
-
-export default function AddHabitModal({ variant, visible, onClose, onSave }: Props) {
+export default function AddWaterHabitModal({
+  visible,
+  onClose,
+  onSave,
+}: Props) {
   const [step, setStep] = useState<number>(1);
   const [calculatedIntake, setCalculatedIntake] = useState<number>(0);
-  const [selectedCupSize, setSelectedCupSize] = useState<number>(250);
-  
+  const [selectedCupSize, setSelectedCupSize] = useState<number>(0);
+
   const [formData, setFormData] = useState({
     weight: "",
     height: "",
@@ -45,25 +131,13 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
     sleepHours: "8",
   });
 
-  const handleNextStep = () => {
-    if (step < 5) {
-      setStep(step + 1);
-    }
-  };
-
-  const handleBackStep = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    }
-  };
-
   const handleInputChange = useCallback((field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   }, []);
 
   const validateInputs = (): boolean => {
     const { weight, height, age } = formData;
-    
+
     if (!weight || !height || !age) {
       Alert.alert("Error", "Please fill in all required fields.");
       return false;
@@ -107,21 +181,21 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
       sleepHours,
     } = formData;
 
-    // Convert string values to numbers
+    // convert string values to numbers
     const weightNum = parseFloat(weight);
     const heightNum = parseFloat(height);
     const ageNum = parseFloat(age);
     const activityTimeNum = parseInt(activityTime, 10);
     const sleepHoursNum = parseInt(sleepHours, 10);
 
-    // Base calculation using weight (30ml per kg)
+    // base calculation using weight (30ml per kg)
     let waterIntake = weightNum * 30;
 
-    // Adjust for height (taller people need more water)
+    // adjust for height (taller people need more water)
     const heightFactor = heightNum / 170; // 170cm as baseline
     waterIntake *= heightFactor;
 
-    // Activity level adjustments
+    // activity level adjustments
     const activityMultipliers = {
       Sedentary: 0.7,
       Light: 0.9,
@@ -129,27 +203,29 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
       High: 1.2,
       Intense: 1.4,
     };
-    waterIntake *= activityMultipliers[activityLevel as keyof typeof activityMultipliers];
+    waterIntake *=
+      activityMultipliers[activityLevel as keyof typeof activityMultipliers];
 
-    // Climate adjustments
+    // climate adjustments
     const climateMultipliers = {
       Cold: 0.9,
       Moderate: 1.0,
       Hot: 1.2,
       VeryHot: 1.4,
     };
-    waterIntake *= climateMultipliers[climate as keyof typeof climateMultipliers];
+    waterIntake *=
+      climateMultipliers[climate as keyof typeof climateMultipliers];
 
-    // Additional activity time (10ml per minute of exercise)
+    // additional activity time (10ml per minute of exercise)
     waterIntake += activityTimeNum * 10;
 
-    // Age adjustment (older people need more reminders to drink)
+    // age adjustment (older people need more reminders to drink)
     if (ageNum > 60) waterIntake *= 1.1;
 
-    // Gender adjustment
+    // gender adjustment
     if (gender === "Male") waterIntake *= 1.1;
 
-    // Health condition adjustments
+    // health condition adjustments
     const healthMultipliers = {
       Normal: 1.0,
       Pregnant: 1.3,
@@ -158,9 +234,10 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
       HighBloodPressure: 1.1,
       KidneyIssues: 0.8,
     };
-    waterIntake *= healthMultipliers[healthCondition as keyof typeof healthMultipliers];
+    waterIntake *=
+      healthMultipliers[healthCondition as keyof typeof healthMultipliers];
 
-    // Diet type adjustments
+    // diet type adjustments
     const dietMultipliers = {
       Regular: 1.0,
       HighProtein: 1.2,
@@ -170,32 +247,38 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
     };
     waterIntake *= dietMultipliers[dietType as keyof typeof dietMultipliers];
 
-    // Sleep adjustment (less sleep = more water needed)
+    // sleep adjustment (less sleep = more water needed)
     const sleepFactor = 8 / sleepHoursNum;
     waterIntake *= sleepFactor;
 
-    // Convert to liters
+    // convert to liters
     const waterIntakeLiters = waterIntake / 1000;
 
     setCalculatedIntake(waterIntakeLiters);
-    renderResult();
+    setStep(6);
   }, [formData]);
 
-  const handleCupSelection = useCallback((cupSize: number) => {
-    setSelectedCupSize(cupSize); // Add this line
-    const cupsNeeded = Math.ceil((calculatedIntake * 1000) / cupSize);
-    
-    const waterData = {
-      dailyWaterIntake: calculatedIntake,
-      cupsNeeded,
-      cupSize,
-    };
+  const handleCupSelection = useCallback(
+    (cupSize: number) => {
+      setTimeout(() => {
+        setSelectedCupSize(cupSize); // set the choosen cup size
+        const cupsNeeded = Math.ceil((calculatedIntake * 1000) / cupSize); // calculate the number of cups
 
-    if (onSave) {
-      onSave(waterData);
-    }
+        const waterData = {
+          dailyWaterIntake: calculatedIntake,
+          cupsNeeded,
+          cupSize,
+        };
 
-  }, [calculatedIntake, onSave]);
+        if (onSave) {
+          onSave(waterData); // save the data
+        }
+
+        setStep(7); // next step
+      }, 3000); // wait 3 seconds
+    },
+    [calculatedIntake, onSave] 
+  );
 
   const renderInputForm = () => {
     const renderStepContent = () => {
@@ -203,7 +286,9 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
         case 1:
           return (
             <View style={styles.inputContainer}>
-              <Text style={styles.modalTitle}>Step 1: Personal Information</Text>
+              <CustomText style={styles.modalTitle}>
+                {step} step of 5
+              </CustomText>
               <InputField
                 label="Weight (kg)"
                 placeholder="Enter your weight"
@@ -223,7 +308,9 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
         case 2:
           return (
             <View style={styles.inputContainer}>
-              <Text style={styles.modalTitle}>Step 2: Age and Gender</Text>
+              <CustomText style={styles.modalTitle}>
+                {step} step of 5
+              </CustomText>
               <InputField
                 label="Age"
                 placeholder="Enter your age"
@@ -245,11 +332,15 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
         case 3:
           return (
             <View style={styles.inputContainer}>
-              <Text style={styles.modalTitle}>Step 3: Activity and Climate</Text>
+              <CustomText style={styles.modalTitle}>
+                {step} step of 5
+              </CustomText>
               <InputPicker
                 label="Activity Level"
                 selectedValue={formData.activityLevel}
-                onValueChange={(value) => handleInputChange("activityLevel", value)}
+                onValueChange={(value) =>
+                  handleInputChange("activityLevel", value)
+                }
                 items={[
                   { label: "Sedentary", value: "Sedentary" },
                   { label: "Light", value: "Light" },
@@ -274,18 +365,24 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
         case 4:
           return (
             <View style={styles.inputContainer}>
-              <Text style={styles.modalTitle}>Step 4: Health and Sleep</Text>
+              <CustomText style={styles.modalTitle}>
+                {step} step of 5
+              </CustomText>
               <InputField
                 label="Activity Time (min)"
                 placeholder="Daily exercise minutes"
                 keyboardType="numeric"
                 value={formData.activityTime}
-                onChangeText={(value) => handleInputChange("activityTime", value)}
+                onChangeText={(value) =>
+                  handleInputChange("activityTime", value)
+                }
               />
               <InputPicker
                 label="Health Condition"
                 selectedValue={formData.healthCondition}
-                onValueChange={(value) => handleInputChange("healthCondition", value)}
+                onValueChange={(value) =>
+                  handleInputChange("healthCondition", value)
+                }
                 items={[
                   { label: "Normal", value: "Normal" },
                   { label: "Pregnant", value: "Pregnant" },
@@ -300,7 +397,9 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
         case 5:
           return (
             <View style={styles.inputContainer}>
-              <Text style={styles.modalTitle}>Step 5: Diet and Final Information</Text>
+              <CustomText style={styles.modalTitle}>
+                {step} step of 5
+              </CustomText>
               <InputPicker
                 label="Diet Type"
                 selectedValue={formData.dietType}
@@ -326,7 +425,7 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
           return null;
       }
     };
-  
+
     return (
       <ScrollView style={styles.modalContent}>
         {renderStepContent()}
@@ -347,6 +446,7 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
               width={120}
               height={45}
               variant="fill"
+              marginLeft={10}
             />
           ) : (
             <CustomButton
@@ -355,31 +455,39 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
               width={120}
               height={45}
               variant="fill"
+              marginLeft={10}
             />
           )}
         </View>
       </ScrollView>
     );
   };
-  
 
   const renderCupSelection = () => (
     <View style={styles.modalContent}>
-      <Text style={styles.modalTitle}>Select Cup Size</Text>
-      <Text style={styles.resultText}>
-        Recommended daily water intake: {calculatedIntake.toFixed(1)} liters
-      </Text>
-      
+      <CustomText style={styles.modalTitle}>Select Cup Size</CustomText>
+      <View style={styles.resultContainer}>
+        <CustomText style={styles.resultText}>
+          Your recommended daily water intake:{" "}
+        </CustomText>
+        <CustomText style={styles.resultBold}>
+          {calculatedIntake.toFixed(1)} liters
+        </CustomText>
+      </View>
       <View style={styles.cupGrid}>
-        {[200, 250, 300, 500].map((size) => (
-          <CustomButton
+        {cupSizes.map(({ size, component, name }) => (
+          <TouchableOpacity
             key={size}
-            label={`${size}ml`}
+            style={[
+              styles.cupButton,
+              selectedCupSize === size && styles.selectedCup,
+            ]}
             onPress={() => handleCupSelection(size)}
-            width={140}
-            height={140}
-            variant="outlined"
-          />
+          >
+            {component}
+            <CustomText style={styles.cupName}>{name}</CustomText>
+            <CustomText style={styles.cupSize}>{size} ml</CustomText>
+          </TouchableOpacity>
         ))}
       </View>
     </View>
@@ -387,13 +495,23 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
 
   const renderResult = () => (
     <View style={styles.modalContent}>
-      <Text style={styles.modalTitle}>Your Daily Water Goal</Text>
-      <Text style={styles.resultText}>
-        Daily water intake: {calculatedIntake.toFixed(1)} liters
-      </Text>
-      <Text style={styles.resultText}>
-        Number of cups: {Math.ceil((calculatedIntake * 1000) / selectedCupSize)}
-      </Text>
+      <CustomText style={styles.modalTitle}>Your Daily Water Goal</CustomText>
+      <View style={styles.resultContainer}>
+        <CustomText style={styles.resultText}>
+          Daily water intake:
+        </CustomText>
+        <CustomText style={styles.resultBold}>
+          {calculatedIntake.toFixed(1)} liters
+        </CustomText>
+      </View>
+      <View style={styles.resultContainer}>
+        <CustomText style={styles.resultText}>
+          Number of cups:
+        </CustomText>
+        <CustomText style={styles.resultBold}>
+          {Math.ceil((calculatedIntake * 1000) / selectedCupSize)}
+        </CustomText>
+      </View>
       <View style={styles.buttonContainer}>
         <CustomButton
           label="Done"
@@ -406,7 +524,6 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
     </View>
   );
 
-
   return (
     <Modal
       animationType="fade"
@@ -414,16 +531,21 @@ export default function AddHabitModal({ variant, visible, onClose, onSave }: Pro
       visible={visible}
       onRequestClose={onClose}
     >
-      <SafeAreaView style={styles.overlay}>
-        <View style={styles.modalView}>
-          {renderInputForm()}
-        </View>
-      </SafeAreaView>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaView style={styles.overlay}>
+          <View style={styles.modalView}>
+            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+              <Ionicons name="close" size={24} color="#1E3A5F" />
+            </TouchableOpacity>
+            {step <= 5 && renderInputForm()}
+            {step === 6 && renderCupSelection()}
+            {step === 7 && renderResult()}
+          </View>
+        </SafeAreaView>
+      </GestureHandlerRootView>
     </Modal>
   );
 }
-
-const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   overlay: {
@@ -433,7 +555,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalView: {
-    width: width - 40,
+    width: width > 760 ? width - 900 : width - 40,
     backgroundColor: "#FCFCFC",
     padding: 20,
     borderRadius: 12,
@@ -443,6 +565,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     maxHeight: "90%",
+    paddingTop: 60,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 20,
+    right: 20,
   },
   modalContent: {
     width: "100%",
@@ -450,6 +578,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
+    color: "#1E3A5F",
     marginBottom: 20,
     textAlign: "center",
   },
@@ -457,25 +586,78 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   inputContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
     marginBottom: 20,
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: width > 760 ? "flex-end" : "center",
+    width: "100%",
     marginTop: 20,
+  },
+  resultContainer: {
+    display: "flex",
+    flexDirection: width > 760 ? "row" : "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
   },
   cupGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-around",
-    gap: 20,
+    gap: width > 760 ? 10 : 5,
     marginTop: 20,
   },
+  cupButton: {
+    width: width > 760 ? 170 : 150,
+    height: width > 760 ? 140 : 120,
+    backgroundColor: "#f8f8f8",
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    margin: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  selectedCup: {
+    backgroundColor: "#1E3A5F",
+  },
+  cupLabel: {
+    marginTop: 10,
+    fontSize: 14,
+    color: "#444",
+    fontWeight: "500",
+  },
+  cupName: {
+    fontSize: width > 760 ? 16 : 14,
+    color: "#1E3A5F",
+    fontWeight: "bold",
+    marginTop: 10,
+  },
+  cupSize: {
+    fontSize: 14,
+    color: "#1E3A5F",
+    opacity: 0.7,
+    fontWeight: "400",
+    marginTop: 6,
+  },
   resultText: {
-    fontSize: 16,
+    fontSize: width > 760 ? 16 : 14,
+    color: "#1E3A5F",
     textAlign: "center",
-    marginBottom: 15,
+  },
+  resultBold: {
+    fontWeight: "bold",
+    fontSize: width > 760 ? 18 : 16,
+    marginLeft: 10,
+    color: "#1E3A5F",
+    backgroundColor: "#E5EEFF",
+    padding: 10,
+    borderRadius: 8,
   },
 });

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
-import AddHabitModal from "@/components/modals/AddHabitModal";
+import AddWaterHabitModal from "@/components/modals/AddWaterHabitModal";
 import { CustomText } from "@/CustomText";
 
 const { width } = Dimensions.get("window");
@@ -81,8 +81,7 @@ export default function CreateHabitCard() {
       </View>
 
       {isModalOpen && (
-        <AddHabitModal
-          variant="Water"
+        <AddWaterHabitModal
           visible={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />
