@@ -28,7 +28,7 @@ const { width } = Dimensions.get("window");
 export default function Profile() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [userData, setUserData] = useState({
-    name: "",
+    formattedName: "",
     email: "",
     password: "",
     nickname: "",
@@ -88,7 +88,7 @@ export default function Profile() {
       const userDoc = await getDoc(userDocRef);
 
       setUserData({
-        name: userDoc.data()?.name || "",
+        formattedName: userDoc.data()?.formattedName || "",
         email: user.email || "",
         password: "••••••",
         nickname: userDoc.data()?.nickname || "",
@@ -136,9 +136,9 @@ export default function Profile() {
         case "Name":
           const userDocRef1 = doc(db, "users", user.uid);
           await updateDoc(userDocRef1, {
-            name: editModal.value,
+            formattedName: editModal.value,
           });
-          setUserData((prev) => ({ ...prev, name: editModal.value }));
+          setUserData((prev) => ({ ...prev, formattedName: editModal.value }));
           break;
         case "Nickname":
           const userDocRef2 = doc(db, "users", user.uid);
@@ -290,7 +290,7 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <ProfileField label="Name" value={userData.name} />
+        <ProfileField label="Name" value={userData.formattedName} />
         <ProfileField label="Nickname" value={userData.nickname} />
         <ProfileField label="Email" value={userData.email} />
         <ProfileField label="Password" value={userData.password} isPassword />

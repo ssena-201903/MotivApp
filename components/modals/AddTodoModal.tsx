@@ -84,7 +84,7 @@ export default function AddTodoModal({
                  label="Cancel"
                  onPress={onClose}
                  variant="cancel"
-                 width={85}
+                 width={100}
                  height={50}
                />
              </TouchableOpacity>
@@ -93,7 +93,7 @@ export default function AddTodoModal({
                  label="Add"
                  onPress={handleAdd}
                  variant="fill"
-                 width={85}
+                 width={100}
                  height={50}
                />
              </TouchableOpacity>
@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
  modalButtons: {
    flexDirection: "row",
    justifyContent: "flex-end",
+   marginTop: 10,
  },
  modalButton: {
    marginLeft: 10,

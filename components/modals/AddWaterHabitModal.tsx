@@ -23,7 +23,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CupIcon from "../icons/CupIcon";
 import { CustomText } from "@/CustomText";
 
-// firebase 
+// firebase
 import { db, auth } from "@/firebase.config";
 import { doc, setDoc } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore";
@@ -137,6 +137,7 @@ export default function AddWaterHabitModal({
   const [calculatedIntake, setCalculatedIntake] = useState<number>(0);
   const [selectedCupSize, setSelectedCupSize] = useState<number>(0);
   const [cupsNeeded, setCupsNeeded] = useState<number>(0);
+  const [cupType, setCupType] = useState<string>("");
 
   const [formData, setFormData] = useState({
     weight: "",
@@ -282,9 +283,10 @@ export default function AddWaterHabitModal({
   }, [formData]);
 
   const handleCupSelection = useCallback(
-    (cupSize: number) => {
+    (cupSize: number, name: string) => {
       setTimeout(() => {
         setSelectedCupSize(cupSize); // set the choosen cup size
+        setCupType(name);
         setCupsNeeded(Math.ceil((calculatedIntake * 1000) / cupSize));
         // const cupsNeeded = Math.ceil((calculatedIntake * 1000) / cupSize); // calculate the number of cups
 
@@ -302,6 +304,7 @@ export default function AddWaterHabitModal({
           dailyWaterIntake: calculatedIntake,
           dailyCupsNeeded: cupsNeeded,
           dailyCupSize: cupSize,
+          cupType: name,
         };
 
         if (onSave) {
@@ -311,19 +314,19 @@ export default function AddWaterHabitModal({
         setStep(7); // next step
       }, 3000); // wait 3 seconds
     },
-    [calculatedIntake, onSave] 
+    [calculatedIntake, onSave]
   );
 
-  const handleSendDataToDb = useCallback(async() => {
+  const handleSendDataToDb = useCallback(async () => {
     try {
       if (!userId) {
         console.log("user did not find");
         return;
       }
 
-      // user doc referance 
+      // user doc referance
       const userDocRef = doc(db, "users", userId);
-      const goalsDocRef = collection(userDocRef, "goals");
+      const habitsDocRef = collection(userDocRef, "habits");
 
       // data to save to db
       const waterData = {
@@ -340,26 +343,27 @@ export default function AddWaterHabitModal({
         healthCondition: formData.healthCondition,
         dietType: formData.dietType,
         sleepHours: formData.sleepHours,
+        cupType: cupType,
       };
 
-      const goalsData = {
-        type: "Water",
+      const habitsData = {
+        variant: "Water",
         streakDays: 0,
         dailyWaterIntake: calculatedIntake,
         cupsNeeded: cupsNeeded || 0,
         cupSize: selectedCupSize,
+        cupType: cupType,
         isDone: false,
       };
 
       await setDoc(userDocRef, waterData, { merge: true });
-      await addDoc(goalsDocRef, goalsData);
+      await addDoc(habitsDocRef, habitsData);
 
       console.log("data saved to db successfully");
       if (onSave) {
         onSave(waterData);
       }
       onClose();
-
     } catch (error) {
       console.log("error saving data to db", error);
     }
@@ -554,9 +558,9 @@ export default function AddWaterHabitModal({
       <View style={styles.resultContainer}>
         <CustomText style={styles.resultText}>
           Your recommended daily water intake:{" "}
-        </CustomText>
-        <CustomText style={styles.resultBold}>
-          {calculatedIntake.toFixed(1)} liters
+          <CustomText style={styles.resultBold}>
+            {calculatedIntake.toFixed(1)} liters
+          </CustomText>
         </CustomText>
       </View>
       <View style={styles.cupGrid}>
@@ -567,7 +571,7 @@ export default function AddWaterHabitModal({
               styles.cupButton,
               selectedCupSize === size && styles.selectedCup,
             ]}
-            onPress={() => handleCupSelection(size)}
+            onPress={() => handleCupSelection(size, name)}
           >
             {component}
             <CustomText style={styles.cupName}>{name}</CustomText>
@@ -583,18 +587,18 @@ export default function AddWaterHabitModal({
       <CustomText style={styles.modalTitle}>Your Daily Water Goal</CustomText>
       <View style={styles.resultContainer}>
         <CustomText style={styles.resultText}>
-          Daily water intake:
-        </CustomText>
-        <CustomText style={styles.resultBold}>
-          {calculatedIntake.toFixed(1)} liters
+          Daily water intake:{" "}
+          <CustomText style={styles.resultBold}>
+            {calculatedIntake.toFixed(1)} liters
+          </CustomText>
         </CustomText>
       </View>
       <View style={styles.resultContainer}>
         <CustomText style={styles.resultText}>
-          Number of cups:
-        </CustomText>
-        <CustomText style={styles.resultBold}>
-          {Math.ceil((calculatedIntake * 1000) / selectedCupSize)}
+          Number of cups:{" "}
+          <CustomText style={styles.resultBold}>
+            {Math.ceil((calculatedIntake * 1000) / selectedCupSize)}
+          </CustomText>
         </CustomText>
       </View>
       <View style={styles.buttonContainer}>
@@ -664,7 +668,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#1E3A5F",
-    marginBottom: 20,
+    marginBottom: 30,
     textAlign: "center",
   },
   scrollViewContent: {
@@ -677,7 +681,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: width > 760 ? "flex-end" : "center",
+    justifyContent: width > 760 ? "center" : "center",
     width: "100%",
     marginTop: 20,
   },
@@ -686,7 +690,7 @@ const styles = StyleSheet.create({
     flexDirection: width > 760 ? "row" : "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
+    marginBottom: 30,
   },
   cupGrid: {
     flexDirection: "row",
@@ -742,7 +746,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: "#1E3A5F",
     backgroundColor: "#E5EEFF",
-    padding: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     borderRadius: 8,
   },
 });

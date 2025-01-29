@@ -13,6 +13,7 @@ import AddWaterHabitModal from "@/components/modals/AddWaterHabitModal";
 import { CustomText } from "@/CustomText";
 import { auth, db } from "@/firebase.config";
 import { doc, getDoc } from "firebase/firestore";
+import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -37,7 +38,7 @@ export default function CreateHabitCard() {
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        setUserName(userData.name);
+        setUserName(userData.formattedName);
         return userData.name;
       } else {
         console.log("User document does not exist");
@@ -99,7 +100,7 @@ export default function CreateHabitCard() {
       <View style={styles.buttonContainer}>
         <CustomButton
           label="Maybe later"
-          onPress={() => {}}
+          onPress={() => {router.push("/home");}}
           variant="cancel"
           width={170}
           height={45}

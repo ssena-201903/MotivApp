@@ -191,9 +191,9 @@ export default function HomeSection({ variant }: Props) {
         <>
           <SectionHeader text="Habits" percentDone={60} />
           <View style={styles.gridView}>
-            <CardHabit variant="Water" />
-            <CardHabit variant="Sport" />
-            <CardHabit variant="Book" />
+            <CardHabit variant="Water" userId={userId} />
+            <CardHabit variant="Sport" userId={userId} />
+            <CardHabit variant="Book" userId={userId} />
           </View>
         </>
       );

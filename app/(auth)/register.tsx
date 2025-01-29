@@ -28,6 +28,14 @@ export default function Register() {
     if (step > 1) setStep(step - 1);
   };
 
+  // make first letter capital
+  const capitalizeName = (name: string): string => {
+    return name
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) 
+      .join(" "); 
+  };
+
   const handleRegister = async () => {
     if (password !== confirmPassword) {
       setError("Passwords do not match");
@@ -39,6 +47,7 @@ export default function Register() {
       return;
     }
 
+    const formattedName = capitalizeName(name);
     setError("");
     setLoading(true); // start loading
 
@@ -51,7 +60,7 @@ export default function Register() {
       const user = userCredential.user;
 
       const userRef = doc(db, "users", user.uid);
-      await setDoc(userRef, { name, email, nickname });
+      await setDoc(userRef, { formattedName, email, nickname });
 
       // creating empty collections
       const collections = ["goals", "habits", "memories", "todos", "friends"];
