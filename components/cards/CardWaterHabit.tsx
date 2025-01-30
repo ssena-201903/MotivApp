@@ -308,7 +308,7 @@ export default function CardWaterHabit({ variant, userId }: Props) {
             style={{ height: 30, justifyContent: "center" }}
           >
             <Ionicons
-              name={isWaterDone ? "checkmark-circle" : "add"}
+              name={isWaterDone ? "checkbox" : "add"}
               size={28}
               color="#1E3A5F"
             />
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     width: width > 760 ? 300 : 190,
     height: width > 760 ? 60 : 50,
     backgroundColor: "#f8f8f8",
-    borderRadius: 12,
+    borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
     // justifyContent: "center",
@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
     width: width > 760 ? 300 : 190,
     height: width > 760 ? 60 : 50,
     backgroundColor: "#E5EEFF",
-    borderRadius: 12,
+    borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
     // justifyContent: "center",
@@ -427,5 +427,7 @@ const styles = StyleSheet.create({
   streakText: {
     fontSize: 14,
     color: "#1E3A5F",
+    fontWeight: "semibold",
+    marginLeft: 4,
   },
 });
