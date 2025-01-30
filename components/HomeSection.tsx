@@ -1,7 +1,7 @@
 import { View, StyleSheet, ScrollView, Dimensions } from "react-native";
 import SectionHeader from "@/components/headers/SectionHeader";
 import CardGoal from "@/components/cards/CardGoal";
-import CardHabit from "@/components/cards/CardHabit";
+import CardWaterHabit from "@/components/cards/CardWaterHabit";
 import CardTodo from "@/components/cards/CardTodo";
 import React, { useEffect, useState } from "react";
 import { db, auth } from "@/firebase.config";
@@ -31,6 +31,40 @@ export default function HomeSection({ variant }: Props) {
   const [todosPercentage, setTodosPercentage] = useState<number>(0);
   const [goals, setGoals] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null); 
+  const [isWaterCard, setIsWaterCard] = useState<boolean>(false);
+  const [isBookCard, setIsBookCard] = useState<boolean>(false);
+  const [isSportCard, setIsSportCard] = useState<boolean>(false);
+  const [isCustomCard, setIsCustomCard] = useState<boolean>(false);
+  const [isVocabularyCard, setIsVocabularyCard] = useState<boolean>(false);
+
+  const fetchHabitDatas = async () => {
+    try {
+      const habitsRef = collection(db, `users/${userId}/habits`);
+      const querySnapshot = await getDocs(habitsRef);
+
+      querySnapshot.docs.forEach((doc) => {
+        const habitDoc = doc.data();
+        if (habitDoc.variant === "Water") {
+          setIsWaterCard(true);
+        } else if (habitDoc.variant === "Book") {
+          setIsBookCard(true);
+        } else if (habitDoc.variant === "Sport") {
+          setIsSportCard(true);
+        } else if (habitDoc.variant === "Custom") {
+          setIsCustomCard(true);
+        } else if (habitDoc.variant === "Vocabulary") {
+          setIsVocabularyCard(true);
+        }
+      })
+    } catch (error) {
+      console.log("error fetching habits", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchHabitDatas();
+  }, [userId]);
+    
 
   const calculateTodosPercentage = (todos: any[]) => {
     const totalTodos = todos.length;
@@ -191,9 +225,12 @@ export default function HomeSection({ variant }: Props) {
         <>
           <SectionHeader text="Habits" percentDone={60} />
           <View style={styles.gridView}>
-            <CardHabit variant="Water" userId={userId} />
-            <CardHabit variant="Sport" userId={userId} />
-            <CardHabit variant="Book" userId={userId} />
+            {isWaterCard && (
+              <CardWaterHabit
+                variant="Water"
+                userId={userId}
+              />
+            )}
           </View>
         </>
       );

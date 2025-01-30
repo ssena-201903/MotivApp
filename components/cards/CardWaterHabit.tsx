@@ -9,15 +9,21 @@ import {
 } from "react-native";
 import { Audio } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
-import FillGlassIcon from "@/components/icons/FillGlassIcon";
-import EmptyGlassIcon from "@/components/icons/EmptyGlassIcon";
+import GlassIcon from "@/components/icons/GlassIcon";
 import CardFeedback from "@/components/cards/CardFeedback";
 import { CustomText } from "@/CustomText";
 import LottieView from "lottie-react-native";
 import BottleIcon from "@/components/icons/BottleIcon";
 import CupIcon from "@/components/icons/CupIcon";
 import MugIcon from "@/components/icons/MugIcon";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/firebase.config";
 
 const { width } = Dimensions.get("window");
@@ -26,9 +32,10 @@ const cupSizes = [
   {
     size: 200,
     component: (
-      <EmptyGlassIcon
-        width={width > 760 ? 21 : 31}
-        height={width > 760 ? 20 : 30}
+      <GlassIcon
+        width={width > 760 ? 25 : 31}
+        height={width > 760 ? 25 : 30}
+        variant="empty"
       />
     ),
     name: "Glass",
@@ -37,8 +44,8 @@ const cupSizes = [
     size: 250,
     component: (
       <CupIcon
-        width={width > 760 ? 41 : 31}
-        height={width > 760 ? 40 : 30}
+        width={width > 760 ? 25 : 31}
+        height={width > 760 ? 25 : 30}
         variant="empty"
       />
     ),
@@ -48,8 +55,8 @@ const cupSizes = [
     size: 300,
     component: (
       <MugIcon
-        width={width > 760 ? 41 : 31}
-        height={width > 760 ? 40 : 30}
+        width={width > 760 ? 25 : 31}
+        height={width > 760 ? 25 : 30}
         variant="empty"
       />
     ),
@@ -63,7 +70,7 @@ const cupSizes = [
         height={width > 760 ? 50 : 40}
         variant="empty"
         litres={500}
-        position="vertical"
+        position="horizontal"
       />
     ),
     name: "Small Bottle",
@@ -76,7 +83,7 @@ const cupSizes = [
         height={width > 760 ? 50 : 40}
         variant="empty"
         litres={1000}
-        position="vertical"
+        position="horizontal"
       />
     ),
     name: "Large Bottle",
@@ -89,7 +96,7 @@ const cupSizes = [
         height={width > 760 ? 60 : 50}
         variant="empty"
         litres={1500}
-        position="vertical"
+        position="horizontal"
       />
     ),
     name: "Extra Large Bottle",
@@ -101,7 +108,7 @@ type Props = {
   userId: string;
 };
 
-export default function CardHabit({ variant, userId }: Props) {
+export default function CardWaterHabit({ variant, userId }: Props) {
   const [filledGlass, setFilledGlass] = useState<number>(0);
   const [totalWater, setTotalWater] = useState<number>(0);
   const [cupSize, setCupSize] = useState<number>(0);
@@ -113,6 +120,7 @@ export default function CardHabit({ variant, userId }: Props) {
   const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
   const [animationKey, setAnimationKey] = useState<number>(0);
 
+  // fetch water habit datas
   useEffect(() => {
     fetcWaterHabitDatas();
   }, [userId, variant, waterStreak, cupSize, cupType]);
@@ -130,7 +138,7 @@ export default function CardHabit({ variant, userId }: Props) {
       setTotalWater(habitDoc.cupsNeeded);
       setCupSize(habitDoc.cupSize);
       setCupType(habitDoc.cupType);
-      setIsWaterDone(habitDoc.isWaterDone);
+      setIsWaterDone(habitDoc.isDone);
       setWaterStreak(habitDoc.streakDays);
     }
   };
@@ -158,188 +166,141 @@ export default function CardHabit({ variant, userId }: Props) {
     };
   }, []);
 
-  const handleWaterPress = () => {
+  // handle water press
+  const handleWaterPress = async () => {
     if (variant === "Water" && filledGlass < totalWater) {
       const newFilledGlass = filledGlass + 1;
       setFilledGlass(newFilledGlass);
 
       playSound();
 
+      let isCompleted = false;
+      let newStreakDays = waterStreak;
+
       if (newFilledGlass === totalWater) {
-        // Alert.alert("Tebrikler, hedefi tamamladın!");
+        isCompleted = true;
+        newStreakDays += 1;
+        setWaterStreak(newStreakDays);
         setIsFeedbackVisible(true);
-        setIsWaterDone((prev) => !prev);
+        setIsWaterDone(true);
       }
 
-      setAnimationKey((prev) => prev + 1);
+      try {
+        // find the water habit document
+        const habitsRef = collection(db, `users/${userId}/habits`);
+        const q = query(habitsRef, where("variant", "==", "Water"));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const habitDoc = querySnapshot.docs[0]; // get the first document
+          const habitDocRef = doc(db, `users/${userId}/habits/${habitDoc.id}`);
+
+          // update datas in firestore
+          await updateDoc(habitDocRef, {
+            filledCup: newFilledGlass,
+            ...(isCompleted && { isDone: true, streakDays: newStreakDays }),
+          });
+
+          console.log("updated water habit data!");
+        }
+      } catch (error) {
+        console.error("error updating water habit data:", error);
+      }
     }
   };
 
+  // get cup component
   const getCupComponent = (size: number, isFilled: boolean) => {
     const cupItem = cupSizes.find((cup) => cup.size === size);
-    
-    if (!cupItem) return <EmptyGlassIcon width={31} height={30} />; // Default component
-  
+
+    if (!cupItem) return <GlassIcon width={31} height={30} variant="empty" />; // default component
+
     if (isFilled) {
       return React.cloneElement(cupItem.component, { variant: "full" });
     }
     return cupItem.component;
   };
 
-  const handleDonePress = () => {
-    if (isDone) {
-      Alert.alert("Habit", "Undo the action", [
-        {
-          text: "No",
-          style: "cancel",
-        },
-        {
-          text: "Yes",
-          onPress: () => {
-            setIsDone((prev) => !prev);
-          },
-        },
-      ]);
-    } else {
-      Alert.alert("Habit", "Mark as done?", [
-        {
-          text: "No",
-          style: "cancel",
-        },
-        {
-          text: "Yes",
-          onPress: () => {
-            setIsDone((prev) => !prev);
-            setIsFeedbackVisible(true);
-          },
-        },
-      ]);
-    }
-  };
+  // handle done press for sport and other habits
+  // const handleDonePress = () => {
+  //   if (isDone) {
+  //     Alert.alert("Habit", "Undo the action", [
+  //       {
+  //         text: "No",
+  //         style: "cancel",
+  //       },
+  //       {
+  //         text: "Yes",
+  //         onPress: () => {
+  //           setIsDone((prev) => !prev);
+  //         },
+  //       },
+  //     ]);
+  //   } else {
+  //     Alert.alert("Habit", "Mark as done?", [
+  //       {
+  //         text: "No",
+  //         style: "cancel",
+  //       },
+  //       {
+  //         text: "Yes",
+  //         onPress: () => {
+  //           setIsDone((prev) => !prev);
+  //           setIsFeedbackVisible(true);
+  //         },
+  //       },
+  //     ]);
+  //   }
+  // };
 
+  // get feedback props
   const getFeedbackProps = () => {
-    switch (variant) {
-      case "Book":
+    if (variant === "Water") {
+      if (waterStreak === 14) {
         return {
-          text: "Congragulations! You have complete the Book Goal...",
+          text: "Tebrikler 14 gün su içtiniz!",
         };
-      case "Water":
+      } else {
         return {
-          text: "Congragulations! You have complete the Water Goal...",
+          text: "Congratulations! You have completed the Water Goal...",
         };
-      case "Sport":
-        return {
-          text: "Congragulations! You have complete the Sport Goal",
-        };
-      default:
-        return { text: "", type: "celebration" };
+      }
     }
+
+    // default case
+    return { text: "", type: "celebration" };
   };
 
   const createHabitCard = () => {
-    const leftViewStyle = [
-      styles.leftView,
-      variant !== "Water" && { height: 30 },
-    ];
-
-    if (variant === "Sport") {
-      return (
-        <>
-          <View style={leftViewStyle}>
-            <Ionicons
-              name={isDone ? "barbell" : "barbell-outline"}
-              size={22}
-              color="#1E3A5F"
-            />
-            <CustomText style={styles.text}>Spor</CustomText>
-            {/* <CustomText style={styles.subText}>20 min</CustomText> */}
+    return (
+      <>
+        <View style={styles.leftView}>
+          <View style={styles.waterRow}>
+            {Array.from({ length: totalWater }).map((_, index) => (
+              <View key={index} style={{ marginRight: 8 }}>
+                {getCupComponent(cupSize, index < filledGlass)}
+              </View>
+            ))}
           </View>
-          <Pressable
-            style={{
-              height: 50,
-              width: 30,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onPress={handleDonePress}
-          >
-            <Ionicons
-              name={isDone ? "checkmark-circle" : "add"}
-              size={28}
-              color="#1E3A5F"
-            />
-          </Pressable>
-        </>
-      );
-    } else if (variant === "Book") {
-      return (
-        <>
-          <View style={leftViewStyle}>
-            <Ionicons
-              name={isDone ? "book" : "book-outline"}
-              size={22}
-              color="#1E3A5F"
-            />
-            <CustomText style={styles.text}>Book</CustomText>
-          </View>
-          <Pressable
-            style={{
-              height: 50,
-              width: 30,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onPress={handleDonePress}
-          >
-            <Ionicons
-              name={isDone ? "checkmark-circle" : "add"}
-              size={28}
-              color="#1E3A5F"
-            />
-          </Pressable>
-        </>
-      );
-    } else if (variant === "Water") {
-      return (
-        <>
-          <View style={leftViewStyle}>
-            <View style={styles.waterRow}>
-              {Array.from({ length: totalWater }).map((_, index) => (
-                <View key={index} style={{ marginRight: 8 }}>
-                  {getCupComponent(cupSize, index < filledGlass)}
-                </View>
-              ))}
-            </View>
-            <CustomText style={styles.subText}>{`${filledGlass}/${totalWater}`}</CustomText>
-          </View>
-          <View style={styles.streakContainer}>
-            <Ionicons name="leaf" size={18} color={"#1E3A5F"} />
-            <CustomText style={styles.streakText}>{waterStreak}</CustomText>
-          </View>
-        </>
-      );
-    }
+          <CustomText
+            style={styles.subText}
+          >{`${filledGlass}/${totalWater}`}</CustomText>
+        </View>
+        <View style={styles.streakContainer}>
+          <Ionicons name="leaf" size={18} color={"#1E3A5F"} />
+          <CustomText style={styles.streakText}>{waterStreak}</CustomText>
+        </View>
+      </>
+    );
   };
 
   return (
     <View>
-      {variant !== "Water" ? (
-        <Pressable
-          onPress={handleDonePress}
-          style={[
-            isDone ? styles.doneHabit : styles.container,
-            { width: width > 760 ? 270 : 220 },
-          ]}
-        >
-          {createHabitCard()}
-          <View style={styles.streakContainer}>
-            <Ionicons name={isDone ? "leaf" : "leaf-outline"} size={18} color={"#1E3A5F"} />
-            <CustomText>0</CustomText>
-          </View>
-        </Pressable>
-      ) : (
         <View
-          style={[isDone ? styles.doneHabit : styles.container, { width: 460 }]}
+          style={[
+            isWaterDone ? styles.doneHabit : styles.container,
+            { width: 460 },
+          ]}
         >
           {createHabitCard()}
           <Pressable
@@ -347,19 +308,18 @@ export default function CardHabit({ variant, userId }: Props) {
             style={{ height: 30, justifyContent: "center" }}
           >
             <Ionicons
-              name={isDone ? "checkmark-circle" : "add"}
+              name={isWaterDone ? "checkmark-circle" : "add"}
               size={28}
               color="#1E3A5F"
             />
           </Pressable>
         </View>
-      )}
-
       <CardFeedback
         isVisible={isFeedbackVisible}
         text={getFeedbackProps().text}
         type="celebration"
         onComplete={() => setIsFeedbackVisible(false)}
+        isStreak={variant === "Water"}
       />
     </View>
   );
@@ -410,7 +370,7 @@ const styles = StyleSheet.create({
   subText: {
     color: "#1E3A5F",
     marginLeft: 10,
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "200",
     overflow: "visible",
   },

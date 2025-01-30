@@ -7,6 +7,7 @@ type Props = {
   text: string;
   type: "celebration" | "success" | "warning";
   onComplete: () => void;
+  isStreak?: boolean;
 };
 
 const { width } = Dimensions.get("window");
@@ -16,12 +17,14 @@ export default function CardFeedback({
   text,
   type,
   onComplete,
+  isStreak,
 }: Props) {
   useEffect(() => {
     if (isVisible) {
+      const timeDuration = isStreak ? 5000 : 2000;
       const timer = setTimeout(() => {
         onComplete();
-      }, 2000);
+      }, timeDuration);
 
       return () => clearTimeout(timer);
     }

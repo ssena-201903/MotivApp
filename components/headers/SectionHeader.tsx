@@ -85,7 +85,9 @@ const styles = StyleSheet.create({
   progressBarBackground: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#E5EEFF",
+    backgroundColor: "#f8f8f8",
+    borderWidth: 1,
+    borderColor: "#E5E5E5",
   },
   progressBar: {
     height: "100%",
@@ -93,6 +95,6 @@ const styles = StyleSheet.create({
   },
   remainingBar: {
     height: "100%",
-    backgroundColor: "#264653",
+    // backgroundColor: "#264653",
   },
 });
