@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 import { CustomText } from "@/CustomText";
 import { router } from "expo-router";
+import CardOtherHabit from "./cards/CardOtherHabit";
 
 const { width } = Dimensions.get("window");
 
@@ -227,8 +228,13 @@ export default function HomeSection({ variant }: Props) {
           <View style={styles.gridView}>
             {isWaterCard && (
               <CardWaterHabit
-                variant="Water"
                 userId={userId}
+              />
+            )}
+            {isBookCard && (
+              <CardOtherHabit
+                userId={userId}
+                variant="Book"
               />
             )}
           </View>

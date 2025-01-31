@@ -342,7 +342,7 @@ export default function Profile() {
                   }}
                   variant="cancel"
                   width={100}
-                  height={50}
+                  height={45}
                 />
               </TouchableOpacity>
               <TouchableOpacity>
@@ -351,7 +351,8 @@ export default function Profile() {
                   onPress={handleSaveEdit}
                   variant="fill"
                   width={100}
-                  height={50}
+                  height={45}
+                  marginLeft={10}
                 />
               </TouchableOpacity>
             </View>
@@ -478,10 +479,12 @@ const styles = StyleSheet.create({
   deleteButton: {
     marginHorizontal: 20,
     alignItems: "center",
+    justifyContent: "center",
     position: "absolute",
+    width: width > 760 ? width - 1200 : width - 40,
     bottom: 32,
-    left: 0,
-    right: 0,
+    left: "auto",
+    right: "auto",
   },
   modalContainer: {
     flex: 1,

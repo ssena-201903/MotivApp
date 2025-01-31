@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Alert,
-  Pressable,
-} from "react-native";
+import { View, StyleSheet, Dimensions, Alert, Pressable } from "react-native";
 import { Audio } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
 import GlassIcon from "@/components/icons/GlassIcon";
@@ -66,8 +59,8 @@ const cupSizes = [
     size: 500,
     component: (
       <BottleIcon
-        width={width > 760 ? 51 : 41}
-        height={width > 760 ? 50 : 40}
+        width={width > 760 ? 51 : 51}
+        height={width > 760 ? 50 : 50}
         variant="empty"
         litres={500}
         position="horizontal"
@@ -104,11 +97,10 @@ const cupSizes = [
 ];
 
 type Props = {
-  variant: "Book" | "Sport" | "Water";
   userId: string;
 };
 
-export default function CardWaterHabit({ variant, userId }: Props) {
+export default function CardWaterHabit({ userId }: Props) {
   const [filledGlass, setFilledGlass] = useState<number>(0);
   const [totalWater, setTotalWater] = useState<number>(0);
   const [cupSize, setCupSize] = useState<number>(0);
@@ -116,15 +108,9 @@ export default function CardWaterHabit({ variant, userId }: Props) {
   const [isWaterDone, setIsWaterDone] = useState<boolean>(false);
   const [waterStreak, setWaterStreak] = useState<number>(0);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
-  const [isDone, setIsDone] = useState(false);
   const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
-  const [animationKey, setAnimationKey] = useState<number>(0);
 
   // fetch water habit datas
-  useEffect(() => {
-    fetcWaterHabitDatas();
-  }, [userId, variant, waterStreak, cupSize, cupType]);
-
   const fetcWaterHabitDatas = async () => {
     const habitsRef = collection(db, "users", userId, "habits");
     const q = query(habitsRef, where("variant", "==", "Water"));
@@ -142,6 +128,10 @@ export default function CardWaterHabit({ variant, userId }: Props) {
       setWaterStreak(habitDoc.streakDays);
     }
   };
+
+  useEffect(() => {
+    fetcWaterHabitDatas();
+  }, [userId, waterStreak, cupSize, cupType, filledGlass, totalWater, isWaterDone]);
 
   // load water sound
   const loadWaterSound = async () => {
@@ -168,7 +158,7 @@ export default function CardWaterHabit({ variant, userId }: Props) {
 
   // handle water press
   const handleWaterPress = async () => {
-    if (variant === "Water" && filledGlass < totalWater) {
+    if (filledGlass < totalWater) {
       const newFilledGlass = filledGlass + 1;
       setFilledGlass(newFilledGlass);
 
@@ -221,57 +211,20 @@ export default function CardWaterHabit({ variant, userId }: Props) {
     return cupItem.component;
   };
 
-  // handle done press for sport and other habits
-  // const handleDonePress = () => {
-  //   if (isDone) {
-  //     Alert.alert("Habit", "Undo the action", [
-  //       {
-  //         text: "No",
-  //         style: "cancel",
-  //       },
-  //       {
-  //         text: "Yes",
-  //         onPress: () => {
-  //           setIsDone((prev) => !prev);
-  //         },
-  //       },
-  //     ]);
-  //   } else {
-  //     Alert.alert("Habit", "Mark as done?", [
-  //       {
-  //         text: "No",
-  //         style: "cancel",
-  //       },
-  //       {
-  //         text: "Yes",
-  //         onPress: () => {
-  //           setIsDone((prev) => !prev);
-  //           setIsFeedbackVisible(true);
-  //         },
-  //       },
-  //     ]);
-  //   }
-  // };
-
   // get feedback props
   const getFeedbackProps = () => {
-    if (variant === "Water") {
-      if (waterStreak === 14) {
-        return {
-          text: "Tebrikler 14 gün su içtiniz!",
-        };
-      } else {
-        return {
-          text: "Congratulations! You have completed the Water Goal...",
-        };
-      }
+    if (waterStreak === 14) {
+      return {
+        text: "Tebrikler 14 gün su içtiniz!",
+      };
+    } else {
+      return {
+        text: "Congratulations! You have completed the Water Goal...",
+      };
     }
-
-    // default case
-    return { text: "", type: "celebration" };
   };
 
-  const createHabitCard = () => {
+  const createWaterCard = () => {
     return (
       <>
         <View style={styles.leftView}>
@@ -296,30 +249,29 @@ export default function CardWaterHabit({ variant, userId }: Props) {
 
   return (
     <View>
-        <View
-          style={[
-            isWaterDone ? styles.doneHabit : styles.container,
-            { width: 460 },
-          ]}
+      <View
+        style={[
+          isWaterDone ? styles.doneHabit : styles.container
+        ]}
+      >
+        {createWaterCard()}
+        <Pressable
+          onPress={handleWaterPress}
+          style={{ height: 30, justifyContent: "center" }}
         >
-          {createHabitCard()}
-          <Pressable
-            onPress={handleWaterPress}
-            style={{ height: 30, justifyContent: "center" }}
-          >
-            <Ionicons
-              name={isWaterDone ? "checkbox" : "add"}
-              size={28}
-              color="#1E3A5F"
-            />
-          </Pressable>
-        </View>
+          <Ionicons
+            name={isWaterDone ? "checkbox" : "add"}
+            size={28}
+            color="#1E3A5F"
+          />
+        </Pressable>
+      </View>
       <CardFeedback
         isVisible={isFeedbackVisible}
         text={getFeedbackProps().text}
         type="celebration"
         onComplete={() => setIsFeedbackVisible(false)}
-        isStreak={variant === "Water"}
+        isStreak={true}
       />
     </View>
   );
@@ -327,28 +279,12 @@ export default function CardWaterHabit({ variant, userId }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    // display: "flex",
-    // flexDirection: "row",
-    // alignItems: "center",
-    // justifyContent: "space-between",
-    // paddingHorizontal: 20,
-    // paddingVertical: 10,
-    // marginTop: 2,
-    // height: 50,
-    // backgroundColor: "#E5EEFF",
-    // borderRadius: 12,
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 4 },
-    // shadowOpacity: 0.07,
-    // shadowRadius: 4,
-    // overflow: "visible",
-
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    width: width > 760 ? 300 : 190,
-    height: width > 760 ? 60 : 50,
+    width: width > 760 ? 380 : width - 40,
+    height: width > 760 ? "auto" : "auto",
     backgroundColor: "#f8f8f8",
     borderRadius: 8,
     paddingHorizontal: 20,
@@ -379,36 +315,27 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: "auto",
-    height: 60,
+    height: "auto",
   },
   waterRow: {
-    width: 240,
-    flexDirection: "row",
+    width: width > 760 ? 200 : 180,
+    maxHeight: "auto",
+    alignItems: "flex-start",
+    justifyContent: "center",
     flexWrap: "wrap",
     display: "flex",
   },
   doneHabit: {
-    // display: "flex",
-    // flexDirection: "row",
-    // alignItems: "center",
-    // justifyContent: "space-between",
-    // paddingHorizontal: 20,
-    // paddingVertical: 10,
-    // marginTop: 2,
-    // height: 50,
-    // backgroundColor: "#E5EEFF",
-    // borderRadius: 12,
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    width: width > 760 ? 300 : 190,
+    width: width > 760 ? 400 : width - 40,
     height: width > 760 ? 60 : 50,
     backgroundColor: "#E5EEFF",
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    // justifyContent: "center",
     margin: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

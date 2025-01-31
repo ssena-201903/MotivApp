@@ -14,7 +14,7 @@ type Props = {
 export default function CardGoal({ type, inlineText, categoryId, onCategoryPress }: Props) {
   return (
     <Pressable style={styles.container} onPress={() => onCategoryPress(categoryId)}>
-      <Ionicons name={type} size={22} color="#1E3A5F" />
+      <Ionicons name={type} size={20} color="#1E3A5F" />
       <CustomText style={styles.inlineText}>{inlineText}</CustomText>
     </Pressable>
   );
@@ -34,14 +34,16 @@ const styles = StyleSheet.create({
     // borderRadius: 20,
     display: "flex",
     flexDirection: width > 760 ? "column" : "row",
-    width: width > 760 ? 290 : 110,
+    width: width > 760 ? 290 : 117,
     height: width > 760 ? 70 : 60,
     backgroundColor: "#f8f8f8",
-    borderRadius: 12,
+    borderRadius: 8,
+    // borderWidth: 0.5,
+    // borderColor: "rgba(30, 58, 95, 0.3)",
     alignItems: "center",
     justifyContent: "center",
-    margin: 5,
-    shadowColor: "#000",
+    margin: 2,
+    shadowColor: "#1E3A5F",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
