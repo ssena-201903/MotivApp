@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CustomText } from "@/CustomText";
+
+// import { Trees } from "lucide-react-native"; // Trees icon from lucide
+import { FontAwesome } from '@expo/vector-icons';
 
 import {
   doc,
@@ -12,6 +15,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "@/firebase.config";
+import CardFeedback from "./CardFeedback";
 
 const { width } = Dimensions.get("window");
 
@@ -24,8 +28,9 @@ interface Props {
 export default function CardOtherHabit({ variant, userId, customText }: Props) {
   const [isDone, setIsDone] = useState<boolean>(false);
   const [streak, setStreak] = useState<number>(0);
+  const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
 
-  // Kartın metin ve ikon bilgilerini belirle
+  // get cards text and icon props
   const getCardProps = () => {
     switch (variant) {
       case "Sport":
@@ -45,7 +50,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
         };
       case "Custom":
         return {
-          icon: isDone ? "add-circle" : "add-circle-outline", // Custom için uygun ikon
+          icon: isDone ? "create" : "create-outline", // Custom için uygun ikon
           text: customText || "Özel",
         };
       default:
@@ -56,13 +61,47 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
     }
   };
 
-  // Firestore'daki ilgili dokümanı bul ve güncelle
+  // fetch habit data from firestore
+  useEffect(() => {
+    const fetchHabitData = async () => {
+      try {
+        const habitsRef = collection(db, `users/${userId}/habits`);
+        let q;
+
+        // get query for custom variant by customText
+        if (variant === "Custom" && customText) {
+          q = query(habitsRef, where("customText", "==", customText));
+        } else {
+          q = query(habitsRef, where("variant", "==", variant));
+        }
+
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const habitDoc = querySnapshot.docs[0];
+          const habitData = habitDoc.data();
+
+          // update local state with fetched data
+          setIsDone(habitData.isDone || false);
+          setStreak(habitData.streakDays || 0);
+        } else {
+          console.error("No matching document found!");
+        }
+      } catch (error) {
+        console.error("Error fetching habit data: ", error);
+      }
+    };
+
+    fetchHabitData();
+  }, [userId, variant, customText, isDone, streak]);
+
+  // update habit data in firestore
   const updateHabit = async (isDone: boolean, newStreak: number) => {
     try {
       const habitsRef = collection(db, `users/${userId}/habits`);
       let q;
 
-      // Custom variantı için customText'e göre sorgu yap
+      // get query for custom variant by customText
       if (variant === "Custom" && customText) {
         q = query(habitsRef, where("customText", "==", customText));
       } else {
@@ -75,7 +114,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
         const habitDoc = querySnapshot.docs[0];
         const habitDocRef = doc(db, `users/${userId}/habits/${habitDoc.id}`);
 
-        // Dokümanı güncelle
+        // update doc in firestore
         await updateDoc(habitDocRef, {
           isDone,
           streakDays: newStreak,
@@ -84,6 +123,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
         // Yerel state'i güncelle
         setIsDone(isDone);
         setStreak(newStreak);
+        setIsFeedbackVisible(isDone); // show feedback if done
       } else {
         console.error("No matching document found!");
       }
@@ -92,10 +132,26 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
     }
   };
 
-  // Artıya basıldığında onay mesajı göster
+  const getFeedbackProps = () => {
+    if (streak === 14) {
+      return {
+        text: `Congratulations! You have completed the ${variant} for 14 days!`,
+      };
+    } else {
+      return {
+        text: "Congratulations! You have completed the Water Goal...",
+      };
+    }
+  };
+
+  // const handleShowFeedback = () => {
+  //   setIsFeedbackVisible(true); // show feedback
+  // };
+
+  // show alert for done press
   const handleDonePress = () => {
     if (isDone) {
-      // Eğer zaten yapıldı olarak işaretlendiyse, geri alma işlemi
+      // if already done, ask for undo
       Alert.alert(
         "Geri Alma",
         "Bunu yapılmamış olarak işaretlemek istiyor musunuz?",
@@ -111,7 +167,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
         ]
       );
     } else {
-      // Yapıldı olarak işaretleme işlemi
+      // if not done, ask for done
       Alert.alert("Onay", "Bunu yapıldı olarak işaretlemek istiyor musunuz?", [
         {
           text: "Vazgeç",
@@ -133,11 +189,15 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
       </View>
       <View style={styles.rigthView}>
         <View style={styles.streakContainer}>
-          <Ionicons
-            name={isDone ? "leaf" : "leaf-outline"}
-            size={18}
-            color="#1E3A5F"
-          />
+          {streak > 13 ? (
+            <FontAwesome name="tree" size={18} color="#1E3A5F" />
+          ) : (
+            <Ionicons
+              name="leaf"
+              size={18}
+              color="#1E3A5F"
+            />
+          )}
           <CustomText style={styles.streakText}>{streak}</CustomText>
         </View>
         <Pressable
@@ -156,6 +216,15 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
           />
         </Pressable>
       </View>
+
+      {/* Feedback modal */}
+      <CardFeedback
+        isVisible={isFeedbackVisible}
+        text={getFeedbackProps().text}
+        type="celebration"
+        onComplete={() => setIsFeedbackVisible(false)}
+        isStreak={true}
+      />
     </View>
   );
 }
@@ -166,14 +235,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    width: width > 760 ? 380 : width - 40,
-    height: width > 760 ? 50 : 50,
+    width: width > 760 ? 440 : width - 40,
+    height: width > 760 ? 55 : 50,
     backgroundColor: "#f8f8f8",
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    // justifyContent: "center",
-    margin: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  doneHabit: {
+    backgroundColor: "#E5EEFF",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: width > 760 ? 440 : width - 40,
+    height: width > 760 ? 55 : 50,
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -200,10 +284,10 @@ const styles = StyleSheet.create({
   },
   subText: {
     color: "#1E3A5F",
-    marginLeft: 10,
-    fontSize: 12,
     fontWeight: "200",
     overflow: "visible",
+    fontSize: width > 760 ? 14 : 12,
+    marginRight: 20,
   },
   streakContainer: {
     display: "flex",
@@ -215,27 +299,9 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   streakText: {
-    fontSize: 14,
     color: "#1E3A5F",
     fontWeight: "semibold",
-    marginLeft: 4,
-  },
-  doneHabit: {
-    backgroundColor: "#FFA38F",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: width > 760 ? 380 : width - 40,
-    height: width > 760 ? "auto" : 50,
-    borderRadius: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    margin: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    marginLeft: 2,
+    fontSize: width > 760 ? 16 : 14,
   },
 });

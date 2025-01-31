@@ -237,6 +237,19 @@ export default function HomeSection({ variant }: Props) {
                 variant="Book"
               />
             )}
+            {isSportCard && (
+              <CardOtherHabit
+                userId={userId}
+                variant="Sport"
+              />
+            )}
+            {isCustomCard && (
+              <CardOtherHabit
+                userId={userId}
+                variant="Custom"
+                customText="Diş Fırçalamak"
+              />
+            )}
           </View>
         </>
       );
@@ -289,6 +302,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "flex-start",
     width: width > 760 ? width - 600 : width - 40,
-    gap: width > 760 ? 10 : 4,
+    gap: width > 760 ? 10 : 8,
   },
 });
