@@ -237,12 +237,18 @@ export default function HomeSection({ variant }: Props) {
                 variant="Book"
               />
             )}
-            {isSportCard && (
+            {isVocabularyCard && (
+              <CardOtherHabit
+                userId={userId}
+                variant="Vocabulary"
+              />
+            )}
+            {/* {isSportCard && (
               <CardOtherHabit
                 userId={userId}
                 variant="Sport"
               />
-            )}
+            )} */}
             {isCustomCard && (
               <CardOtherHabit
                 userId={userId}

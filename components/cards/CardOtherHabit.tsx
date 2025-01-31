@@ -29,6 +29,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
   const [isDone, setIsDone] = useState<boolean>(false);
   const [streak, setStreak] = useState<number>(0);
   const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
+  const [subText, setSubText] = useState<string>("");
 
   // get cards text and icon props
   const getCardProps = () => {
@@ -43,11 +44,11 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
           icon: isDone ? "book" : "book-outline",
           text: "Book",
         };
-      case "Vocabulary":
-        return {
-          icon: isDone ? "book" : "book-outline", // Vocabulary için uygun ikon
-          text: "Vocabulary",
-        };
+      // case "Vocabulary":
+      //   return {
+      //     icon: isDone ? "book" : "book-outline", // Vocabulary için uygun ikon
+      //     text: "Vocabulary",
+      //   };
       case "Custom":
         return {
           icon: isDone ? "create" : "create-outline", // Custom için uygun ikon
@@ -84,6 +85,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
           // update local state with fetched data
           setIsDone(habitData.isDone || false);
           setStreak(habitData.streakDays || 0);
+          setSubText(habitData.duration || "");
         } else {
           console.error("No matching document found!");
         }
@@ -93,10 +95,10 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
     };
 
     fetchHabitData();
-  }, [userId, variant, customText, isDone, streak]);
+  }, [userId, variant, customText, isDone, streak, subText]);
 
   // update habit data in firestore
-  const updateHabit = async (isDone: boolean, newStreak: number) => {
+  const updateHabit = async (isDone: boolean, newStreak: number, subText?: string) => {
     try {
       const habitsRef = collection(db, `users/${userId}/habits`);
       let q;
@@ -118,12 +120,14 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
         await updateDoc(habitDocRef, {
           isDone,
           streakDays: newStreak,
+          duration: subText,
         });
 
         // Yerel state'i güncelle
         setIsDone(isDone);
         setStreak(newStreak);
         setIsFeedbackVisible(isDone); // show feedback if done
+        setSubText(subText || "");
       } else {
         console.error("No matching document found!");
       }
@@ -132,6 +136,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
     }
   };
 
+  // get sub text for variant
   const getFeedbackProps = () => {
     if (streak === 14) {
       return {
@@ -184,10 +189,16 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
   return (
     <View style={isDone ? styles.doneHabit : styles.container}>
       <View style={styles.leftView}>
+        {variant === "Vocabulary" ? (
+          <FontAwesome name="card-heart" size={22} color="#1E3A5F" />
+        ) : null}
         <Ionicons name={getCardProps().icon} size={22} color="#1E3A5F" />
         <CustomText style={styles.text}>{getCardProps().text}</CustomText>
       </View>
       <View style={styles.rigthView}>
+        <CustomText style={styles.subText}>
+          {variant}
+          </CustomText>
         <View style={styles.streakContainer}>
           {streak > 13 ? (
             <FontAwesome name="tree" size={18} color="#1E3A5F" />

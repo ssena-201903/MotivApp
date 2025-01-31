@@ -65,7 +65,7 @@ const cupSizes = [
         height={width > 760 ? 40 : 45}
         variant="empty"
         litres={500}
-        position="horizontal"
+        position="vertical"
       />
     ),
     name: "Small Bottle",
@@ -78,7 +78,7 @@ const cupSizes = [
         height={width > 760 ? 40 : 45}
         variant="empty"
         litres={1000}
-        position="horizontal"
+        position="vertical"
       />
     ),
     name: "Large Bottle",
