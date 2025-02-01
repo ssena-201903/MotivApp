@@ -134,13 +134,7 @@ export default function CardWaterHabit({ userId }: Props) {
   useEffect(() => {
     fetchWaterHabitData();
   }, [
-    userId,
-    waterStreak,
-    cupSize,
-    cupType,
-    filledGlass,
-    totalWater,
-    isWaterDone,
+    userId
   ]);
 
   // Load water sound
@@ -248,26 +242,31 @@ export default function CardWaterHabit({ userId }: Props) {
 
         {/* Right side: Subtext, streak, and add icon */}
         <View style={styles.rightContainer}>
-          <View style={styles.textContainer}>
-            <CustomText
-              style={styles.subText}
-            >{`${filledGlass}/${totalWater}`}</CustomText>
-            <View style={styles.streakContainer}>
-              {waterStreak > 13 ? (
-                <FontAwesome name="tree" size={18} color="#1E3A5F" />
-              ) : (
-                <Ionicons name="leaf" size={18} color="#1E3A5F" />
-              )}
-              <CustomText style={styles.streakText}>{waterStreak}</CustomText>
+          <View style={styles.top}>
+            <View style={styles.textContainer}>
+              <CustomText
+                style={styles.subTextDone}
+              >{`${filledGlass}/${totalWater}`}</CustomText>
+              <View style={styles.streakContainer}>
+                {waterStreak > 13 ? (
+                  <FontAwesome name="tree" size={18} color="#1E3A5F" />
+                ) : (
+                  <Ionicons name="leaf" size={18} color="#1E3A5F" />
+                )}
+                <CustomText style={styles.streakText}>{waterStreak}</CustomText>
+              </View>
             </View>
+            <Pressable onPress={handleWaterPress} style={styles.addButton}>
+              <Ionicons
+                name={isWaterDone ? "checkbox" : "add"}
+                size={isWaterDone ? 22 : 28}
+                color="#1E3A5F"
+              />
+            </Pressable>
           </View>
-          <Pressable onPress={handleWaterPress} style={styles.addButton}>
-            <Ionicons
-              name={isWaterDone ? "checkbox" : "add"}
-              size={isWaterDone ? 22 : 28}
-              color="#1E3A5F"
-            />
-          </Pressable>
+          <View style={styles.bottom}>
+            <CustomText style={styles.subTextType}>{cupType} | {cupSize} ml</CustomText>
+          </View>
         </View>
       </View>
 
@@ -300,6 +299,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
+    flex: 1,
   },
   doneHabit: {
     backgroundColor: "#E5EEFF",
@@ -317,32 +317,54 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
+    flex: 1,
   },
   cupGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    width: "60%",
+    width: "55%",
   },
   cupContainer: {
     marginBottom: 8,
     marginRight: 4,
   },
   rightContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "45%",
+    height: "100%",
+  },
+  top: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    width: "40%",
+    width: "100%",
+  },
+  bottom: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    width: "100%",
   },
   textContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginRight: 20,
   },
-  subText: {
+  subTextDone: {
     color: "#1E3A5F",
+    opacity: 0.8,
     fontSize: width > 760 ? 14 : 12,
     fontWeight: "200",
     marginRight: 20,
+  },
+  subTextType: {
+    color: "#1E3A5F",
+    opacity: 0.6,
+    fontSize: width > 760 ? 12 : 10,
+    fontWeight: "400",
   },
   streakContainer: {
     flexDirection: "row",

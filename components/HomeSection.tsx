@@ -231,12 +231,12 @@ export default function HomeSection({ variant }: Props) {
                 userId={userId}
               />
             )}
-            {isBookCard && (
+            {/* {isBookCard && (
               <CardOtherHabit
                 userId={userId}
                 variant="Book"
               />
-            )}
+            )} */}
             {isVocabularyCard && (
               <CardOtherHabit
                 userId={userId}

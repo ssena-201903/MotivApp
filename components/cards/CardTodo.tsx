@@ -22,45 +22,78 @@ export default function CardTodo({
   onDelete,
 }: Props) {
   return (
-    <View style={[styles.container, isCompleted && styles.completedContainer]}>
-      <Pressable style={styles.checkbox} onPress={() => onToggle(id)}>
-        <Ionicons
-          name={isCompleted ? "checkmark-circle" : "ellipse-outline"}
-          size={24}
-          color="#1E3A5F"
-        />
-      </Pressable>
-
+    <View style={[styles.container, isCompleted && styles.doneTodo]}>
       <Text style={[styles.text, isCompleted && styles.strikethrough]}>
         {text}
       </Text>
-      {!isCompleted && (
-        <Pressable onPress={() => onDelete(id)} style={styles.deleteButton}>
-          <Ionicons name="trash-outline" size={20} color="#1E3A5F" />
-        </Pressable>
-      )}
+      <View style={styles.rigthContainer}>
+        {!isCompleted && (
+          <Pressable onPress={() => onDelete(id)} style={styles.deleteButton}>
+            <Ionicons name="trash-outline" size={20} color="#1E3A5F" />
+          </Pressable>
+        )}
+        <Pressable onPress={() => onToggle(id)}>
+        <Ionicons
+          name={isCompleted ? "checkbox" : "add"}
+          size={isCompleted ? 22 : 28}
+          color="#1E3A5F"
+        />
+      </Pressable>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#E5EEFF",
-    paddingHorizontal: 16,
+    justifyContent: "space-between",
+    width: width > 760 ? 890 : width - 40,
+    height: width > 760 ? 55 : 50,
+    backgroundColor: "#f8f8f8",
+    borderRadius: 8,
+    paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 12,
-    marginBottom: 8,
-    width: width > 760 ? width - 600 : width - 40,
-    height: 50,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    marginBottom: 10,
+  },
+  doneTodo: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: width > 760 ? 890 : width - 40,
+    height: width > 760 ? 55 : 50,
+    backgroundColor: "#E5EEFF",
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   completedContainer: {
     backgroundColor: "#B5C4E4",
   },
-  checkbox: {
-    marginRight: 12,
+  rigthContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    height: 30,
+    width: 85,
   },
+  // checkbox: {
+  //   marginRight: 12,
+  // },
   text: {
     flex: 1,
     fontSize: 16,
@@ -71,6 +104,6 @@ const styles = StyleSheet.create({
     color: "#1E3A5F",
   },
   deleteButton: {
-    marginLeft: 12,
+    marginRight: 20,
   },
 });

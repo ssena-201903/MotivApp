@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CustomText } from "@/CustomText";
-
-// import { Trees } from "lucide-react-native"; // Trees icon from lucide
-import { FontAwesome } from '@expo/vector-icons';
-
+import { FontAwesome } from "@expo/vector-icons";
 import {
   doc,
   updateDoc,
@@ -30,6 +27,8 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
   const [streak, setStreak] = useState<number>(0);
   const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
   const [subText, setSubText] = useState<string>("");
+  const [goalNumber, setGoalNumber] = useState<number>(0);
+  const [doneNumber, setDoneNumber] = useState<number>(0);
 
   // get cards text and icon props
   const getCardProps = () => {
@@ -44,14 +43,14 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
           icon: isDone ? "book" : "book-outline",
           text: "Book",
         };
-      // case "Vocabulary":
-      //   return {
-      //     icon: isDone ? "book" : "book-outline", // Vocabulary için uygun ikon
-      //     text: "Vocabulary",
-      //   };
+      case "Vocabulary":
+        return {
+          icon: isDone ? "copy" : "copy-outline", // Vocabulary için FontAwesome ikonu
+          text: "Vocabulary",
+        };
       case "Custom":
         return {
-          icon: isDone ? "create" : "create-outline", // Custom için uygun ikon
+          icon: isDone ? "extension-puzzle" : "extension-puzzle-outline", // Custom için uygun ikon
           text: customText || "Özel",
         };
       default:
@@ -62,7 +61,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
     }
   };
 
-  // fetch habit data from firestore
+  // fetch habit data
   useEffect(() => {
     const fetchHabitData = async () => {
       try {
@@ -85,7 +84,24 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
           // update local state with fetched data
           setIsDone(habitData.isDone || false);
           setStreak(habitData.streakDays || 0);
-          setSubText(habitData.duration || "");
+          setDoneNumber(habitData.doneNumber || 0);
+          setGoalNumber(habitData.goalNumber || 0);
+
+          // Set subText based on variant
+          switch (variant) {
+            case "Sport":
+            case "Book":
+              setSubText(`${habitData.duration} min`);
+              break;
+            case "Vocabulary":
+            case "Custom":
+              setSubText(
+                `${habitData.doneNumber}/${habitData.goalNumber} days`
+              );
+              break;
+            default:
+              setSubText("");
+          }
         } else {
           console.error("No matching document found!");
         }
@@ -95,10 +111,16 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
     };
 
     fetchHabitData();
-  }, [userId, variant, customText, isDone, streak, subText]);
+  }, [
+    userId
+  ]);
 
   // update habit data in firestore
-  const updateHabit = async (isDone: boolean, newStreak: number, subText?: string) => {
+  const updateHabit = async (
+    isDone: boolean,
+    newStreak: number,
+    newDoneNumber?: number
+  ) => {
     try {
       const habitsRef = collection(db, `users/${userId}/habits`);
       let q;
@@ -120,14 +142,15 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
         await updateDoc(habitDocRef, {
           isDone,
           streakDays: newStreak,
-          duration: subText,
+          doneNumber: newDoneNumber,
         });
 
         // Yerel state'i güncelle
         setIsDone(isDone);
         setStreak(newStreak);
         setIsFeedbackVisible(isDone); // show feedback if done
-        setSubText(subText || "");
+        // setSubText(subText || "");
+        setDoneNumber(newDoneNumber || 0);
       } else {
         console.error("No matching document found!");
       }
@@ -149,10 +172,6 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
     }
   };
 
-  // const handleShowFeedback = () => {
-  //   setIsFeedbackVisible(true); // show feedback
-  // };
-
   // show alert for done press
   const handleDonePress = () => {
     if (isDone) {
@@ -167,7 +186,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
           },
           {
             text: "Evet",
-            onPress: () => updateHabit(false, streak - 1),
+            onPress: () => updateHabit(false, streak - 1, doneNumber - 1),
           },
         ]
       );
@@ -180,7 +199,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
         },
         {
           text: "Evet",
-          onPress: () => updateHabit(true, streak + 1),
+          onPress: () => updateHabit(true, streak + 1, doneNumber + 1),
         },
       ]);
     }
@@ -189,25 +208,17 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
   return (
     <View style={isDone ? styles.doneHabit : styles.container}>
       <View style={styles.leftView}>
-        {variant === "Vocabulary" ? (
-          <FontAwesome name="card-heart" size={22} color="#1E3A5F" />
-        ) : null}
         <Ionicons name={getCardProps().icon} size={22} color="#1E3A5F" />
+
         <CustomText style={styles.text}>{getCardProps().text}</CustomText>
       </View>
       <View style={styles.rigthView}>
-        <CustomText style={styles.subText}>
-          {variant}
-          </CustomText>
+        <CustomText style={styles.subText}>{subText}</CustomText>
         <View style={styles.streakContainer}>
           {streak > 13 ? (
             <FontAwesome name="tree" size={18} color="#1E3A5F" />
           ) : (
-            <Ionicons
-              name="leaf"
-              size={18}
-              color="#1E3A5F"
-            />
+            <Ionicons name="leaf" size={18} color="#1E3A5F" />
           )}
           <CustomText style={styles.streakText}>{streak}</CustomText>
         </View>
@@ -276,6 +287,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   leftView: {
+    width: width > 760 ? 200 : 180,
+    height: "auto",
     flexDirection: "row",
     alignItems: "center",
   },
@@ -285,7 +298,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     height: 30,
-    width: 70,
+    width: 145,
   },
   text: {
     color: "#1E3A5F",
@@ -295,6 +308,7 @@ const styles = StyleSheet.create({
   },
   subText: {
     color: "#1E3A5F",
+    opacity: 0.6,
     fontWeight: "200",
     overflow: "visible",
     fontSize: width > 760 ? 14 : 12,
