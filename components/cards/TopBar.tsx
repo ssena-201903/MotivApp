@@ -8,7 +8,7 @@ import {
 import { CustomText } from "@/CustomText";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProfileModal from "../modals/ProfileModal";
 import { auth } from "@/firebase.config";
 
@@ -21,6 +21,9 @@ type Props = {
 
 export default function TopBar({ onDiamondPress, onDatePress }: Props) {
   const userId = auth.currentUser?.uid;
+  const [dateMonth, setDateMonth] = useState<string>("");
+  const [dateDay, setDateDay] = useState<string>("");
+  const [dateDayName, setDateDayName] = useState<string>("");
 
   const [isProfileModalVisible, setIsProfileModalVisible] =
     useState<boolean>(false);
@@ -39,18 +42,41 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
     setIsProfileModalVisible(false);
   };
 
+  // Get current date on component mount
+  const getCurrentDate = () => {
+    const date = new Date();
+    const months = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    const month = months[date.getMonth()]; 
+    const day = date.getDate().toString(); 
+    const dayName = days[date.getDay()]; 
+
+    setDateMonth(month);
+    setDateDay(day);
+    setDateDayName(dayName);
+  };
+
+  useEffect(() => {
+    getCurrentDate();
+  }, []);
+    
+
   return (
     <View style={styles.container}>
       <Pressable style={styles.date} onPress={onDatePress}>
-        <CustomText style={styles.dateMonth}>Dec 26</CustomText>
-        <CustomText style={styles.dateDay}>Wed</CustomText>
+        <CustomText style={styles.dateMonth}>{dateMonth} {dateDay}</CustomText>
+        <CustomText style={styles.dateDay}>{dateDayName}</CustomText>
       </Pressable>
       <View style={styles.topMenu}>
         <TouchableOpacity style={styles.topMenuItem}>
           <Ionicons
             name="calendar"
             size={24}
-            color="#FCFCFC"
+            color="#f8f8f8"
             onPress={handleCalendarPress}
           />
         </TouchableOpacity>
@@ -58,7 +84,7 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
           <Ionicons
             name="sparkles"
             size={24}
-            color="#FCFCFC"
+            color="#f8f8f8"
             onPress={onDiamondPress}
           />
         </TouchableOpacity>
@@ -66,7 +92,7 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
           <Ionicons
             name="menu"
             size={24}
-            color="#FCFCFC"
+            color="#f8f8f8"
             onPress={handleProfileModals}
           />
         </TouchableOpacity>
@@ -98,11 +124,11 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    // marginLeft: 4,
+    justifyContent: "space-around",
     paddingHorizontal: 10,
     paddingVertical: 2,
     borderRadius: 6,
-    backgroundColor: "#FCFCFC",
+    backgroundColor: "#f8f8f8",
   },
   dateMonth: {
     color: "#1E3A5F",
