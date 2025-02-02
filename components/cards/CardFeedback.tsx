@@ -49,12 +49,14 @@ export default function CardFeedback({
     <Modal visible={isVisible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.messageCard}>
-          <Lottie
-            source={getAnimationSource()}
-            autoPlay
-            loop={false}
-            style={styles.animation}
-          />
+          <View style={styles.animationContainer}>
+            <Lottie
+              source={getAnimationSource()}
+              autoPlay
+              loop={false}
+              style={styles.animation}
+            />
+          </View>
           <Text style={styles.messageText}>{text}</Text>
         </View>
       </View>
@@ -69,17 +71,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  animation: {
+  animationContainer: {
     width: 200,
     height: 200,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  animation: {
+    width: "100%",
+    height: "100%",
   },
   messageCard: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    width: width - 80,
-    padding: 40,
+    width: width > 760 ? 400 : width - 40,
+    paddingHorizontal: 40,
+    paddingVertical: 60,
     height: 400,
     backgroundColor: "#EFF4FF",
     borderRadius: 12,
@@ -89,7 +98,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-
   messageText: {
     marginTop: 20,
     fontSize: 20,

@@ -61,55 +61,55 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
     }
   };
 
+  const fetchHabitData = async () => {
+    try {
+      const habitsRef = collection(db, `users/${userId}/habits`);
+      let q;
+
+      // get query for custom variant by customText
+      if (variant === "Custom" && customText) {
+        q = query(habitsRef, where("customText", "==", customText));
+      } else {
+        q = query(habitsRef, where("variant", "==", variant));
+      }
+
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const habitDoc = querySnapshot.docs[0];
+        const habitData = habitDoc.data();
+
+        // update local state with fetched data
+        setIsDone(habitData.isDone || false);
+        setStreak(habitData.streakDays || 0);
+        setDoneNumber(habitData.doneNumber || 0);
+        setGoalNumber(habitData.goalNumber || 0);
+
+        // Set subText based on variant
+        switch (variant) {
+          case "Sport":
+          case "Book":
+            setSubText(`${habitData.duration} min`);
+            break;
+          case "Vocabulary":
+          case "Custom":
+            setSubText(
+              `${habitData.doneNumber}/${habitData.goalNumber} days`
+            );
+            break;
+          default:
+            setSubText("");
+        }
+      } else {
+        console.error("No matching document found!");
+      }
+    } catch (error) {
+      console.error("Error fetching habit data: ", error);
+    }
+  };
+
   // fetch habit data
   useEffect(() => {
-    const fetchHabitData = async () => {
-      try {
-        const habitsRef = collection(db, `users/${userId}/habits`);
-        let q;
-
-        // get query for custom variant by customText
-        if (variant === "Custom" && customText) {
-          q = query(habitsRef, where("customText", "==", customText));
-        } else {
-          q = query(habitsRef, where("variant", "==", variant));
-        }
-
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-          const habitDoc = querySnapshot.docs[0];
-          const habitData = habitDoc.data();
-
-          // update local state with fetched data
-          setIsDone(habitData.isDone || false);
-          setStreak(habitData.streakDays || 0);
-          setDoneNumber(habitData.doneNumber || 0);
-          setGoalNumber(habitData.goalNumber || 0);
-
-          // Set subText based on variant
-          switch (variant) {
-            case "Sport":
-            case "Book":
-              setSubText(`${habitData.duration} min`);
-              break;
-            case "Vocabulary":
-            case "Custom":
-              setSubText(
-                `${habitData.doneNumber}/${habitData.goalNumber} days`
-              );
-              break;
-            default:
-              setSubText("");
-          }
-        } else {
-          console.error("No matching document found!");
-        }
-      } catch (error) {
-        console.error("Error fetching habit data: ", error);
-      }
-    };
-
     fetchHabitData();
   }, [
     userId
@@ -145,12 +145,14 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
           doneNumber: newDoneNumber,
         });
 
-        // Yerel state'i güncelle
+        // update local state
         setIsDone(isDone);
         setStreak(newStreak);
         setIsFeedbackVisible(isDone); // show feedback if done
         // setSubText(subText || "");
         setDoneNumber(newDoneNumber || 0);
+
+        fetchHabitData();
       } else {
         console.error("No matching document found!");
       }
@@ -161,13 +163,19 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
 
   // get sub text for variant
   const getFeedbackProps = () => {
-    if (streak === 14) {
-      return {
-        text: `Congratulations! You have completed the ${variant} for 14 days!`,
-      };
+    if (variant !== "Custom") {
+      if (streak === 14) {
+        return {
+          text: `Congratulations! You have completed the ${variant} for 14 days!`,
+        };
+      } else {
+        return {
+          text: `Congratulations! You have completed the daily ${variant} goal...`,
+        };
+      }
     } else {
       return {
-        text: "Congratulations! You have completed the Water Goal...",
+        text: `Congratulations! You have completed the daily ${customText} goal...`,
       };
     }
   };
@@ -308,9 +316,9 @@ const styles = StyleSheet.create({
   },
   subText: {
     color: "#1E3A5F",
-    opacity: 0.6,
+    opacity: 0.8,
     fontWeight: "200",
-    overflow: "visible",
+    // overflow: "visible",
     fontSize: width > 760 ? 14 : 12,
     marginRight: 20,
   },

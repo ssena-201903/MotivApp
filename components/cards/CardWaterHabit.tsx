@@ -223,7 +223,7 @@ export default function CardWaterHabit({ userId }: Props) {
       };
     } else {
       return {
-        text: "Congratulations! You have completed the Water Goal...",
+        text: "Congratulations! Completed the daily water goal...",
       };
     }
   };
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "space-between",
     width: width > 760 ? 890 : width - 40,
-    minHeight: 50,
+    minHeight: 70,
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 20,
