@@ -10,6 +10,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 import AddWaterHabitModal from "@/components/modals/AddWaterHabitModal";
+import AddOtherHabitModal from "@/components/modals/AddOtherHabitModal";
 import { CustomText } from "@/CustomText";
 import { auth, db } from "@/firebase.config";
 import { doc, getDoc } from "firebase/firestore";
@@ -18,11 +19,34 @@ import { router } from "expo-router";
 const { width } = Dimensions.get("window");
 
 export default function CreateHabitCard() {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isWaterModalOpen, setIsWaterModalOpen] = useState<boolean>(false);
+  const [isOtherModalOpen, setIsOtherModalOpen] = useState<boolean>(false);
+  const [variant, setVariant] = useState<string>("");
+  
   const [userName, setUserName] = useState<string>("");
-  const handleHabitModalPress = () => {
+  const handleWaterHabitModalPress = () => {
     console.log("Habit Modal Pressed");
-    setIsModalOpen(true);
+    setIsWaterModalOpen(true);
+  };
+
+  const handleBookModalPress = () => {
+    setVariant("Book");
+    setIsOtherModalOpen(true);
+  };
+
+  const handleSportModalPress = () => {
+    setVariant("Sport");
+    setIsOtherModalOpen(true);
+  };
+
+  const handleVocabularyModalPress = () => {
+    setVariant("Vocabulary");
+    setIsOtherModalOpen(true);
+  };
+
+  const handleCustomModalPress = () => {
+    setVariant("Custom");
+    setIsOtherModalOpen(true);
   };
 
   const getUserInfos = async () => {
@@ -62,35 +86,35 @@ export default function CreateHabitCard() {
 
         <View style={styles.habits}>
           <View style={styles.habitRow}>
-            <TouchableOpacity style={styles.plusButton} onPress={handleHabitModalPress}>
+            <TouchableOpacity style={styles.plusButton} onPress={handleWaterHabitModalPress}>
               <Ionicons name="add" size={24} color="#fff" />
             </TouchableOpacity>
             <CustomText style={styles.habitText}>Water</CustomText>
           </View>
 
           <View style={styles.habitRow}>
-            <TouchableOpacity style={styles.plusButton}>
+            <TouchableOpacity style={styles.plusButton} onPress={handleBookModalPress}>
               <Ionicons name="add" size={24} color="#fff" />
             </TouchableOpacity>
             <CustomText style={styles.habitText}>Book</CustomText>
           </View>
 
           <View style={styles.habitRow}>
-            <TouchableOpacity style={styles.plusButton}>
+            <TouchableOpacity style={styles.plusButton} onPress={handleSportModalPress}>
               <Ionicons name="add" size={24} color="#fff" />
             </TouchableOpacity>
             <CustomText style={styles.habitText}>Sport</CustomText>
           </View>
 
           <View style={styles.habitRow}>
-            <TouchableOpacity style={styles.plusButton}>
+            <TouchableOpacity style={styles.plusButton} onPress={handleVocabularyModalPress}>
               <Ionicons name="add" size={24} color="#fff" />
             </TouchableOpacity>
             <CustomText style={styles.habitText}>Vocabulary</CustomText>
           </View>
 
           <View style={styles.habitRow}>
-            <TouchableOpacity style={styles.plusButton}>
+            <TouchableOpacity style={styles.plusButton} onPress={handleCustomModalPress}>
               <Ionicons name="add" size={24} color="#fff" />
             </TouchableOpacity>
             <CustomText style={styles.habitText}>Custom Habit</CustomText>
@@ -114,12 +138,19 @@ export default function CreateHabitCard() {
         />
       </View>
 
-      {isModalOpen && (
+      {isWaterModalOpen && (
         <AddWaterHabitModal
-          visible={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          visible={isWaterModalOpen}
+          onClose={() => setIsWaterModalOpen(false)}
         />
       )}
+      {isOtherModalOpen && (
+        <AddOtherHabitModal
+          visible={isOtherModalOpen}
+          onClose={() => setIsOtherModalOpen(false)}
+          variant={variant}
+        />
+        )}
     </ScrollView>
   );
 }

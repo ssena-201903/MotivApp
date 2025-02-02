@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     fontWeight: 400,
   },
   disabled: {
-    backgroundColor: "#FF8462", // can change later
+    backgroundColor: "#1E3A5F", // can change later
     opacity: 0.7,
   },
   disabledText: {
