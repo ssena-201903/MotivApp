@@ -74,7 +74,7 @@ const cupSizes = [
     size: 1000,
     component: (
       <BottleIcon
-        width={width > 760 ? 40 : 45} // Boyut küçültüldü
+        width={width > 760 ? 40 : 45}
         height={width > 760 ? 40 : 45}
         variant="empty"
         litres={1000}
@@ -133,9 +133,7 @@ export default function CardWaterHabit({ userId }: Props) {
 
   useEffect(() => {
     fetchWaterHabitData();
-  }, [
-    userId
-  ]);
+  }, [userId]);
 
   // Load water sound
   const loadWaterSound = async () => {
@@ -230,7 +228,9 @@ export default function CardWaterHabit({ userId }: Props) {
 
   return (
     <View>
-      <View style={[isWaterDone ? styles.doneHabit : styles.container]}>
+      <View
+        style={[isWaterDone ? styles.doneHabit : styles.container]}
+      >
         {/* Left side: Grid of cups */}
         <View style={styles.cupGrid}>
           {Array.from({ length: totalWater }).map((_, index) => (
@@ -265,7 +265,9 @@ export default function CardWaterHabit({ userId }: Props) {
             </Pressable>
           </View>
           <View style={styles.bottom}>
-            <CustomText style={styles.subTextType}>{cupType} | {cupSize} ml</CustomText>
+            <CustomText style={styles.subTextType}>
+              {cupType} | {cupSize} ml
+            </CustomText>
           </View>
         </View>
       </View>
@@ -351,7 +353,6 @@ const styles = StyleSheet.create({
   textContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 20,
   },
   subTextDone: {
     color: "#1E3A5F",
@@ -369,6 +370,7 @@ const styles = StyleSheet.create({
   streakContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginRight: 20,
   },
   streakText: {
     fontSize: width > 760 ? 16 : 14,

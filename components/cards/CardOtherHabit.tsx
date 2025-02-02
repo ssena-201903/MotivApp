@@ -22,7 +22,11 @@ interface Props {
   customText?: string;
 }
 
-export default function CardOtherHabit({ variant, userId, customText }: Props) {
+export default function CardOtherHabit({
+  variant,
+  userId,
+  customText,
+}: Props) {
   const [isDone, setIsDone] = useState<boolean>(false);
   const [streak, setStreak] = useState<number>(0);
   const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
@@ -228,9 +232,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
       <View style={styles.rightContainer}>
         <View style={styles.top}>
           <View style={styles.textContainer}>
-            <CustomText
-              style={styles.subTextDone}
-            >{subTextDone}</CustomText>
+            <CustomText style={styles.subTextDone}>{subTextDone}</CustomText>
             <View style={styles.streakContainer}>
               {streak > 13 ? (
                 <FontAwesome name="tree" size={18} color="#1E3A5F" />
