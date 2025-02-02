@@ -28,6 +28,7 @@ import { db, auth } from "@/firebase.config";
 import { doc, setDoc } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore";
 import { Timestamp } from "firebase/firestore";
+import { create } from "react-test-renderer";
 
 const { width } = Dimensions.get("window");
 
@@ -354,6 +355,8 @@ export default function AddWaterHabitModal({
         cupSize: selectedCupSize,
         cupType: cupType,
         isDone: false,
+        createdAt: new Date(),
+        finishedAt: null,
       };
 
       await setDoc(userDocRef, waterData, { merge: true });
