@@ -26,9 +26,12 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
   const [isDone, setIsDone] = useState<boolean>(false);
   const [streak, setStreak] = useState<number>(0);
   const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
-  const [subText, setSubText] = useState<string>("");
+  const [subTextDone, setSubTextDone] = useState<string>("");
+  const [subTextType, setSubTextType] = useState<string>("");
   const [goalNumber, setGoalNumber] = useState<number>(0);
   const [doneNumber, setDoneNumber] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
+  const [dailyAmount, setDailyAmount] = useState<number>(0);
 
   // get cards text and icon props
   const getCardProps = () => {
@@ -45,13 +48,13 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
         };
       case "Vocabulary":
         return {
-          icon: isDone ? "copy" : "copy-outline", // Vocabulary için FontAwesome ikonu
+          icon: isDone ? "copy" : "copy-outline",
           text: "Vocabulary",
         };
       case "Custom":
         return {
-          icon: isDone ? "extension-puzzle" : "extension-puzzle-outline", // Custom için uygun ikon
-          text: customText || "Özel",
+          icon: isDone ? "extension-puzzle" : "extension-puzzle-outline",
+          text: customText || "Custom Habit",
         };
       default:
         return {
@@ -84,21 +87,25 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
         setStreak(habitData.streakDays || 0);
         setDoneNumber(habitData.doneNumber || 0);
         setGoalNumber(habitData.goalNumber || 0);
+        setDailyAmount(habitData.dailyAmount || 0);
+        setDuration(habitData.duration || 0);
 
-        // Set subText based on variant
+        // Set subTextDone and subTextType based on variant
         switch (variant) {
           case "Sport":
           case "Book":
-            setSubText(`${habitData.duration} min`);
+            setSubTextType(`${habitData.duration} min`);
+            setSubTextDone(`${habitData.doneNumber}/${habitData.goalNumber} days`);
             break;
           case "Vocabulary":
+            setSubTextType(`${habitData.dailyAmount} words`);
+            setSubTextDone(`${habitData.doneNumber}/${habitData.goalNumber} days`);
+            break;
           case "Custom":
-            setSubText(
-              `${habitData.doneNumber}/${habitData.goalNumber} days`
-            );
+            setSubTextDone(`${habitData.doneNumber}/${habitData.goalNumber} days`);
             break;
           default:
-            setSubText("");
+            setSubTextType("");
         }
       } else {
         console.error("No matching document found!");
@@ -111,9 +118,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
   // fetch habit data
   useEffect(() => {
     fetchHabitData();
-  }, [
-    userId
-  ]);
+  }, [userId]);
 
   // update habit data in firestore
   const updateHabit = async (
@@ -220,31 +225,34 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
 
         <CustomText style={styles.text}>{getCardProps().text}</CustomText>
       </View>
-      <View style={styles.rigthView}>
-        <CustomText style={styles.subText}>{subText}</CustomText>
-        <View style={styles.streakContainer}>
-          {streak > 13 ? (
-            <FontAwesome name="tree" size={18} color="#1E3A5F" />
-          ) : (
-            <Ionicons name="leaf" size={18} color="#1E3A5F" />
-          )}
-          <CustomText style={styles.streakText}>{streak}</CustomText>
+      <View style={styles.rightContainer}>
+        <View style={styles.top}>
+          <View style={styles.textContainer}>
+            <CustomText
+              style={styles.subTextDone}
+            >{subTextDone}</CustomText>
+            <View style={styles.streakContainer}>
+              {streak > 13 ? (
+                <FontAwesome name="tree" size={18} color="#1E3A5F" />
+              ) : (
+                <Ionicons name="leaf" size={18} color="#1E3A5F" />
+              )}
+              <CustomText style={styles.streakText}>{streak}</CustomText>
+            </View>
+          </View>
+          <Pressable onPress={handleDonePress}>
+            <Ionicons
+              name={isDone ? "checkbox" : "add"}
+              size={isDone ? 22 : 28}
+              color="#1E3A5F"
+            />
+          </Pressable>
         </View>
-        <Pressable
-          style={{
-            height: 50,
-            width: 30,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          onPress={handleDonePress}
-        >
-          <Ionicons
-            name={isDone ? "checkbox" : "add"}
-            size={isDone ? 22 : 28}
-            color="#1E3A5F"
-          />
-        </Pressable>
+        <View style={styles.bottom}>
+          <CustomText style={styles.subTextType}>
+            {subTextType || "Default"}
+          </CustomText>
+        </View>
       </View>
 
       {/* Feedback modal */}
@@ -263,10 +271,10 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     width: width > 760 ? 440 : width - 40,
-    height: width > 760 ? 55 : 50,
+    height: width > 760 ? 65 : 65,
     backgroundColor: "#f8f8f8",
     borderRadius: 8,
     paddingHorizontal: 20,
@@ -281,10 +289,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#E5EEFF",
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     width: width > 760 ? 440 : width - 40,
-    height: width > 760 ? 55 : 50,
+    height: width > 760 ? 65 : 65,
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -300,41 +308,58 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  rigthView: {
+  rightContainer: {
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-between",
-    height: 30,
-    width: 145,
+    width: "45%",
+    height: "100%",
+  },
+  top: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    width: "100%",
+  },
+  bottom: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    width: "100%",
+  },
+  textContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 20,
+  },
+  subTextDone: {
+    color: "#1E3A5F",
+    opacity: 0.8,
+    fontSize: width > 760 ? 14 : 12,
+    fontWeight: "200",
+    marginRight: 20,
+  },
+  subTextType: {
+    color: "#1E3A5F",
+    opacity: 0.6,
+    fontSize: width > 760 ? 10 : 10,
+    fontWeight: "400",
+  },
+  streakContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  streakText: {
+    fontSize: width > 760 ? 16 : 14,
+    color: "#1E3A5F",
+    fontWeight: "semibold",
+    marginLeft: 2,
   },
   text: {
     color: "#1E3A5F",
     marginLeft: 12,
     fontWeight: "400",
     fontSize: 14,
-  },
-  subText: {
-    color: "#1E3A5F",
-    opacity: 0.8,
-    fontWeight: "200",
-    // overflow: "visible",
-    fontSize: width > 760 ? 14 : 12,
-    marginRight: 20,
-  },
-  streakContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: 30,
-    width: 30,
-    marginRight: 20,
-  },
-  streakText: {
-    color: "#1E3A5F",
-    fontWeight: "semibold",
-    marginLeft: 2,
-    fontSize: width > 760 ? 16 : 14,
   },
 });

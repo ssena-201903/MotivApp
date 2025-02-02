@@ -21,7 +21,7 @@ export default function CardFeedback({
 }: Props) {
   useEffect(() => {
     if (isVisible) {
-      const timeDuration = isStreak ? 5000 : 2000;
+      const timeDuration = isStreak ? 2000 : 2000;
       const timer = setTimeout(() => {
         onComplete();
       }, timeDuration);

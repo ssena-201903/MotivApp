@@ -97,7 +97,7 @@ export default function AddOtherHabitModal({ variant, visible, onClose }: Props)
         duration: variant !== "Vocabulary" ? parseFloat(formData.dailyDuration) : null,
         goalNumber: parseFloat(formData.goalDays),
         customText: variant === "Custom" ? capitalizeText(formData.customText) : null,
-        dailyAmount: variant === "Vocabulary" ? formData.dailyAmount : null,
+        dailyAmount: variant === "Vocabulary" ? parseFloat(formData.dailyAmount) : null,
         isDone: false,
         isArchieved: false,
         variant,

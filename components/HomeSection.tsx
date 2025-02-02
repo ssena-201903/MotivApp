@@ -231,29 +231,28 @@ export default function HomeSection({ variant }: Props) {
                 userId={userId}
               />
             )}
-            {/* {isBookCard && (
+            {isBookCard && (
               <CardOtherHabit
                 userId={userId}
                 variant="Book"
               />
-            )} */}
+            )}
             {isVocabularyCard && (
               <CardOtherHabit
                 userId={userId}
                 variant="Vocabulary"
               />
             )}
-            {/* {isSportCard && (
+            {isSportCard && (
               <CardOtherHabit
                 userId={userId}
                 variant="Sport"
               />
-            )} */}
+            )}
             {isCustomCard && (
               <CardOtherHabit
                 userId={userId}
                 variant="Custom"
-                customText="Diş Fırçalamak"
               />
             )}
           </View>
