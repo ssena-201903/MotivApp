@@ -10,7 +10,10 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
+import {
+  GestureHandlerRootView,
+  ScrollView,
+} from "react-native-gesture-handler";
 import InputField from "@/components/cards/InputField";
 import CustomButton from "@/components/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
@@ -35,7 +38,11 @@ interface FormData {
   dailyAmount: string;
 }
 
-export default function AddOtherHabitModal({ variant, visible, onClose }: Props) {
+export default function AddOtherHabitModal({
+  variant,
+  visible,
+  onClose,
+}: Props) {
   const userId = auth.currentUser?.uid;
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -45,16 +52,31 @@ export default function AddOtherHabitModal({ variant, visible, onClose }: Props)
     dailyAmount: "",
   });
 
-  const handleInputChange = useCallback((field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  }, []);
+  const handleInputChange = useCallback(
+    (field: keyof FormData, value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    },
+    []
+  );
 
   const validateInputs = (): boolean => {
     const { goalDays, dailyDuration, customText, dailyAmount } = formData;
 
-    if (variant === "Custom" && !customText.trim()) {
-      Alert.alert("Error", "Please fill in the custom habit name.");
-      return false;
+    if (variant === "Custom") {
+      if (!customText.trim()) {
+        Alert.alert("Error", "Please fill in the custom habit name.");
+        return false;
+      }
+      if (!dailyAmount.trim()) {
+        Alert.alert("Error", "Please fill in the daily amount.");
+        return false;
+      }
+      if (!goalDays.trim()) {
+        Alert.alert("Error", "Please fill in all required fields.");
+        return false;
+      }
+
+      return true;
     }
 
     if (variant === "Vocabulary" && !dailyAmount.trim()) {
@@ -62,7 +84,7 @@ export default function AddOtherHabitModal({ variant, visible, onClose }: Props)
       return false;
     }
 
-    if (!goalDays.trim() || (variant !== "Vocabulary" && !dailyDuration.trim())) {
+    if (!goalDays.trim() || !dailyDuration.trim()) {
       Alert.alert("Error", "Please fill in all required fields.");
       return false;
     }
@@ -74,13 +96,13 @@ export default function AddOtherHabitModal({ variant, visible, onClose }: Props)
     return text
       .trim()
       .split(" ")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   };
 
   const handleSendDataToDb = async () => {
     if (isSaving) return;
-    
+
     try {
       if (!validateInputs()) {
         return;
@@ -94,10 +116,13 @@ export default function AddOtherHabitModal({ variant, visible, onClose }: Props)
       }
 
       const habitData = {
-        duration: variant !== "Vocabulary" ? parseFloat(formData.dailyDuration) : null,
+        duration:
+          variant !== "Vocabulary" ? parseFloat(formData.dailyDuration) : null,
         goalNumber: parseFloat(formData.goalDays),
-        customText: variant === "Custom" ? capitalizeText(formData.customText) : null,
-        dailyAmount: variant === "Vocabulary" ? parseFloat(formData.dailyAmount) : null,
+        customText:
+          variant === "Custom" ? capitalizeText(formData.customText) : null,
+        dailyAmount:
+          variant === "Vocabulary" || variant === "Custom" ? parseFloat(formData.dailyAmount) : null,
         isDone: false,
         isArchieved: false,
         variant,
@@ -109,7 +134,7 @@ export default function AddOtherHabitModal({ variant, visible, onClose }: Props)
 
       const userDocRef = doc(db, "users", userId);
       const habitsDocRef = collection(userDocRef, "habits");
-      
+
       await addDoc(habitsDocRef, habitData);
       Keyboard.dismiss();
       onClose();
@@ -125,12 +150,21 @@ export default function AddOtherHabitModal({ variant, visible, onClose }: Props)
     switch (variant) {
       case "Custom":
         return (
-          <InputField
-            label="Custom Habit"
-            placeholder="Enter custom habit name"
-            value={formData.customText}
-            onChangeText={(text) => handleInputChange("customText", text)}
-          />
+          <>
+            <InputField
+              label="Habit Name"
+              placeholder="Enter custom habit name"
+              value={formData.customText}
+              onChangeText={(text) => handleInputChange("customText", text)}
+            />
+            <InputField
+              label="Daily Duration (minutes) or Amount"
+              placeholder="Enter daily amount (if none, please enter 0)"
+              keyboardType="numeric"
+              value={formData.dailyAmount}
+              onChangeText={(text) => handleInputChange("dailyAmount", text)}
+            />
+          </>
         );
       case "Vocabulary":
         return (
@@ -168,15 +202,15 @@ export default function AddOtherHabitModal({ variant, visible, onClose }: Props)
         <SafeAreaView style={styles.overlay}>
           <TouchableWithoutFeedback>
             <View style={styles.modalView}>
-              <TouchableOpacity 
-                style={styles.closeButton} 
+              <TouchableOpacity
+                style={styles.closeButton}
                 onPress={() => {
                   if (!isSaving) onClose();
                 }}
               >
                 <Ionicons name="close" size={24} color="#1E3A5F" />
               </TouchableOpacity>
-              <ScrollView 
+              <ScrollView
                 style={styles.modalContent}
                 keyboardShouldPersistTaps="handled"
               >
