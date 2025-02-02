@@ -109,7 +109,11 @@ export default function Goals() {
           </TouchableOpacity>
         ))}
       </ScrollView>
-      <SectionHeader text={activeCategory} percentDone={calculatePercentDone(activeCategory)} />
+      <SectionHeader
+        text={activeCategory}
+        percentDone={calculatePercentDone(activeCategory)}
+        variant="other"
+      />
       {/* content container */}
       <ScrollView
         contentContainerStyle={styles.contentContainer}

@@ -95,14 +95,14 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
           case "Sport":
           case "Book":
             setSubTextType(`${habitData.duration} min`);
-            setSubTextDone(`${habitData.doneNumber}/${habitData.goalNumber} days`);
+            setSubTextDone(`${habitData.goalNumber} days`);
             break;
           case "Vocabulary":
             setSubTextType(`${habitData.dailyAmount} words`);
-            setSubTextDone(`${habitData.doneNumber}/${habitData.goalNumber} days`);
+            setSubTextDone(`${habitData.goalNumber} days`);
             break;
           case "Custom":
-            setSubTextDone(`${habitData.doneNumber}/${habitData.goalNumber} days`);
+            setSubTextDone(`${habitData.goalNumber} days`);
             break;
           default:
             setSubTextType("");

@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
   subTextType: {
     color: "#1E3A5F",
     opacity: 0.6,
-    fontSize: width > 760 ? 12 : 10,
+    fontSize: width > 760 ? 10 : 10,
     fontWeight: "400",
   },
   streakContainer: {

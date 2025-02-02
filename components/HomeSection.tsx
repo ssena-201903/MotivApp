@@ -180,7 +180,7 @@ export default function HomeSection({ variant }: Props) {
     if (variant === "goals") {
       return (
         <>
-          <SectionHeader text="Goals" percentDone={calculateGoalsPercentage(goals)} />
+          <SectionHeader text="Goals" percentDone={calculateGoalsPercentage(goals)} variant="home" />
           <View style={styles.gridView}>
             <CardGoal
               type="videocam"
@@ -224,7 +224,7 @@ export default function HomeSection({ variant }: Props) {
     } else if (variant === "habits") {
       return (
         <>
-          <SectionHeader text="Habits" percentDone={60} />
+          <SectionHeader text="Habits" percentDone={60} variant="home" />
           <View style={styles.gridView}>
             {isWaterCard && (
               <CardWaterHabit
@@ -264,7 +264,7 @@ export default function HomeSection({ variant }: Props) {
       }
       return (
         <>
-          <SectionHeader text="To-Do" percentDone={todosPercentage} />
+          <SectionHeader text="To-Do" percentDone={todosPercentage} variant="home" />
           <ScrollView style={styles.todoView}>
             {currentTodos.map((todo) => (
               <CardTodo

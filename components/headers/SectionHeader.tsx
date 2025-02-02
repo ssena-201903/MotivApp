@@ -1,16 +1,19 @@
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { CustomText } from "@/CustomText";
 import { useEffect, useRef } from "react";
 import { Animated } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 type Props = {
+  variant: "home" | "other";
   text: string;
   percentDone: number;
 };
 
 const { width } = Dimensions.get("screen");
 
-export default function SectionHeader({ text, percentDone }: Props) {
+export default function SectionHeader({ variant, text, percentDone }: Props) {
   const progressWidth = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -21,9 +24,26 @@ export default function SectionHeader({ text, percentDone }: Props) {
     }).start();
   }, [percentDone]);
 
+  const handlePress = () => {
+    if (variant === "home") {
+      if (text === "Goals") {
+        router.push("/goals");
+      } else if (text === "Habits") {
+        router.push("/habits");
+      } else if (text === "To-Do") {
+        router.push("/calendar");
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <CustomText style={styles.text}>{text}</CustomText>
+      <TouchableOpacity style={styles.header} onPress={handlePress}>
+        <CustomText style={styles.headerText}>{text}</CustomText>
+        {variant === "home" && (
+          <Ionicons name="chevron-forward-outline" size={16} color="#f8f8f8"/>
+        )}
+      </TouchableOpacity>
       <View style={styles.progressBarContainer}>
         <View style={styles.progressBarBackground}>
           <Animated.View
@@ -52,15 +72,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 20,
   },
-  text: {
-    color: "#FCFCFC",
-    fontSize: 14,
-    fontWeight: "700",
+  header: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     backgroundColor: "#1E3A5F",
     paddingHorizontal: 14,
-    paddingVertical: 2,
+    paddingVertical: 4,
     borderRadius: 6,
     width: 110,
+  },
+  headerText: {
+    color: "#f8f8f8",
+    fontSize: 14,
+    fontWeight: "700",
+    width: 70,
   },
   percentText: {
     display: "flex",
