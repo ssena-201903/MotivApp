@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { CustomText } from "@/CustomText";
 import { FontAwesome } from "@expo/vector-icons";
 import {
@@ -36,6 +36,7 @@ export default function CardOtherHabit({
   const [doneNumber, setDoneNumber] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [dailyAmount, setDailyAmount] = useState<number>(0);
+  const [iconFamily, setIconFamily] = useState<string>("");
 
   // get cards text and icon props
   const getCardProps = () => {
@@ -225,8 +226,13 @@ export default function CardOtherHabit({
   return (
     <View style={isDone ? styles.doneHabit : styles.container}>
       <View style={styles.leftView}>
-        <Ionicons name={getCardProps().icon} size={22} color="#1E3A5F" />
-
+        {variant === "Book" && (
+          <MaterialCommunityIcons name={getCardProps().icon} size={22} color="#1E3A5F" />
+        )}
+        {variant !== "Book" && (
+          <Ionicons name={getCardProps().icon} size={22} color="#1E3A5F" />
+        )}
+        
         <CustomText style={styles.text}>{getCardProps().text}</CustomText>
       </View>
       <View style={styles.rightContainer}>
