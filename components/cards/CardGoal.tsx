@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, Pressable, Dimensions } from "react-native";
 import { CustomText } from "@/CustomText";
 
@@ -9,12 +9,21 @@ type Props = {
   inlineText: string;
   categoryId: string; 
   onCategoryPress: (categoryId: string) => void; 
+  iconFamily?: "fontawesome" | "ionicons" | "material-community";
 };
 
-export default function CardGoal({ type, inlineText, categoryId, onCategoryPress }: Props) {
+export default function CardGoal({ type, inlineText, categoryId, onCategoryPress, iconFamily }: Props) {
   return (
     <Pressable style={styles.container} onPress={() => onCategoryPress(categoryId)}>
-      <Ionicons name={type} size={20} color="#1E3A5F" />
+      {iconFamily === "fontawesome" && (
+        <FontAwesome name={type} size={18} color="#1E3A5F" />
+      )}
+      {iconFamily === "ionicons" && (
+        <Ionicons name={type} size={22} color="#1E3A5F" />
+      )}
+      {iconFamily === "material-community" && (
+        <MaterialCommunityIcons name={type} size={22} color="#1E3A5F" />
+      )}
       <CustomText style={styles.inlineText}>{inlineText}</CustomText>
     </Pressable>
   );

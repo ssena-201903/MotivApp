@@ -31,7 +31,7 @@ export default function HomeSection({ variant }: Props) {
   const [loading, setLoading] = useState<boolean>(true);
   const [todosPercentage, setTodosPercentage] = useState<number>(0);
   const [goals, setGoals] = useState<any[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null); 
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isWaterCard, setIsWaterCard] = useState<boolean>(false);
   const [isBookCard, setIsBookCard] = useState<boolean>(false);
   const [isSportCard, setIsSportCard] = useState<boolean>(false);
@@ -56,7 +56,7 @@ export default function HomeSection({ variant }: Props) {
         } else if (habitDoc.variant === "Vocabulary") {
           setIsVocabularyCard(true);
         }
-      })
+      });
     } catch (error) {
       console.log("error fetching habits", error);
     }
@@ -65,7 +65,6 @@ export default function HomeSection({ variant }: Props) {
   useEffect(() => {
     fetchHabitDatas();
   }, [userId]);
-    
 
   const calculateTodosPercentage = (todos: any[]) => {
     const totalTodos = todos.length;
@@ -159,13 +158,12 @@ export default function HomeSection({ variant }: Props) {
   };
 
   const handleCategoryPress = (categoryId: string) => {
-    setSelectedCategory(categoryId); 
+    setSelectedCategory(categoryId);
     router.push({
-      pathname: '/goals',
+      pathname: "/goals",
       params: { categoryId },
     });
   };
-  
 
   useEffect(() => {
     if (variant === "todos") {
@@ -180,43 +178,53 @@ export default function HomeSection({ variant }: Props) {
     if (variant === "goals") {
       return (
         <>
-          <SectionHeader text="Goals" percentDone={calculateGoalsPercentage(goals)} variant="home" />
+          <SectionHeader
+            text="Goals"
+            percentDone={calculateGoalsPercentage(goals)}
+            variant="home"
+          />
           <View style={styles.gridView}>
             <CardGoal
-              type="videocam"
+              type="movie"
               inlineText="Movie"
               categoryId="Movie"
               onCategoryPress={handleCategoryPress}
+              iconFamily="material-community"
             />
             <CardGoal
               type="car"
               inlineText="Place"
               categoryId="Place"
               onCategoryPress={handleCategoryPress}
+              iconFamily="ionicons"
             />
             <CardGoal
-              type="fast-food"
+              type="food"
               inlineText="Food"
               categoryId="Food"
               onCategoryPress={handleCategoryPress}
+              iconFamily="material-community"
             />
             <CardGoal
-              type="cash"
+              type="wallet"
               inlineText="Buy"
               categoryId="Buy"
               onCategoryPress={handleCategoryPress}
+              iconFamily="material-community"
             />
             <CardGoal
               type="accessibility"
               inlineText="Activity"
               categoryId="Activity"
               onCategoryPress={handleCategoryPress}
+              iconFamily="ionicons"
             />
             <CardGoal
               type="book"
               inlineText="Book"
               categoryId="Book"
               onCategoryPress={handleCategoryPress}
+              iconFamily="material-community"
             />
           </View>
         </>
@@ -226,34 +234,14 @@ export default function HomeSection({ variant }: Props) {
         <>
           <SectionHeader text="Habits" percentDone={60} variant="home" />
           <View style={styles.gridView}>
-            {isWaterCard && (
-              <CardWaterHabit
-                userId={userId}
-              />
-            )}
-            {isBookCard && (
-              <CardOtherHabit
-                userId={userId}
-                variant="Book"
-              />
-            )}
+            {isWaterCard && <CardWaterHabit userId={userId} />}
+            {isBookCard && <CardOtherHabit userId={userId} variant="Book" />}
             {isVocabularyCard && (
-              <CardOtherHabit
-                userId={userId}
-                variant="Vocabulary"
-              />
+              <CardOtherHabit userId={userId} variant="Vocabulary" />
             )}
-            {isSportCard && (
-              <CardOtherHabit
-                userId={userId}
-                variant="Sport"
-              />
-            )}
+            {isSportCard && <CardOtherHabit userId={userId} variant="Sport" />}
             {isCustomCard && (
-              <CardOtherHabit
-                userId={userId}
-                variant="Custom"
-              />
+              <CardOtherHabit userId={userId} variant="Custom" />
             )}
           </View>
         </>
@@ -264,7 +252,11 @@ export default function HomeSection({ variant }: Props) {
       }
       return (
         <>
-          <SectionHeader text="To-Do" percentDone={todosPercentage} variant="home" />
+          <SectionHeader
+            text="To-Do"
+            percentDone={todosPercentage}
+            variant="home"
+          />
           <ScrollView style={styles.todoView}>
             {currentTodos.map((todo) => (
               <CardTodo

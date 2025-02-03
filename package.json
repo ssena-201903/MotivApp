@@ -27,6 +27,7 @@
     "@react-navigation/bottom-tabs": "^7.0.0",
     "@react-navigation/native": "^7.0.0",
     "@tamagui/lucide-icons": "^1.123.5",
+    "bootstrap-icons": "^1.11.3",
     "date-fns": "^4.1.0",
     "expo": "~52.0.26",
     "expo-asset": "~11.0.2",
