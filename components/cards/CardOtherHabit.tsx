@@ -22,11 +22,7 @@ interface Props {
   customText?: string;
 }
 
-export default function CardOtherHabit({
-  variant,
-  userId,
-  customText,
-}: Props) {
+export default function CardOtherHabit({ variant, userId, customText }: Props) {
   const [isDone, setIsDone] = useState<boolean>(false);
   const [streak, setStreak] = useState<number>(0);
   const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
@@ -227,12 +223,16 @@ export default function CardOtherHabit({
     <View style={isDone ? styles.doneHabit : styles.container}>
       <View style={styles.leftView}>
         {variant === "Book" && (
-          <MaterialCommunityIcons name={getCardProps().icon} size={22} color="#1E3A5F" />
+          <MaterialCommunityIcons
+            name={getCardProps().icon}
+            size={22}
+            color="#1E3A5F"
+          />
         )}
         {variant !== "Book" && (
           <Ionicons name={getCardProps().icon} size={22} color="#1E3A5F" />
         )}
-        
+
         <CustomText style={styles.text}>{getCardProps().text}</CustomText>
       </View>
       <View style={styles.rightContainer}>
@@ -249,9 +249,14 @@ export default function CardOtherHabit({
             </View>
           </View>
           <Pressable onPress={handleDonePress}>
-            <Ionicons
+            {/* <Ionicons
               name={isDone ? "checkbox" : "add"}
               size={isDone ? 22 : 28}
+              color="#1E3A5F"
+            /> */}
+            <FontAwesome
+              name={isDone ? "check" : "square-o"}
+              size={isDone ? 22 : 22}
               color="#1E3A5F"
             />
           </Pressable>

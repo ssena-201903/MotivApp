@@ -257,7 +257,7 @@ export default function HomeSection({ variant }: Props) {
             percentDone={todosPercentage}
             variant="home"
           />
-          <ScrollView style={styles.todoView}>
+          <View style={styles.gridView}>
             {currentTodos.map((todo) => (
               <CardTodo
                 key={todo.id}
@@ -269,7 +269,7 @@ export default function HomeSection({ variant }: Props) {
                 onDelete={() => deleteTodo(todo.id)}
               />
             ))}
-          </ScrollView>
+          </View>
         </>
       );
     }
@@ -284,14 +284,11 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
-    width: width > 760 ? width - 600 : width - 40,
-    marginBottom: width > 760 ? 30 : 20,
-  },
-  todoView: {
-    flexGrow: 1,
-    width: width > 760 ? width - 600 : width - 40,
-    height: 190,
-    overflow: "hidden",
+    width: width > 760 ? width - 600 : width,
+    // marginBottom: width > 760 ? 30 : 20,
+    paddingHorizontal: width > 760 ? 40 : 20,
+    // paddingBottom: 20,
+    marginBottom: 20,
   },
   gridView: {
     display: "flex",

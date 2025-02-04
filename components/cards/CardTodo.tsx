@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Dimensions, Pressable, Text } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, FontAwesome } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
@@ -33,12 +33,17 @@ export default function CardTodo({
           </Pressable>
         )}
         <Pressable onPress={() => onToggle(id)}>
-        <Ionicons
+          {/* <Ionicons
           name={isCompleted ? "checkbox" : "add"}
           size={isCompleted ? 22 : 28}
           color="#1E3A5F"
-        />
-      </Pressable>
+        /> */}
+          <FontAwesome
+            name={isCompleted ? "check" : "square-o"}
+            size={isCompleted ? 22 : 24}
+            color="#1E3A5F"
+          />
+        </Pressable>
       </View>
     </View>
   );
@@ -61,7 +66,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   doneTodo: {
     display: "flex",
@@ -105,5 +110,6 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     marginRight: 20,
+    opacity: 0.85,
   },
 });

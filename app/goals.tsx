@@ -180,7 +180,7 @@ export default function Goals() {
       </ScrollView>
 
       <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
-        <Ionicons name="add" size={28} color="white" />
+        <FontAwesome name="plus" size={22} color="white" />
       </TouchableOpacity>
 
       <AddGoalModal
@@ -205,7 +205,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     marginBottom: 20,
-    marginHorizontal: width > 760 ? "auto" : 10,
+    marginHorizontal: width > 760 ? "auto" : 0,
+    paddingHorizontal: width > 760 ? 0 : 20,
   },
   button: {
     width: width > 760 ? 100 : 60,
@@ -236,9 +237,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   contentContainer: {
-    flexGrow: 1,
-    width: width > 760 ? width - 900 : width - 40,
-    marginHorizontal: "auto",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingTop: 10,
+    width: width,
+    paddingHorizontal: width > 760 ? "auto" : 40,
   },
   addButton: {
     backgroundColor: "#1E3A5F",

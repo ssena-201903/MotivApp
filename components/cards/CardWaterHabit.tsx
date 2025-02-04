@@ -257,9 +257,14 @@ export default function CardWaterHabit({ userId }: Props) {
               </View>
             </View>
             <Pressable onPress={handleWaterPress} style={styles.addButton}>
-              <Ionicons
+              {/* <Ionicons
                 name={isWaterDone ? "checkbox" : "add"}
                 size={isWaterDone ? 22 : 28}
+                color="#1E3A5F"
+              /> */}
+              <FontAwesome
+                name={isWaterDone ? "check" : "plus"}
+                size={isWaterDone ? 22 : 24}
                 color="#1E3A5F"
               />
             </Pressable>
