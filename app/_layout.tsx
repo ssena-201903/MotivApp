@@ -43,6 +43,12 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <Stack>
+        {/* (tabs) */}
+        <Stack.Screen 
+          name="(tabs)"
+          options={{ headerShown: false }}
+        />
+
         {/* opening screen */}
         <Stack.Screen
           name="index"
