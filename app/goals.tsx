@@ -177,6 +177,11 @@ export default function Goals() {
             onUpdate={fetchGoals}
           />
         ))}
+        {goals.length === 0 && (
+          <View>
+            <CustomText style={styles.noGoalsText}>No goals yet</CustomText>
+          </View>
+        )}
       </ScrollView>
 
       <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
@@ -255,5 +260,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 20,
     right: 20,
+  },
+  noGoalsText: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#1E3A5F",
+    opacity: 0.7,
+    marginTop: 40,
   },
 });
