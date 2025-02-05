@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#1E3A5F",
-    borderRadius: 10,
+    borderRadius: 8,
     width: width > 760 ? width - 600 : width - 40,
     paddingHorizontal: 10,
     paddingVertical: 8,
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     paddingHorizontal: 10,
     paddingVertical: 2,
-    borderRadius: 6,
+    borderRadius: 4,
     backgroundColor: "#f8f8f8",
   },
   dateMonth: {

@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1E3A5F",
     paddingHorizontal: 14,
     paddingVertical: 4,
-    borderRadius: 6,
+    borderRadius: 4,
     width: 110,
   },
   headerText: {
