@@ -1,5 +1,6 @@
 import { CustomText } from "@/CustomText";
 import { useState, useEffect } from "react";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import {
   View,
   Text,
@@ -39,6 +40,7 @@ export default function CalendarPage() {
   const [todos, setTodos] = useState<{ [key: string]: Todo[] }>({});
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -49,38 +51,35 @@ export default function CalendarPage() {
     try {
       const todosRef = collection(db, "users", userId, "todos");
       const querySnapshot = await getDocs(todosRef);
+      // console.log("querySnapshot", querySnapshot);
 
-      const todosByDate: { [key: string]: Todo[] } = {};
+      const todos: { [key: string]: Todo[] } = {};
 
       querySnapshot.docs.forEach((doc) => {
-        const todoData = doc.data();
-        const dueDate =
-          todoData.dueDate ||
-          todoData.createdAt?.toDate().toISOString().split("T")[0];
+        const todo = doc.data();
+        const dueDate = todo.dueDate.toDate().toISOString().split("T")[0];
+        // console.log("todo", dueDate);
 
-        if (!todosByDate[dueDate]) {
-          todosByDate[dueDate] = [];
+        if (!todos[dueDate]) {
+          todos[dueDate] = [];
         }
 
-        todosByDate[dueDate].push({
+        todos[dueDate].push({
           id: doc.id,
-          text: todoData.text,
-          isDone: todoData.isDone,
-          createdAt: todoData.createdAt,
-          dueDate: dueDate,
+          text: todo.text,
+          isDone: todo.isDone,
+          createdAt: todo.createdAt,
+          dueDate: todo.dueDate.toDate().toISOString(),
         });
+        // console.log("todo", todos);
+        setTodos(todos);
       });
-
-      setTodos(todosByDate);
-    } catch (error) {
-      console.error("Error fetching todos:", error);
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
     fetchTodos();
+    setSelectedDay(today);
   }, [userId]);
 
   const handleDayPress = (day: DateData) => {
@@ -170,7 +169,9 @@ export default function CalendarPage() {
           selectedDayTextColor: "#1E3A5F",
           arrowColor: "#FFA38F",
         }}
-        dayComponent={({ date, state }) => {
+        dayComponent={({ date }) => {
+          if (!date) return null;
+
           const isSelected = date.dateString === selectedDay;
           const isToday = date.dateString === today;
 
@@ -203,25 +204,28 @@ export default function CalendarPage() {
           <CustomText style={styles.selectedDayTitle}>
             {selectedDay} Todos
           </CustomText>
-          {todos[selectedDay]?.map((todo) => (
-            <CardTodo
-              key={todo.id}
-              id={todo.id}
-              text={todo.text}
-              isCompleted={todo.isDone}
-              variant="todo"
-              onToggle={() => toggleTodo(todo.id)}
-              onDelete={() => deleteTodo(todo.id)}
-            />
-          ))}
+          <View style={styles.todoList}>
+            {todos[selectedDay]?.map((todo) => (
+              <CardTodo
+                key={todo.id}
+                id={todo.id}
+                text={todo.text}
+                isCompleted={todo.isDone}
+                variant="todo"
+                onToggle={() => toggleTodo(todo.id)}
+                onDelete={() => deleteTodo(todo.id)}
+              />
+            ))}
+          </View>
         </View>
       )}
 
+      {/* Add Button */}
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => setModalVisible(true)}
       >
-        <CustomText style={styles.addButtonText}>+</CustomText>
+        <Ionicons name="add" size={width > 760 ? 24 : 20} color="white" />
       </TouchableOpacity>
 
       {userId && (
@@ -249,7 +253,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 4,
     width: width / 7 - 4,
-    height: 80,
+    height: width > 760 ? 80 : 110,
     backgroundColor: "#fff",
   },
   selectedDayContainer: {
@@ -287,11 +291,11 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: "absolute",
-    right: 30,
-    bottom: 30,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    right: width > 760 ? 340 : 20,
+    top: 570,
+    width: width > 760 ? 40 : 40,
+    height: width > 760 ? 40 : 40,
+    borderRadius: 50,
     backgroundColor: "#1E3A5F",
     justifyContent: "center",
     alignItems: "center",
@@ -301,21 +305,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
-  addButtonText: {
-    fontSize: 32,
-    color: "#F9F9F9",
-    borderRadius: 2,
-  },
   selectedDayTodos: {
+    position: "relative",
+    alignItems: "center",
     marginTop: 20,
     marginHorizontal: 20,
     paddingBottom: 100,
+    height: "auto",
   },
   selectedDayTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#1E3A5F",
-    marginBottom: 10,
+    marginBottom: width > 760 ? 50 : 40,
+  },
+  todoList: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+    width: width > 760 ? width - 600 : width - 40,
+    gap: width > 760 ? 10 : 8,
   },
   completedDayTodoText: {
     textDecorationLine: "line-through",

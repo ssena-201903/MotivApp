@@ -124,8 +124,8 @@ export default function Goals() {
               <FontAwesome
                 name={
                   activeCategory === category.id
-                    ? category.name
-                    : `${category.name}-outline`
+                    ? category.name as any
+                    : (`${category.name}-outline` as any)
                 }
                 size={22}
                 color="#1E3A5F"
@@ -135,8 +135,8 @@ export default function Goals() {
               <Ionicons
                 name={
                   activeCategory === category.id
-                    ? category.name
-                    : `${category.name}-outline`
+                  ? category.name as any
+                  : (`${category.name}-outline` as any)
                 }
                 size={22}
                 color="#1E3A5F"
@@ -146,8 +146,8 @@ export default function Goals() {
               <MaterialCommunityIcons
                 name={
                   activeCategory === category.id
-                    ? category.name
-                    : `${category.name}-outline`
+                  ? category.name as any
+                  : (`${category.name}-outline` as any)
                 }
                 size={22}
                 color="#1E3A5F"
