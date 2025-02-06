@@ -1,6 +1,13 @@
 import { FontAwesome, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, Pressable, Dimensions } from "react-native";
 import { CustomText } from "@/CustomText";
+import MovieIcon from "../icons/MovieIcon";
+import CarIcon from "../icons/CarIcon";
+import FoodIcon from "../icons/FoodIcon";
+import WalletIcon from "../icons/WalletIcon";
+import ActivityIcon from "../icons/ActivityIcon";
+import BookIcon from "../icons/BookIcon";
+import SellIcon from "../icons/SellIcon";
 
 const { width } = Dimensions.get('window');
 
@@ -15,14 +22,23 @@ type Props = {
 export default function CardGoal({ type, inlineText, categoryId, onCategoryPress, iconFamily }: Props) {
   return (
     <Pressable style={styles.container} onPress={() => onCategoryPress(categoryId)}>
-      {iconFamily === "fontawesome" && (
-        <FontAwesome name={type} size={18} color="#1E3A5F" />
+      {categoryId === "Movie" && (
+        <MovieIcon size={20} color="#1E3A5F" variant="fill"/>
       )}
-      {iconFamily === "ionicons" && (
-        <Ionicons name={type} size={22} color="#1E3A5F" />
+      {categoryId === "Place" && (
+        <CarIcon size={24} color="#1E3A5F" variant="fill"/>
       )}
-      {iconFamily === "material-community" && (
-        <MaterialCommunityIcons name={type} size={22} color="#1E3A5F" />
+      {categoryId === "Food" && (
+        <FoodIcon size={28} color="#1E3A5F" variant="fill"/>
+      )}
+      {categoryId === "Buy" && (
+        <SellIcon size={24} color="#1E3A5F" variant="fill"/>
+      )}
+      {categoryId === "Activity" && (
+        <ActivityIcon size={28} color="#1E3A5F" variant="fill"/>
+      )}
+      {categoryId === "Book" && (
+        <BookIcon size={24} color="#1E3A5F" variant="fill"/>
       )}
       <CustomText style={styles.inlineText}>{inlineText}</CustomText>
     </Pressable>

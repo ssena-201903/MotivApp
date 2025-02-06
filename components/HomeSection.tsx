@@ -189,42 +189,36 @@ export default function HomeSection({ variant }: Props) {
               inlineText="Movie"
               categoryId="Movie"
               onCategoryPress={handleCategoryPress}
-              iconFamily="material-community"
             />
             <CardGoal
               type="car"
               inlineText="Place"
               categoryId="Place"
               onCategoryPress={handleCategoryPress}
-              iconFamily="ionicons"
             />
             <CardGoal
               type="food"
               inlineText="Food"
               categoryId="Food"
               onCategoryPress={handleCategoryPress}
-              iconFamily="material-community"
             />
             <CardGoal
               type="wallet"
               inlineText="Buy"
               categoryId="Buy"
               onCategoryPress={handleCategoryPress}
-              iconFamily="material-community"
             />
             <CardGoal
               type="accessibility"
               inlineText="Activity"
               categoryId="Activity"
               onCategoryPress={handleCategoryPress}
-              iconFamily="ionicons"
             />
             <CardGoal
               type="book"
               inlineText="Book"
               categoryId="Book"
               onCategoryPress={handleCategoryPress}
-              iconFamily="material-community"
             />
           </View>
         </>

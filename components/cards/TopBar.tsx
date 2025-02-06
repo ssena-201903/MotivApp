@@ -15,6 +15,12 @@ import MovieIcon from "@/components/icons/MovieIcon";
 import NotificationIcon from "@/components/icons/NotificationIcon";
 import MenuIcon from "@/components/icons/MenuIcon";
 import SparklesIcon from "@/components/icons/SparklesIcon";
+import WalletIcon from "@/components/icons/WalletIcon";
+import SellIcon from "@/components/icons/SellIcon";
+import CarIcon from "@/components/icons/CarIcon";
+import FoodIcon from "@/components/icons/FoodIcon";
+import ActivityIcon from "@/components/icons/ActivityIcon";
+import BookIcon from "../icons/BookIcon";
 
 const { width } = Dimensions.get("window");
 
