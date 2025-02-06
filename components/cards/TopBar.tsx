@@ -111,11 +111,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "#1E3A5F",
     borderRadius: 8,
-    width: width > 760 ? width - 600 : width - 40,
+    width: width - 40,
     paddingHorizontal: 10,
     paddingVertical: 8,
     marginHorizontal: 20,
-    marginTop: width > 760 ? 10 : 30,
+    marginTop: 20,
     marginBottom: 20,
   },
   date: {
