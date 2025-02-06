@@ -278,18 +278,19 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
-    width: width > 760 ? width - 600 : width,
+    width: width - 40,
     // marginBottom: width > 760 ? 30 : 20,
-    paddingHorizontal: width > 760 ? 40 : 20,
+    paddingHorizontal: 20,
     // paddingBottom: 20,
     marginBottom: 20,
+    backgroundColor: "yellow"
   },
   gridView: {
     display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "flex-start",
-    width: width > 760 ? width - 600 : width - 40,
-    gap: width > 760 ? 10 : 8,
+    width: width - 40,
+    gap: 10,
   },
 });
