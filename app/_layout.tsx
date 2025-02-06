@@ -92,10 +92,10 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="calendar"
+          name="notifications"
           options={{
             headerShown: true,
-            title: "Takvim",
+            title: "Notifications",
           }}
         />
         <Stack.Screen

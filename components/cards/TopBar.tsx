@@ -11,6 +11,10 @@ import { router, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import ProfileModal from "../modals/ProfileModal";
 import { auth } from "@/firebase.config";
+import MovieIcon from "@/components/icons/MovieIcon";
+import NotificationIcon from "@/components/icons/NotificationIcon";
+import MenuIcon from "@/components/icons/MenuIcon";
+import SparklesIcon from "@/components/icons/SparklesIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -30,8 +34,8 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
 
   const handleToast = () => {};
 
-  const handleCalendarPress = () => {
-    router.push("/calendar");
+  const handleNotificationsPress = () => {
+    router.push("/notifications");
   };
 
   const handleProfileModals = () => {
@@ -72,29 +76,17 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
         <CustomText style={styles.dateDay}>{dateDayName}</CustomText>
       </Pressable>
       <View style={styles.topMenu}>
-        <TouchableOpacity style={styles.topMenuItem}>
-          <Ionicons
-            name="calendar"
-            size={24}
-            color="#f8f8f8"
-            onPress={handleCalendarPress}
-          />
+        <TouchableOpacity style={styles.topMenuItem} onPress={handleNotificationsPress}>
+          <NotificationIcon size={24} color="#f8f8f8" variant="fill"/>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.topMenuItem}>
-          <Ionicons
-            name="sparkles"
-            size={24}
-            color="#f8f8f8"
-            onPress={onDiamondPress}
-          />
+        <View style={styles.notificationsDot}>
+          <CustomText style={styles.notificationsDotText}>3</CustomText>
+        </View>
+        <TouchableOpacity style={styles.topMenuItem} onPress={onDiamondPress}>
+          <SparklesIcon size={24} color="#f8f8f8" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.topMenuItem}>
-          <Ionicons
-            name="menu"
-            size={24}
-            color="#f8f8f8"
-            onPress={handleProfileModals}
-          />
+        <TouchableOpacity style={styles.topMenuItem} onPress={handleProfileModals}>
+          <MenuIcon size={24} color="#f8f8f8" />
         </TouchableOpacity>
       </View>
       <ProfileModal
@@ -168,5 +160,22 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: "regular",
     marginTop: 6,
+  },
+  notificationsDot: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    top: -4,
+    right: 84,
+    width: 16,
+    height: 16,
+    borderRadius: 20,
+    backgroundColor: "#FFA38F",
+  },
+  notificationsDotText: {
+    color: "#1E3A5F",
+    fontSize: 10,
+    fontWeight: "bold",
   },
 });

@@ -4,10 +4,21 @@ import { useRouter } from "expo-router";
 import LottieView from "lottie-react-native";
 import { CustomText } from "@/CustomText";
 import { useAuth } from "./_layout";
+// import { useFonts } from "expo-font";
 
 export default function Index() {
   const router = useRouter();
   const { user } = useAuth();
+
+  // const [fontsLoaded] = useFonts({
+  //   "FontAwesome": require("@expo/vector-icons/fonts/FontAwesome.ttf"),
+  //   "MaterialCommunityIcons": require("@expo/vector-icons/fonts/MaterialCommunityIcons.ttf"),
+  //   "Ionicons": require("@expo/vector-icons/fonts/Ionicons.ttf"),
+  // })
+
+  // if (!fontsLoaded) {
+  //   return <CustomText>Loading Fonts and Icons...</CustomText>;
+  // }
 
   useEffect(() => {
     const timer = setTimeout(() => {
