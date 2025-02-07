@@ -183,7 +183,7 @@ export default function HomeSection({ variant }: Props) {
             percentDone={calculateGoalsPercentage(goals)}
             variant="home"
           />
-          <View style={styles.gridView}>
+          <View style={styles.gridViewRow}>
             <CardGoal
               type="movie"
               inlineText="Movie"
@@ -276,21 +276,29 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "flex-start",
-    width: width - 40,
-    // marginBottom: width > 760 ? 30 : 20,
+    flex: 1,  
     paddingHorizontal: 20,
-    // paddingBottom: 20,
     marginBottom: 20,
-    backgroundColor: "yellow"
   },
   gridView: {
     display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    width: "100%",
+    padding: 5,
+    gap: 8,
+    flexGrow: 1
+  },
+  gridViewRow: {
+    display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "flex-start",
-    width: width - 40,
-    gap: 10,
+    justifyContent: "space-between",
+    width: "100%",
+    padding: 5,
+    gap: 8,
+    flexGrow: 1
   },
 });

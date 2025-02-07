@@ -18,7 +18,7 @@ export default function SectionHeader({ variant, text, percentDone }: Props) {
 
   useEffect(() => {
     Animated.timing(progressWidth, {
-      toValue: (240 * percentDone) / 100, // // width of progress bar which is stable
+      toValue: percentDone, // Animasyonu yüzdelik olarak ayarlıyoruz
       duration: 500,
       useNativeDriver: false,
     }).start();
@@ -38,22 +38,19 @@ export default function SectionHeader({ variant, text, percentDone }: Props) {
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <TouchableOpacity style={styles.header} onPress={handlePress}>
         <CustomText style={styles.headerText}>{text}</CustomText>
         {variant === "home" && (
-          <Ionicons name="chevron-forward-outline" size={16} color="#f8f8f8"/>
+          <Ionicons name="chevron-forward-outline" size={16} color="#f8f8f8" />
         )}
       </TouchableOpacity>
+
+      {/* Progress Bar */}
       <View style={styles.progressBarContainer}>
         <View style={styles.progressBarBackground}>
           <Animated.View
-            style={[styles.progressBar, { width: progressWidth }]}
-          />
-          <View
-            style={[
-              styles.remainingBar,
-              { width: 190 - (190 * percentDone) / 100 },
-            ]}
+            style={[styles.progressBar, { width: `${percentDone}%` }]} // Responsive progress bar
           />
         </View>
       </View>
@@ -63,17 +60,14 @@ export default function SectionHeader({ variant, text, percentDone }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
     flexDirection: "row",
-    justifyContent: "flex-start",
     alignItems: "center",
-    width: width > 760 ? width - 600 : width - 40,
-    marginHorizontal: 20,
+    width: "100%",
     marginBottom: 20,
     marginTop: 20,
   },
   header: {
-    display: "flex",
+    flex: 3, 
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -81,29 +75,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 4,
     borderRadius: 4,
-    width: 110,
   },
   headerText: {
     color: "#f8f8f8",
     fontSize: 14,
     fontWeight: "700",
-    width: 70,
-  },
-  percentText: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    color: "#FCFCFC",
-    fontSize: 12,
-    fontWeight: "medium",
-    backgroundColor: "#264653",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    marginLeft: 10,
-    borderRadius: 20,
   },
   progressBarContainer: {
-    width: 240, // width of progress bar which is stable
+    flex: 7,
     height: 10,
     borderRadius: 5,
     overflow: "hidden",
@@ -119,9 +98,5 @@ const styles = StyleSheet.create({
   progressBar: {
     height: "100%",
     backgroundColor: "#FFA38F", // I can change later
-  },
-  remainingBar: {
-    height: "100%",
-    // backgroundColor: "#264653",
   },
 });

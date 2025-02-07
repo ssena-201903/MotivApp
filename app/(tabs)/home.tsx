@@ -1,8 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, ScrollView, Dimensions } from "react-native";
 import TopBar from "@/components/cards/TopBar";
 import CustomButton from "@/components/CustomButton";
 import HomeSection from "@/components/HomeSection";
@@ -11,10 +7,12 @@ import AddTodoModal from "@/components/modals/AddTodoModal";
 import { auth } from "@/firebase.config";
 import AddMemoryModal from "@/components/modals/AddMemoryModal";
 
+const { width } = Dimensions.get("window");
+
 export default function Home() {
   const [isMemoryModalVisible, setIsMemoryModalVisible] = useState(false);
   const [isAddTodoModalVisible, setIsAddTodoModalVisible] = useState(false);
-  
+
   // getting current user id from auth
   const userId = auth.currentUser?.uid;
 
@@ -25,18 +23,28 @@ export default function Home() {
 
   const handleCloseMemoryModal = () => {
     setIsMemoryModalVisible(false);
-  }
+  };
 
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
-        <TopBar 
-          onDiamondPress={() => setIsMemoryModalVisible(true)} 
-          onDatePress={() => setIsAddTodoModalVisible(true)}
-        />
-        <HomeSection variant="goals" />
-        <HomeSection variant="habits" />
-        <HomeSection variant="todos" />
+        <View style={[styles.topbarContainer, width >= 768 && styles.gridItemLarge]}>
+          <TopBar
+            onDiamondPress={() => setIsMemoryModalVisible(true)}
+            onDatePress={() => setIsAddTodoModalVisible(true)}
+          />
+        </View>
+        <View style={styles.gridContainer}>
+          <View style={[styles.gridItem, width >= 768 && styles.gridItemLarge]}>
+            <HomeSection variant="goals" />
+          </View>
+          <View style={[styles.gridItem, width >= 768 && styles.gridItemLarge]}>
+            <HomeSection variant="habits" />
+          </View>
+          <View style={[styles.gridItem, width >= 768 && styles.gridItemLarge]}>
+            <HomeSection variant="todos" />
+          </View>
+        </View>
       </View>
 
       {/* when user press diamond icon to add new memory */}
@@ -62,13 +70,36 @@ export default function Home() {
 const styles = StyleSheet.create({
   scrollView: {
     flexGrow: 1,
-    backgroundColor: "white",
+    backgroundColor: "#FCFCFC",
   },
   container: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
     flexDirection: "column",
-    backgroundColor: "#FCFCFC",
+  },
+  topbarContainer: {
+    flexGrow: 1,
+    width: "100%",
+    marginBottom: 20,
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  gridContainer: {
+    flexDirection: "column",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    flexGrow: 1,
+  },
+  gridItem: {
+    width: "100%",
+    marginBottom: 20,
+  },
+
+  //responive grid for larger screens
+  gridItemLarge: {
+    width: "70%", // Two columns with some space between on larger screens
   },
 });
