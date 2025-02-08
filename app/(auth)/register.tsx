@@ -166,7 +166,12 @@ export default function Register() {
                   placeholder="Enter your password"
                   value={password}
                   onChangeText={setPassword}
-                  secureTextEntry
+                  secureTextEntry={true}
+                  isPasswordField={true}
+                  errorMessage={error}
+                  inputStyle={{
+                    width: "100%",
+                  }}
                   variant="password"
                 />
               </View>
@@ -176,7 +181,12 @@ export default function Register() {
                   placeholder="Confirm your password"
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
-                  secureTextEntry
+                  secureTextEntry={true}
+                  isPasswordField={true}
+                  errorMessage={error}
+                  inputStyle={{
+                    width: "100%",
+                  }}
                   variant="password"
                 />
               </View>
