@@ -222,7 +222,7 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
   return (
     <View style={isDone ? styles.doneHabit : styles.container}>
       <View style={styles.leftView}>
-        {variant === "Book" && (
+        {variant === "Book" &&  (
           <MaterialCommunityIcons
             name={getCardProps().icon}
             size={22}
@@ -286,17 +286,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    minWidth: "50%",
-    height: width > 760 ? 65 : 65,
-    backgroundColor: "#f8f8f8",
+    minWidth: "100%",
+    minHeight: 70,
+    backgroundColor: "#F4F4F4",
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
+    // elevation: 3,
+    borderWidth: 0.5,
+    borderColor: "#D1D4D9",
     flex: 1,
   },
   doneHabit: {
@@ -305,16 +307,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    minWidth: "50%",
-    height: width > 760 ? 65 : 65,
+    minWidth: "100%",
+    minHeight: 70,
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
+    // elevation: 3,
+    borderWidth: 0.5,
+    borderColor: "#D1D4D9",
     flex: 1,
   },
   leftView: {

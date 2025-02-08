@@ -1,45 +1,39 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
 import LottieView from "lottie-react-native";
-import { CustomText } from "@/CustomText";
 import { useAuth } from "./_layout";
-// import { useFonts } from "expo-font";
 
 export default function Index() {
   const router = useRouter();
   const { user } = useAuth();
 
-  // const [fontsLoaded] = useFonts({
-  //   "FontAwesome": require("@expo/vector-icons/fonts/FontAwesome.ttf"),
-  //   "MaterialCommunityIcons": require("@expo/vector-icons/fonts/MaterialCommunityIcons.ttf"),
-  //   "Ionicons": require("@expo/vector-icons/fonts/Ionicons.ttf"),
-  // })
-
-  // if (!fontsLoaded) {
-  //   return <CustomText>Loading Fonts and Icons...</CustomText>;
-  // }
-
   useEffect(() => {
     const timer = setTimeout(() => {
-      // if user already login
       if (user) {
         router.replace("/home");
       } else {
         router.replace("/(auth)/login");
       }
     }, 3000);
-  })
+
+    return () => clearTimeout(timer); // Timer'ı temizle
+  }, [user, router]);
 
   return (
     <View style={styles.container}>
+      {/* PNG Dosyasını Buraya Ekledik */}
       <View style={styles.topSection}>
-        <CustomText style={styles.appTitle}>MotivApp</CustomText>
+        <Image
+          source={require("@/assets/images/brandName2.png")} 
+          style={styles.logo}
+          resizeMode="contain"
+        />
       </View>
 
       <View style={styles.patternBackground}>
         <LottieView
-          source={require("@/assets/animations/clock_animate.json")} // JSON animasyon dosyasının yolu
+          source={require("@/assets/animations/clock_animate.json")}
           autoPlay
           loop
           style={styles.animation}
@@ -52,7 +46,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FCFCFC",
+    backgroundColor: "#white",
     alignItems: "center",
   },
   topSection: {
@@ -60,51 +54,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 120,
   },
-  appTitle: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#264653",
-    // fontFamily: "VarelaRound",
+  logo: {
+    width: 300, // PNG'nin genişliği
+    height: 100, // PNG'nin yüksekliği
   },
   patternBackground: {
     alignItems: "center",
     flex: 1,
-    // width: 300,
-    // height: 300,
   },
   animation: {
     width: 300,
     height: 300,
     position: 'absolute',
-  },
-  bottomSection: {
-    padding: 20,
-    gap: 10,
-    marginBottom: 30,
-    width: 340,
-  },
-  primaryButton: {
-    backgroundColor: "#FFA69E",
-    padding: 15,
-    borderRadius: 25,
-    alignItems: "center",
-  },
-  primaryButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  secondaryButton: {
-    backgroundColor: "#FFFFFF",
-    padding: 15,
-    borderRadius: 25,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#FFA69E",
-  },
-  secondaryButtonText: {
-    color: "#FFA69E",
-    fontSize: 16,
-    fontWeight: "600",
   },
 });

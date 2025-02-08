@@ -4,25 +4,27 @@ import {
   View,
   StyleSheet,
   Dimensions,
+  Platform,
 } from "react-native";
 
-const { width } = Dimensions.get("window");
+const { width: screenWidth } = Dimensions.get("window");
 
 type Props = {
   label: string;
   onPress: () => void;
-  variant?: 'outlined' | 'fill' | 'disabled' | 'cancel';
-  width: number | "100%";
-  height: number | "100%";
-  marginLeft?: number | 0;
+  variant?: "outlined" | "fill" | "disabled" | "cancel";
+  width?: string | number;
+  height?: number | string;
+  marginLeft?: number;
 };
+
 export default function CustomButton({
   label,
   onPress,
-  variant,
-  width,
+  variant = "fill",
+  width = "100%",
   height,
-  marginLeft,
+  marginLeft = 0,
 }: Props) {
   const getButtonStyle = () => {
     switch (variant) {
@@ -39,10 +41,22 @@ export default function CustomButton({
     }
   };
 
+  // Responsive yükseklik hesaplaması
+  const buttonHeight =
+    height || (Platform.OS === "web" ? 50 : screenWidth * 0.12);
+
   return (
     <TouchableOpacity
       onPress={variant !== "disabled" ? onPress : undefined}
-      style={[styles.button, { width }, { height }, { marginLeft }, getButtonStyle()]}
+      style={[
+        styles.button,
+        {
+          width: width,
+          height: buttonHeight,
+          marginLeft,
+        },
+        getButtonStyle(),
+      ]}
       disabled={variant === "disabled"}
     >
       <Text
@@ -50,8 +64,8 @@ export default function CustomButton({
           styles.text,
           variant === "disabled" && styles.disabledText,
           variant === "outlined" && styles.outlinedText,
-          variant === "fill" && styles.text,
           variant === "cancel" && styles.cancelText,
+          { fontSize: Platform.OS === "web" ? 16 : 14 },
         ]}
       >
         {label}
@@ -64,38 +78,30 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#007AFF",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
+    alignSelf: "center",
   },
   text: {
-    fontSize: 16,
-    color: "#F9F9F9",
-    fontWeight: "semibold",
+    fontWeight: "400",
+    textAlign: "center",
+    color: "white",
   },
   fill: {
-    backgroundColor: "#1E3A5F", // can change later
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    backgroundColor: "#1E3A5F",
   },
   outlined: {
     borderWidth: 2,
-    borderColor: "#FFA38F", // can change later
+    borderColor: "#FFA38F",
     backgroundColor: "transparent",
   },
   outlinedText: {
-    color: "#FFA38F", // can change later
-    fontWeight: 400,
+    color: "#FFA38F",
+    fontWeight: "400",
   },
   disabled: {
-    backgroundColor: "#1E3A5F", // can change later
+    backgroundColor: "#1E3A5F",
     opacity: 0.7,
   },
   disabledText: {
@@ -103,14 +109,12 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   cancel: {
-    backgroundColor: "transparent", // can change later
+    backgroundColor: "transparent",
     borderWidth: 1,
     borderColor: "#1E3A5F",
   },
   cancelText: {
     color: "#1E3A5F",
-    fontWeight: 400,
+    fontWeight: "400",
   },
 });
-
-

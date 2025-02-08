@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Dimensions, Alert, Pressable } from "react-native";
+import { View, StyleSheet, Dimensions, Alert, Pressable, Platform } from "react-native";
 import { Audio } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
 import GlassIcon from "@/components/icons/GlassIcon";
@@ -295,17 +295,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    minWidth: "100%",
+    width: "100%",
     minHeight: 70,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#F4F4F4",
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
+    // elevation: 3,
+    borderWidth: 0.5,
+    borderColor: "#D1D4D9",
     flex: 1,
   },
   doneHabit: {
@@ -314,16 +316,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    minWidth: "50%",
-    height: width > 760 ? 70 : 70,
+    width: "100%",
+    minHeight: 70,
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
+    // elevation: 3,
+    borderWidth: 0.5,
+    borderColor: "#D1D4D9",
     flex: 1,
   },
   cupGrid: {
@@ -364,14 +368,14 @@ const styles = StyleSheet.create({
   subTextDone: {
     color: "#1E3A5F",
     opacity: 0.8,
-    fontSize: width > 760 ? 14 : 12,
+    fontSize: Platform.OS === "web" ? 14 : width * 0.035,
     fontWeight: "200",
     marginRight: 20,
   },
   subTextType: {
     color: "#1E3A5F",
     opacity: 0.6,
-    fontSize: width > 760 ? 10 : 10,
+    fontSize: 10,
     fontWeight: "400",
   },
   streakContainer: {

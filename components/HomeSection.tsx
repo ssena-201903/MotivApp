@@ -197,15 +197,15 @@ export default function HomeSection({ variant }: Props) {
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal
-              type="food"
-              inlineText="Food"
-              categoryId="Food"
-              onCategoryPress={handleCategoryPress}
-            />
-            <CardGoal
               type="wallet"
               inlineText="Buy"
               categoryId="Buy"
+              onCategoryPress={handleCategoryPress}
+            />
+            <CardGoal
+              type="food"
+              inlineText="Food"
+              categoryId="Food"
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal

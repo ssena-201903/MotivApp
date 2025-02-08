@@ -243,7 +243,7 @@ export default function CalendarPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "#white",
   },
   dayContainer: {
     alignItems: "center",

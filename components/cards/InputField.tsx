@@ -7,7 +7,16 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  Dimensions,
+  Platform,
 } from "react-native";
+import EyeIcon from "../icons/EyeIcon";
+import MailIcon from "../icons/MailIcon";
+import LockIcon from "../icons/LockIcon";
+import PersonIcon from "../icons/PersonIcon";
+import PeopleIcon from "../icons/PeopleIcon";
+
+const { width } = Dimensions.get("window");
 
 type Props = {
   label?: string;
@@ -23,7 +32,7 @@ type Props = {
   inputStyle?: any;
   containerStyle?: any;
   keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
-  variant?: "default" | "password" | "email" | "edit";
+  variant?: "default" | "password" | "email" | "edit" | "name" | "nickname";
 };
 
 export default function InputField({
@@ -34,7 +43,7 @@ export default function InputField({
   onChangeText,
   onSave,
   isEditable = true,
-  secureTextEntry =  false,
+  secureTextEntry = false,
   isPasswordField = false,
   errorMessage,
   inputStyle,
@@ -43,7 +52,11 @@ export default function InputField({
   variant = "default",
 }: Props) {
   const [isSecure, setIsSecure] = useState(secureTextEntry || false);
-  const hasIcon = variant === "password" || variant === "email";
+  const hasIcon =
+    variant === "password" ||
+    variant === "email" ||
+    variant === "name" ||
+    variant === "nickname";
 
   const toggleSecureEntry = () => {
     setIsSecure(!isSecure);
@@ -60,9 +73,10 @@ export default function InputField({
       style={[
         styles.container,
         containerStyle,
-        !isEditable && { opacity: 0.5 }, // Düzenlenemez durum için opaklık
+        !isEditable && { opacity: 0.5 },
+        { width: "100%" },
       ]}
-      pointerEvents={isEditable ? "auto" : "none"} // Tıklanabilirliği kontrol et
+      pointerEvents={isEditable ? "auto" : "none"}
     >
       {label && <CustomText style={styles.label}>{label}</CustomText>}
       {description && (
@@ -72,32 +86,45 @@ export default function InputField({
         style={[
           styles.inputContainer,
           errorMessage ? styles.errorInput : {},
-          
+          { width: "100%" }, 
         ]}
       >
         {variant === "password" && (
-          <Ionicons
-            name="lock-closed"
-            size={18}
-            color="#666"
-            style={styles.iconLeft}
-          />
+          <TouchableOpacity style={styles.iconLeft} onPress={toggleSecureEntry}>
+            <LockIcon size={18} color="#1E3A5F" />
+          </TouchableOpacity>
         )}
         {variant === "email" && (
-          <Ionicons
-            name="mail"
-            size={18}
-            color="#666"
-            style={styles.iconLeft}
-          />
+          <TouchableOpacity style={styles.iconLeft} onPress={toggleSecureEntry}>
+            <MailIcon size={18} color="#1E3A5F" />
+          </TouchableOpacity>
+        )}
+        {variant === "name" && (
+          <TouchableOpacity style={styles.iconLeft} onPress={toggleSecureEntry}>
+            <PersonIcon size={18} color="#1E3A5F" />
+          </TouchableOpacity>
+        )}
+        {variant === "nickname" && (
+          <TouchableOpacity style={styles.iconLeft} onPress={toggleSecureEntry}>
+            <PeopleIcon size={18} color="#1E3A5F" />
+          </TouchableOpacity>
         )}
         <TextInput
           style={[
             styles.input,
+            Platform.select({
+              ios: { fontWeight: "400" },
+              android: { fontWeight: "400" },
+              web: { fontWeight: "400" },
+            }),
             inputStyle,
             errorMessage ? styles.errorInput : {},
             !hasIcon && { marginLeft: 6 },
-            !isEditable && styles.disabledInput, // Düzenlenemez giriş
+            !isEditable && styles.disabledInput,
+            {
+              width: "100%",
+              fontSize: Platform.OS === "web" ? 16 : width * 0.04,
+            },
           ]}
           placeholder={placeholder}
           placeholderTextColor="#999"
@@ -108,13 +135,16 @@ export default function InputField({
           editable={isEditable && variant !== "edit"}
         />
         {variant === "password" && (
-          <Ionicons
-            name={isSecure ? "eye-off" : "eye"}
-            size={18}
-            color="#666"
+          <TouchableOpacity
             style={styles.iconRight}
-            onPress={toggleSecureEntry} // Sadece düzenlenebilirken
-          />
+            onPress={toggleSecureEntry}
+          >
+            <EyeIcon
+              size={18}
+              color="#1E3A5F"
+              variant={isSecure ? "off" : "on"}
+            />
+          </TouchableOpacity>
         )}
         {variant === "edit" && (
           <TouchableOpacity
@@ -134,43 +164,39 @@ export default function InputField({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 10,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    maxWidth: 500, // Maksimum genişlik
+    alignSelf: "center", // Merkeze alma
   },
   label: {
-    fontSize: 14,
+    fontSize: Platform.OS === "web" ? 14 : width * 0.035,
     color: "#1E3A5F",
     fontWeight: "600",
     marginBottom: 10,
   },
   description: {
-    fontSize: 12,
+    fontSize: Platform.OS === "web" ? 12 : width * 0.03,
     color: "#666",
     marginBottom: 10,
   },
   inputContainer: {
     position: "relative",
-    borderRadius: 12,
-    backgroundColor: "#F5F8FF",
-    marginBottom: 16,
+    borderRadius: 8,
+    backgroundColor: "#E5EEFF",
     borderWidth: 1,
     borderColor: "#E5EEFF",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
     flexDirection: "row",
     alignItems: "center",
+    maxWidth: 500, // Maksimum genişlik
+    alignSelf: "center", // Merkeze alma
   },
   input: {
     flex: 1,
     padding: 14,
-    fontSize: 16,
     color: "#1E3A5F",
-    fontWeight: "medium",
+    fontWeight: "500",
     borderRadius: 12,
     marginLeft: 30,
   },
@@ -190,14 +216,11 @@ const styles = StyleSheet.create({
     borderColor: "#FF6B6B",
   },
   errorText: {
-    fontSize: 12,
+    fontSize: Platform.OS === "web" ? 12 : width * 0.03,
     color: "#FF6B6B",
     marginTop: 4,
   },
   disabledInput: {
-    color: "#999", // Düzenlenemez için farklı renk
-  },
-  disabledInputContainer: {
-    cursor: "not-allowed", // Fare imleci değişimi
+    color: "#999",
   },
 });

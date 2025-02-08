@@ -30,22 +30,22 @@ export default function CardGoal({
       onPress={() => onCategoryPress(categoryId)}
     >
       {categoryId === "Movie" && (
-        <MovieIcon size={20} color="#1E3A5F" variant="fill" />
+        <MovieIcon size={18} color="#1E3A5F" variant="fill" />
       )}
       {categoryId === "Place" && (
-        <CarIcon size={24} color="#1E3A5F" variant="fill" />
+        <CarIcon size={22} color="#1E3A5F" variant="fill" />
       )}
       {categoryId === "Food" && (
-        <FoodIcon size={28} color="#1E3A5F" variant="fill" />
+        <FoodIcon size={22} color="#1E3A5F" variant="fill" />
       )}
       {categoryId === "Buy" && (
-        <SellIcon size={24} color="#1E3A5F" variant="fill" />
+        <WalletIcon size={22} color="#1E3A5F" variant="fill" />
       )}
       {categoryId === "Activity" && (
         <ActivityIcon size={28} color="#1E3A5F" variant="fill" />
       )}
       {categoryId === "Book" && (
-        <BookIcon size={24} color="#1E3A5F" variant="fill" />
+        <BookIcon size={22} color="#1E3A5F" variant="fill" />
       )}
       <CustomText style={styles.inlineText}>{inlineText}</CustomText>
     </Pressable>
@@ -57,15 +57,17 @@ const styles = StyleSheet.create({
     flexDirection: width > 768 ? "column" : "row",
     width: "31%",
     height: width > 768 ? 70 : 65,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#F4F4F4",
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#1E3A5F",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    // shadowColor: "#1E3A5F",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
+    // elevation: 3,
+    borderWidth: 0.5,
+    borderColor: "#D1D4D9",
   },
   inlineText: {
     color: "#1E3A5F",
