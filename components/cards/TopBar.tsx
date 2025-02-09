@@ -89,7 +89,7 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
           <CustomText style={styles.notificationsDotText}>3</CustomText>
         </View>
         <TouchableOpacity style={styles.topMenuItem} onPress={onDiamondPress}>
-          <SparklesIcon size={24} color="#f8f8f8" />
+          <SparklesIcon size={24} color="#f8f8f8" variant="fill" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.topMenuItem} onPress={handleProfileModals}>
           <MenuIcon size={24} color="#f8f8f8" />

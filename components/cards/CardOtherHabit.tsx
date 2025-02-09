@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import BookIcon from "@/components/icons/BookIcon";
+import PuzzleIcon from "@/components/icons/PuzzleIcon";
+import SportIcon from "@/components/icons/SportIcon";
+import VocabularyIcon from "@/components/icons/VocabularyIcon";
+import TreeIcon from "@/components/icons/TreeIcon";
+import LeafIcon from "@/components/icons/LeafIcon";
+import BoxIcon from "../icons/BoxIcon";
 import { CustomText } from "@/CustomText";
-import { FontAwesome } from "@expo/vector-icons";
 import {
   doc,
   updateDoc,
@@ -19,177 +24,73 @@ const { width } = Dimensions.get("window");
 interface Props {
   variant: "Sport" | "Book" | "Vocabulary" | "Custom";
   userId: string;
-  customText?: string;
 }
 
-export default function CardOtherHabit({ variant, userId, customText }: Props) {
-  const [isDone, setIsDone] = useState<boolean>(false);
-  const [streak, setStreak] = useState<number>(0);
-  const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
-  const [subTextDone, setSubTextDone] = useState<string>("");
-  const [subTextType, setSubTextType] = useState<string>("");
-  const [goalNumber, setGoalNumber] = useState<number>(0);
-  const [doneNumber, setDoneNumber] = useState<number>(0);
-  const [duration, setDuration] = useState<number>(0);
-  const [dailyAmount, setDailyAmount] = useState<number>(0);
-  const [iconFamily, setIconFamily] = useState<string>("");
+interface HabitData {
+  id: string;
+  text: string;
+  isDone: boolean;
+  streakDays: number;
+  duration: number;
+  goalNumber: number;
+  dailyAmount: number;
+  doneNumber: number;
+}
 
-  // get cards text and icon props
-  const getCardProps = () => {
-    switch (variant) {
-      case "Sport":
-        return {
-          icon: isDone ? "barbell" : "barbell-outline",
-          text: "Sport",
-        };
-      case "Book":
-        return {
-          icon: isDone ? "book" : "book-outline",
-          text: "Book",
-        };
-      case "Vocabulary":
-        return {
-          icon: isDone ? "copy" : "copy-outline",
-          text: "Vocabulary",
-        };
-      case "Custom":
-        return {
-          icon: isDone ? "extension-puzzle" : "extension-puzzle-outline",
-          text: customText || "Custom Habit",
-        };
-      default:
-        return {
-          icon: "add",
-          text: "Default Habit",
-        };
-    }
-  };
+export default function CardOtherHabit({ variant, userId }: Props) {
+  const [habits, setHabits] = useState<HabitData[]>([]);
+  const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
 
   const fetchHabitData = async () => {
     try {
       const habitsRef = collection(db, `users/${userId}/habits`);
-      let q;
-
-      // get query for custom variant by customText
-      if (variant === "Custom" && customText) {
-        q = query(habitsRef, where("customText", "==", customText));
-      } else {
-        q = query(habitsRef, where("variant", "==", variant));
-      }
-
+      const q = query(habitsRef, where("variant", "==", variant));
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        const habitDoc = querySnapshot.docs[0];
-        const habitData = habitDoc.data();
+        const habitsList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as HabitData[];
 
-        // update local state with fetched data
-        setIsDone(habitData.isDone || false);
-        setStreak(habitData.streakDays || 0);
-        setDoneNumber(habitData.doneNumber || 0);
-        setGoalNumber(habitData.goalNumber || 0);
-        setDailyAmount(habitData.dailyAmount || 0);
-        setDuration(habitData.duration || 0);
-
-        // Set subTextDone and subTextType based on variant
-        switch (variant) {
-          case "Sport":
-          case "Book":
-            setSubTextType(`${habitData.duration} min`);
-            setSubTextDone(`${habitData.goalNumber} days`);
-            break;
-          case "Vocabulary":
-            setSubTextType(`${habitData.dailyAmount} words`);
-            setSubTextDone(`${habitData.goalNumber} days`);
-            break;
-          case "Custom":
-            setSubTextDone(`${habitData.goalNumber} days`);
-            break;
-          default:
-            setSubTextType("");
+        // Custom dışındaki variantlar için sadece ilk kartı al
+        if (variant !== "Custom") {
+          setHabits([habitsList[0]]);
+        } else {
+          // Custom için tüm kartları al
+          setHabits(habitsList);
         }
       } else {
-        console.error("No matching document found!");
+        setHabits([]);
       }
     } catch (error) {
       console.error("Error fetching habit data: ", error);
     }
   };
 
-  // fetch habit data
   useEffect(() => {
     fetchHabitData();
-  }, [userId]);
+  }, [userId, variant]);
 
-  // update habit data in firestore
-  const updateHabit = async (
-    isDone: boolean,
-    newStreak: number,
-    newDoneNumber?: number
-  ) => {
+  const updateHabit = async (habitId: string, isDone: boolean, newStreak: number, newDoneNumber: number) => {
     try {
-      const habitsRef = collection(db, `users/${userId}/habits`);
-      let q;
+      const habitDocRef = doc(db, `users/${userId}/habits/${habitId}`);
+      
+      await updateDoc(habitDocRef, {
+        isDone,
+        streakDays: newStreak,
+        doneNumber: newDoneNumber,
+      });
 
-      // get query for custom variant by customText
-      if (variant === "Custom" && customText) {
-        q = query(habitsRef, where("customText", "==", customText));
-      } else {
-        q = query(habitsRef, where("variant", "==", variant));
-      }
-
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const habitDoc = querySnapshot.docs[0];
-        const habitDocRef = doc(db, `users/${userId}/habits/${habitDoc.id}`);
-
-        // update doc in firestore
-        await updateDoc(habitDocRef, {
-          isDone,
-          streakDays: newStreak,
-          doneNumber: newDoneNumber,
-        });
-
-        // update local state
-        setIsDone(isDone);
-        setStreak(newStreak);
-        setIsFeedbackVisible(isDone); // show feedback if done
-        // setSubText(subText || "");
-        setDoneNumber(newDoneNumber || 0);
-
-        fetchHabitData();
-      } else {
-        console.error("No matching document found!");
-      }
+      setIsFeedbackVisible(isDone);
+      fetchHabitData();
     } catch (error) {
       console.error("Error updating habit: ", error);
     }
   };
 
-  // get sub text for variant
-  const getFeedbackProps = () => {
-    if (variant !== "Custom") {
-      if (streak === 14) {
-        return {
-          text: `Congratulations! You have completed the ${variant} for 14 days!`,
-        };
-      } else {
-        return {
-          text: `Congratulations! You have completed the daily ${variant} goal...`,
-        };
-      }
-    } else {
-      return {
-        text: `Congratulations! You have completed the daily ${customText} goal...`,
-      };
-    }
-  };
-
-  // show alert for done press
-  const handleDonePress = () => {
-    if (isDone) {
-      // if already done, ask for undo
+  const handleDonePress = (habit: HabitData) => {
+    if (habit.isDone) {
       Alert.alert(
         "Geri Alma",
         "Bunu yapılmamış olarak işaretlemek istiyor musunuz?",
@@ -200,83 +101,111 @@ export default function CardOtherHabit({ variant, userId, customText }: Props) {
           },
           {
             text: "Evet",
-            onPress: () => updateHabit(false, streak - 1, doneNumber - 1),
+            onPress: () => updateHabit(
+              habit.id,
+              false,
+              habit.streakDays - 1,
+              habit.doneNumber - 1
+            ),
           },
         ]
       );
     } else {
-      // if not done, ask for done
-      Alert.alert("Onay", "Bunu yapıldı olarak işaretlemek istiyor musunuz?", [
-        {
-          text: "Vazgeç",
-          style: "cancel",
-        },
-        {
-          text: "Evet",
-          onPress: () => updateHabit(true, streak + 1, doneNumber + 1),
-        },
-      ]);
+      Alert.alert(
+        "Onay",
+        "Bunu yapıldı olarak işaretlemek istiyor musunuz?",
+        [
+          {
+            text: "Vazgeç",
+            style: "cancel",
+          },
+          {
+            text: "Evet",
+            onPress: () => updateHabit(
+              habit.id,
+              true,
+              habit.streakDays + 1,
+              habit.doneNumber + 1
+            ),
+          },
+        ]
+      );
     }
   };
 
-  return (
-    <View style={isDone ? styles.doneHabit : styles.container}>
-      <View style={styles.leftView}>
-        {variant === "Book" &&  (
-          <MaterialCommunityIcons
-            name={getCardProps().icon}
-            size={22}
-            color="#1E3A5F"
-          />
-        )}
-        {variant !== "Book" && (
-          <Ionicons name={getCardProps().icon} size={22} color="#1E3A5F" />
-        )}
+  const getSubTextType = (habit: HabitData) => {
+    switch (variant) {
+      case "Sport":
+      case "Book":
+      case "Custom":
+        return `${habit.duration} minutes`;
+      case "Vocabulary":
+        return `${habit.dailyAmount} words`;
+      default:
+        return "";
+    }
+  };
 
-        <CustomText style={styles.text}>{getCardProps().text}</CustomText>
+  const getIcon = (isDone: boolean) => {
+    switch (variant) {
+      case "Book":
+        return <BookIcon size={22} color="#1E3A5F" variant={isDone ? "fill" : "outlined"} />;
+      case "Sport":
+        return <SportIcon size={22} color="#1E3A5F" variant={isDone ? "fill" : "outlined"} />;
+      case "Vocabulary":
+        return <VocabularyIcon size={22} color="#1E3A5F" variant={isDone ? "fill" : "outlined"} />;
+      case "Custom":
+        return <PuzzleIcon size={22} color="#1E3A5F" variant={isDone ? "fill" : "outlined"} />;
+      default:
+        return null;
+    }
+  };
+
+  const renderHabitCard = (habit: HabitData) => (
+    <View key={habit.id} style={habit.isDone ? styles.doneHabit : styles.container}>
+      <View style={styles.leftView}>
+        {getIcon(habit.isDone)}
+        <CustomText style={styles.text}>
+          {variant === "Custom" ? habit.text : variant}
+        </CustomText>
       </View>
       <View style={styles.rightContainer}>
         <View style={styles.top}>
           <View style={styles.textContainer}>
-            <CustomText style={styles.subTextDone}>{subTextDone}</CustomText>
+            <CustomText style={styles.subTextDone}>{`${habit.goalNumber} days`}</CustomText>
             <View style={styles.streakContainer}>
-              {streak > 13 ? (
-                <FontAwesome name="tree" size={18} color="#1E3A5F" />
+              {habit.streakDays > 13 ? (
+                <TreeIcon size={18} color="#1E3A5F" variant="fill" />
               ) : (
-                <Ionicons name="leaf" size={18} color="#1E3A5F" />
+                <LeafIcon size={18} color="#1E3A5F" variant={habit.isDone ? "fill" : "outlined"} />
               )}
-              <CustomText style={styles.streakText}>{streak}</CustomText>
+              <CustomText style={styles.streakText}>{habit.streakDays}</CustomText>
             </View>
           </View>
-          <Pressable onPress={handleDonePress}>
-            {/* <Ionicons
-              name={isDone ? "checkbox" : "add"}
-              size={isDone ? 22 : 28}
-              color="#1E3A5F"
-            /> */}
-            <FontAwesome
-              name={isDone ? "check" : "square-o"}
-              size={isDone ? 22 : 22}
-              color="#1E3A5F"
-            />
+          <Pressable onPress={() => handleDonePress(habit)}>
+            <BoxIcon size={20} color="#1E3A5F" variant={habit.isDone ? "fill" : "outlined"} />
           </Pressable>
         </View>
         <View style={styles.bottom}>
           <CustomText style={styles.subTextType}>
-            {subTextType || "Default"}
+            {getSubTextType(habit)}
           </CustomText>
         </View>
       </View>
+    </View>
+  );
 
-      {/* Feedback modal */}
+  return (
+    <>
+      {habits.map(renderHabitCard)}
       <CardFeedback
         isVisible={isFeedbackVisible}
-        text={getFeedbackProps().text}
+        text={`Congratulations! You have completed the daily goal...`}
         type="celebration"
         onComplete={() => setIsFeedbackVisible(false)}
         isStreak={true}
       />
-    </View>
+    </>
   );
 }
 
@@ -288,7 +217,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     minWidth: "100%",
     minHeight: 70,
-    backgroundColor: "#F4F4F4",
+    // backgroundColor: "#F4F4F4",
+    backgroundColor: "#f8f8f8",
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -297,7 +227,7 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.2,
     // shadowRadius: 4,
     // elevation: 3,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: "#D1D4D9",
     flex: 1,
   },
@@ -317,7 +247,7 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.2,
     // shadowRadius: 4,
     // elevation: 3,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: "#D1D4D9",
     flex: 1,
   },

@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Dimensions, Alert, Pressable, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Alert,
+  Pressable,
+  Platform,
+} from "react-native";
 import { Audio } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
+import LeafIcon from "@/components/icons/LeafIcon";
+import TreeIcon from "@/components/icons/TreeIcon";
 import GlassIcon from "@/components/icons/GlassIcon";
 import CardFeedback from "@/components/cards/CardFeedback";
 import { CustomText } from "@/CustomText";
@@ -20,6 +29,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase.config";
+import PlusIcon from "../icons/PlusIcon";
+import BoxIcon from "../icons/BoxIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -228,9 +239,7 @@ export default function CardWaterHabit({ userId }: Props) {
 
   return (
     <View>
-      <View
-        style={[isWaterDone ? styles.doneHabit : styles.container]}
-      >
+      <View style={[isWaterDone ? styles.doneHabit : styles.container]}>
         {/* Left side: Grid of cups */}
         <View style={styles.cupGrid}>
           {Array.from({ length: totalWater }).map((_, index) => (
@@ -249,24 +258,25 @@ export default function CardWaterHabit({ userId }: Props) {
               >{`${filledGlass}/${totalWater}`}</CustomText>
               <View style={styles.streakContainer}>
                 {waterStreak > 13 ? (
-                  <FontAwesome name="tree" size={18} color="#1E3A5F" />
+                  // <FontAwesome name="tree" size={18} color="#1E3A5F" />
+                  <TreeIcon size={18} color="#1E3A5F" variant="fill" />
                 ) : (
-                  <Ionicons name="leaf" size={18} color="#1E3A5F" />
+                  // <Ionicons name="leaf" size={18} color="#1E3A5F" />
+                  <LeafIcon
+                    size={18}
+                    color="#1E3A5F"
+                    variant={isWaterDone ? "fill" : "outlined"}
+                  />
                 )}
                 <CustomText style={styles.streakText}>{waterStreak}</CustomText>
               </View>
             </View>
             <Pressable onPress={handleWaterPress} style={styles.addButton}>
-              {/* <Ionicons
-                name={isWaterDone ? "checkbox" : "add"}
-                size={isWaterDone ? 22 : 28}
-                color="#1E3A5F"
-              /> */}
-              <FontAwesome
-                name={isWaterDone ? "check" : "plus"}
-                size={isWaterDone ? 22 : 24}
-                color="#1E3A5F"
-              />
+              {isWaterDone ? (
+                <BoxIcon size={22} color="#1E3A5F" variant="fill" />
+              ) : (
+                <PlusIcon size={22} color="#1E3A5F" />
+              )}
             </Pressable>
           </View>
           <View style={styles.bottom}>

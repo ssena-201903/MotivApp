@@ -56,8 +56,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: width > 768 ? "column" : "row",
     width: "31%",
-    height: width > 768 ? 70 : 65,
-    backgroundColor: "#F4F4F4",
+    height: width > 768 ? 80 : 65,
+    // backgroundColor: "#F4F4F4",
+    backgroundColor: "#f8f8f8",
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.2,
     // shadowRadius: 4,
     // elevation: 3,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: "#D1D4D9",
   },
   inlineText: {

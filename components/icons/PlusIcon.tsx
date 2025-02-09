@@ -1,18 +1,20 @@
+import React from "react";
 import { SvgXml } from "react-native-svg";
 
 type Props = {
-  height: number;
-  width: number;
+  size?: number;
+  color?: string;
 };
 
-export default function PlusIcon({ width, height }: Props) {
-  const svgData = `
-  <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11.333 2V20.6667" stroke="#264653" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M2 11.3335H20.6667" stroke="#264653" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+export default function PlusIcon({
+  size,
+  color,
+}: Props) {
+    const svgIcon = `
+        <svg width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15.958 22.0413C15.958 21.4891 15.5103 21.0413 14.958 21.0413H1.70801C1.15572 21.0413 0.708008 20.5936 0.708008 20.0413V16.958C0.708008 16.4057 1.15572 15.958 1.70801 15.958H14.958C15.5103 15.958 15.958 15.5103 15.958 14.958V1.70801C15.958 1.15572 16.4057 0.708008 16.958 0.708008H20.0413C20.5936 0.708008 21.0413 1.15572 21.0413 1.70801V14.958C21.0413 15.5103 21.4891 15.958 22.0413 15.958H35.2913C35.8436 15.958 36.2913 16.4057 36.2913 16.958V20.0413C36.2913 20.5936 35.8436 21.0413 35.2913 21.0413H22.0413C21.4891 21.0413 21.0413 21.4891 21.0413 22.0413V35.2913C21.0413 35.8436 20.5936 36.2913 20.0413 36.2913H16.958C16.4057 36.2913 15.958 35.8436 15.958 35.2913V22.0413Z" fill="${color}"/>
 </svg>
+    `;
 
-`;
-
-  return <SvgXml xml={svgData} width={width} height={height} />;
+  return <SvgXml xml={svgIcon} width={size} height={size} color={color} />;
 }

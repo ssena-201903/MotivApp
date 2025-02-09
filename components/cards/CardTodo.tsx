@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Dimensions, Pressable, Text } from "react-native";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import BoxIcon from "../icons/BoxIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -38,10 +39,15 @@ export default function CardTodo({
           size={isCompleted ? 22 : 28}
           color="#1E3A5F"
         /> */}
-          <FontAwesome
+          {/* <FontAwesome
             name={isCompleted ? "check" : "square-o"}
             size={isCompleted ? 22 : 24}
             color="#1E3A5F"
+          /> */}
+          <BoxIcon
+            size={22}
+            color="#1E3A5F"
+            variant={isCompleted ? "fill" : "outlined"}
           />
         </Pressable>
       </View>

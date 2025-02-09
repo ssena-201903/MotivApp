@@ -6,7 +6,7 @@ type Props = {
   color?: string;
 };
 
-export default function MovieIcon({
+export default function MenuIcon({
   size,
   color,
 }: Props) {
