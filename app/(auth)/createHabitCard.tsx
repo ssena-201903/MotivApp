@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
   Dimensions,
+  ImageBackground,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
@@ -15,6 +16,7 @@ import { CustomText } from "@/CustomText";
 import { auth, db } from "@/firebase.config";
 import { doc, getDoc } from "firebase/firestore";
 import { router } from "expo-router";
+import PlusIcon from "@/components/icons/PlusIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -22,7 +24,7 @@ export default function CreateHabitCard() {
   const [isWaterModalOpen, setIsWaterModalOpen] = useState<boolean>(false);
   const [isOtherModalOpen, setIsOtherModalOpen] = useState<boolean>(false);
   const [variant, setVariant] = useState<string>("");
-  
+
   const [userName, setUserName] = useState<string>("");
   const handleWaterHabitModalPress = () => {
     console.log("Habit Modal Pressed");
@@ -72,171 +74,194 @@ export default function CreateHabitCard() {
     }
   };
 
-  useEffect(() => { getUserInfos(); }, []);
+  useEffect(() => {
+    getUserInfos();
+  }, []);
+
+  const backgroundImage =
+    Platform.OS === "web"
+      ? require("@/assets/images/habitCardBg.png")
+      : require("@/assets/images/mobileBg.png");
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.top}>
-        <View style={styles.welcomeContainer}>
-          <CustomText style={styles.welcomeText}>Welcome !</CustomText>
-          <CustomText style={styles.userName}>{userName}</CustomText>
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <View style={styles.top}>
+            <View style={styles.welcomeContainer}>
+              <CustomText style={styles.welcomeText}>Welcome !</CustomText>
+              <CustomText style={styles.userName}>{userName}</CustomText>
+            </View>
+            <CustomText style={styles.title}>Create Habit Streak</CustomText>
+            <CustomText style={styles.subtitle}>
+              Start a new habit and track your progress
+            </CustomText>
+
+            <View style={styles.habits}>
+              <View style={styles.habitRow}>
+                <TouchableOpacity
+                  style={styles.plusButton}
+                  onPress={handleWaterHabitModalPress}
+                >
+                  <PlusIcon size={16} color="#fff"/>
+                </TouchableOpacity>
+                <CustomText style={styles.habitText}>Water</CustomText>
+              </View>
+
+              <View style={styles.habitRow}>
+                <TouchableOpacity
+                  style={styles.plusButton}
+                  onPress={handleBookModalPress}
+                >
+                  <PlusIcon size={16} color="#fff"/>
+                </TouchableOpacity>
+                <CustomText style={styles.habitText}>Book</CustomText>
+              </View>
+
+              <View style={styles.habitRow}>
+                <TouchableOpacity
+                  style={styles.plusButton}
+                  onPress={handleSportModalPress}
+                >
+                  <PlusIcon size={16} color="#fff"/>
+                </TouchableOpacity>
+                <CustomText style={styles.habitText}>Sport</CustomText>
+              </View>
+
+              <View style={styles.habitRow}>
+                <TouchableOpacity
+                  style={styles.plusButton}
+                  onPress={handleVocabularyModalPress}
+                >
+                  <PlusIcon size={16} color="#fff"/>
+                </TouchableOpacity>
+                <CustomText style={styles.habitText}>Vocabulary</CustomText>
+              </View>
+
+              <View style={styles.habitRow}>
+                <TouchableOpacity
+                  style={styles.plusButton}
+                  onPress={handleCustomModalPress}
+                >
+                  <PlusIcon size={16} color="#fff"/>
+                </TouchableOpacity>
+                <CustomText style={styles.habitText}>Custom Habit</CustomText>
+              </View>
+            </View>
+          </View>
+          <View style={styles.buttonContainer}>
+            <CustomButton
+              label="Maybe later"
+              onPress={() => {
+                router.push("/home");
+              }}
+              variant="cancel"
+              width="50%"
+              height={50}
+            />  
+            <CustomButton
+              label="Continue"
+              onPress={() => {router.push("/home")}}
+              variant="fill"
+              width="50%"
+              height={50}
+              marginLeft={10}
+            />
+          </View>
         </View>
-        <CustomText style={styles.title}>Create Habit Streak</CustomText>
-        <CustomText style={styles.subtitle}>Start a new habit and track your progress</CustomText>
 
-        <View style={styles.habits}>
-          <View style={styles.habitRow}>
-            <TouchableOpacity style={styles.plusButton} onPress={handleWaterHabitModalPress}>
-              <Ionicons name="add" size={24} color="#fff" />
-            </TouchableOpacity>
-            <CustomText style={styles.habitText}>Water</CustomText>
-          </View>
-
-          <View style={styles.habitRow}>
-            <TouchableOpacity style={styles.plusButton} onPress={handleBookModalPress}>
-              <Ionicons name="add" size={24} color="#fff" />
-            </TouchableOpacity>
-            <CustomText style={styles.habitText}>Book</CustomText>
-          </View>
-
-          <View style={styles.habitRow}>
-            <TouchableOpacity style={styles.plusButton} onPress={handleSportModalPress}>
-              <Ionicons name="add" size={24} color="#fff" />
-            </TouchableOpacity>
-            <CustomText style={styles.habitText}>Sport</CustomText>
-          </View>
-
-          <View style={styles.habitRow}>
-            <TouchableOpacity style={styles.plusButton} onPress={handleVocabularyModalPress}>
-              <Ionicons name="add" size={24} color="#fff" />
-            </TouchableOpacity>
-            <CustomText style={styles.habitText}>Vocabulary</CustomText>
-          </View>
-
-          <View style={styles.habitRow}>
-            <TouchableOpacity style={styles.plusButton} onPress={handleCustomModalPress}>
-              <Ionicons name="add" size={24} color="#fff" />
-            </TouchableOpacity>
-            <CustomText style={styles.habitText}>Custom Habit</CustomText>
-          </View>
-        </View>
-      </View>
-      <View style={styles.buttonContainer}>
-        <CustomButton
-          label="Maybe later"
-          onPress={() => {router.push("/home");}}
-          variant="cancel"
-          width={170}
-          height={45}
-        />
-        <CustomButton
-          label="Continue"
-          onPress={() => {}}
-          variant="fill"
-          width={170}
-          height={45}
-        />
-      </View>
-
-      {isWaterModalOpen && (
-        <AddWaterHabitModal
-          visible={isWaterModalOpen}
-          onClose={() => setIsWaterModalOpen(false)}
-        />
-      )}
-      {isOtherModalOpen && (
-        <AddOtherHabitModal
-          visible={isOtherModalOpen}
-          onClose={() => setIsOtherModalOpen(false)}
-          variant={variant}
-        />
+        {isWaterModalOpen && (
+          <AddWaterHabitModal
+            visible={isWaterModalOpen}
+            onClose={() => setIsWaterModalOpen(false)}
+          />
         )}
-    </ScrollView>
+        {isOtherModalOpen && (
+          <AddOtherHabitModal
+            visible={isOtherModalOpen}
+            onClose={() => setIsOtherModalOpen(false)}
+            variant={variant}
+          />
+        )}
+      </ScrollView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: Platform.OS === "web" ? "center" : "space-between",
+    alignItems: "center",
+    position: "relative",
+  },
   container: {
-    display: "flex",
-    flexDirection: "column",
+    width: "100%",
+    height: "100%",
+    maxWidth: 480,
+    paddingHorizontal: 30,
+    paddingVertical: 40,
     alignItems: "center",
     justifyContent: "space-between",
-    height: "100%",
-    padding: 20,
-    backgroundColor: "#f5f5f5",
   },
   top: {
-    display: "flex",
-    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
     justifyContent: "flex-start",
-    alignItems: width > 760 ? "flex-start" : "flex-start",
-    width: width > 760 ? width - 1200 : width - 40,
+    marginBottom: 40,
   },
   title: {
+    fontSize: Platform.OS === "web" ? 32 : width * 0.08,
+    fontWeight: "bold",
     color: "#1E3A5F",
-    fontSize: 24,
-    fontWeight: 700,
     marginBottom: 10,
     textAlign: "center",
   },
   subtitle: {
+    marginBottom: 40,
+    fontSize: Platform.OS === "web" ? 16 : width * 0.04,
     color: "#1E3A5F",
-    opacity: 0.7,
-    fontSize: 16,
-    marginBottom: 20,
+    opacity: 0.8,
     textAlign: "center",
   },
   habits: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    marginTop: 20,
+    width: "100%",
+    alignItems: "flex-start",
+    marginBottom: 20,
   },
   habitRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 15,
+    // width: "100%",
+    marginBottom: 20,
   },
   plusButton: {
     width: 40,
     height: 40,
     backgroundColor: "#1E3A5F",
-    borderRadius: 20,
+    borderRadius: 40,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
   },
   habitText: {
-    fontSize: 18,
+    fontSize: Platform.OS === "web" ? 18 : width * 0.04,
     fontWeight: "medium",
     color: "#1E3A5F",
   },
   buttonContainer: {
-    display: "flex",
     flexDirection: "row",
-    width: width > 760 ? width - 1170 : width - 40,
-    justifyContent: "space-between",
-    marginTop: 30,
-    // marginBottom: 10,
-  },
-  laterButton: {
+    width: "100%",
     alignItems: "center",
-  },
-  continueButton: {
-    backgroundColor: "#007BFF",
-    padding: 15,
-    borderRadius: 8,
-    width: "48%",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   welcomeContainer: {
-    marginBottom: 20,
-    display: "flex",
+    flex: 1,
+    width: "100%",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -244,8 +269,8 @@ const styles = StyleSheet.create({
   welcomeText: {
     color: "#1E3A5F",
     marginRight: 20,
-    fontSize: 28,
-    fontWeight: 400,
+    fontSize: 24,
+    fontWeight: 500,
     marginBottom: 10,
     textAlign: "center",
   },

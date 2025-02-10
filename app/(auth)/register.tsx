@@ -100,8 +100,8 @@ export default function Register() {
 
   const backgroundImage =
     Platform.OS === "web"
-      ? require("@/assets/images/bg_2.png")
-      : require("@/assets/images/mobile_bg.png");
+      ? require("@/assets/images/habitCardBg.png")
+      : require("@/assets/images/mobileBg.png");
 
   return (
     <ImageBackground
