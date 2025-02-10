@@ -29,7 +29,7 @@ interface Props {
 
 interface HabitData {
   id: string;
-  text: string;
+  customText: string;
   isDone: boolean;
   streakDays: number;
   duration: number;
@@ -129,14 +129,17 @@ export default function CardOtherHabit({ variant, userId }: Props) {
       });
     }
     setIsConfirmationVisible(true);
-};
+  };
 
   const getSubTextType = (habit: HabitData) => {
     switch (variant) {
       case "Sport":
       case "Book":
-      case "Custom":
         return `${habit.duration} minutes`;
+      case "Custom":
+        return habit.duration && !isNaN(habit.duration)
+          ? `${habit.duration} minutes`
+          : "no time limit";
       case "Vocabulary":
         return `${habit.dailyAmount} words`;
       default:
@@ -192,7 +195,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
         <View style={styles.leftIconContainer}>{getIcon(habit.isDone)}</View>
         <View style={styles.leftTextContainer}>
           <CustomText style={styles.leftText}>
-            {variant === "Custom" ? habit.text : variant}
+            {variant === "Custom" ? habit.customText : variant}
           </CustomText>
         </View>
       </View>

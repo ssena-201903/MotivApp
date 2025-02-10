@@ -59,9 +59,48 @@ export default function AddOtherHabitModal({
     []
   );
 
+  // const validateInputs = (): boolean => {
+  //   const { goalDays, dailyDuration, customText, dailyAmount } = formData;
+
+  //   if (variant === "Custom") {
+  //     if (!customText.trim()) {
+  //       Alert.alert("Error", "Please fill in the custom habit name.");
+  //       return false;
+  //     }
+  //     if (!dailyAmount.trim()) {
+  //       Alert.alert("Error", "Please fill in the daily amount.");
+  //       return false;
+  //     }
+  //     if (!goalDays.trim()) {
+  //       Alert.alert("Error", "Please fill in all required fields.");
+  //       return false;
+  //     }
+
+  //     return true;
+  //   }
+
+  //   // if (variant === "Vocabulary") {
+  //   //   if (!dailyAmount.trim()) {
+  //   //     Alert.alert("Error", "Please fill in the daily amount.");
+  //   //     return false;
+  //   //   }
+  //   //   if (!goalDays.trim()) {
+  //   //     Alert.alert("Error", "Please fill in the goal days.");
+  //   //     return false;
+  //   //   }
+  //   // }
+
+  //   if (variant === "Vocabulary" || !goalDays.trim() || !dailyDuration.trim()) {
+  //     Alert.alert("Error", "Please fill in all required fields.");
+  //     return false;
+  //   }
+
+  //   return true;
+  // };
+
   const validateInputs = (): boolean => {
     const { goalDays, dailyDuration, customText, dailyAmount } = formData;
-
+  
     if (variant === "Custom") {
       if (!customText.trim()) {
         Alert.alert("Error", "Please fill in the custom habit name.");
@@ -72,23 +111,30 @@ export default function AddOtherHabitModal({
         return false;
       }
       if (!goalDays.trim()) {
-        Alert.alert("Error", "Please fill in all required fields.");
+        Alert.alert("Error", "Please fill in the goal days.");
         return false;
       }
-
       return true;
     }
-
-    if (variant === "Vocabulary" && !dailyAmount.trim()) {
-      Alert.alert("Error", "Please fill in the daily amount.");
-      return false;
+  
+    if (variant === "Vocabulary") {
+      if (!dailyAmount.trim()) {
+        Alert.alert("Error", "Please fill in the daily word amount.");
+        return false;
+      }
+      if (!goalDays.trim()) {
+        Alert.alert("Error", "Please fill in the goal days.");
+        return false;
+      }
+      return true;
     }
-
+  
+    // For other variants (Sport, Book)
     if (!goalDays.trim() || !dailyDuration.trim()) {
       Alert.alert("Error", "Please fill in all required fields.");
       return false;
     }
-
+  
     return true;
   };
 
@@ -100,29 +146,79 @@ export default function AddOtherHabitModal({
       .join(" ");
   };
 
+  // const handleSendDataToDb = async () => {
+  //   if (isSaving) return;
+
+  //   try {
+  //     if (!validateInputs()) {
+  //       return;
+  //     }
+
+  //     setIsSaving(true);
+
+  //     if (!userId) {
+  //       console.error("User not found");
+  //       return;
+  //     }
+
+  //     const habitData = {
+  //       duration:
+  //         variant !== "Vocabulary" ? parseFloat(formData.dailyDuration) : null,
+  //       goalNumber: parseFloat(formData.goalDays),
+  //       customText:
+  //         variant === "Custom" ? capitalizeText(formData.customText) : null,
+  //       dailyAmount:
+  //         variant === "Vocabulary"
+  //           ? parseFloat(formData.dailyAmount)
+  //           : variant === "Custom"
+  //           ? parseFloat(formData.dailyAmount)
+  //           : null,
+  //       isDone: false,
+  //       isArchieved: false,
+  //       variant,
+  //       streakDays: 0,
+  //       doneNumber: 0,
+  //       createdAt: new Date(),
+  //       finishedAt: null,
+  //     };
+
+  //     const userDocRef = doc(db, "users", userId);
+  //     const habitsDocRef = collection(userDocRef, "habits");
+
+  //     await addDoc(habitsDocRef, habitData);
+  //     Keyboard.dismiss();
+  //     onClose();
+  //   } catch (error) {
+  //     console.error("Error saving data to db:", error);
+  //     Alert.alert("Error", "Failed to save habit. Please try again.");
+  //   } finally {
+  //     setIsSaving(false);
+  //   }
+  // };
+
   const handleSendDataToDb = async () => {
     if (isSaving) return;
-
+  
     try {
       if (!validateInputs()) {
         return;
       }
-
+  
       setIsSaving(true);
-
+  
       if (!userId) {
         console.error("User not found");
         return;
       }
-
+  
       const habitData = {
-        duration:
-          variant !== "Vocabulary" ? parseFloat(formData.dailyDuration) : null,
+        duration: variant !== "Vocabulary" ? parseFloat(formData.dailyDuration) : null,
         goalNumber: parseFloat(formData.goalDays),
-        customText:
-          variant === "Custom" ? capitalizeText(formData.customText) : null,
-        dailyAmount:
-          variant === "Vocabulary" || variant === "Custom" ? parseFloat(formData.dailyAmount) : null,
+        customText: variant === "Custom" ? capitalizeText(formData.customText) : null,
+        dailyAmount: 
+          variant === "Vocabulary" || variant === "Custom" 
+            ? parseFloat(formData.dailyAmount) 
+            : null,
         isDone: false,
         isArchieved: false,
         variant,
@@ -131,10 +227,10 @@ export default function AddOtherHabitModal({
         createdAt: new Date(),
         finishedAt: null,
       };
-
+  
       const userDocRef = doc(db, "users", userId);
       const habitsDocRef = collection(userDocRef, "habits");
-
+  
       await addDoc(habitsDocRef, habitData);
       Keyboard.dismiss();
       onClose();
