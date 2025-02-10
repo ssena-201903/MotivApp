@@ -257,14 +257,24 @@ export default function CardWaterHabit({ userId }: Props) {
                 style={styles.subTextDone}
               >{`${filledGlass}/${totalWater}`}</CustomText>
               <View style={styles.streakContainer}>
-                {waterStreak > 13 ? (
-                  // <FontAwesome name="tree" size={18} color="#1E3A5F" />
-                  <TreeIcon size={18} color="#1E3A5F" variant="fill" />
+                {waterStreak > 20 ? (
+                  <TreeIcon
+                    size={22}
+                    color={isWaterDone ? "#1E3A5F" : "#1E3A5FCC"}
+                    variant={isWaterDone ? "fill" : "outlined"}
+                    type="plural"
+                  />
+                ) : waterStreak > 13 ? (
+                  <TreeIcon
+                    size={22}
+                    color={isWaterDone ? "#1E3A5F" : "#1E3A5FCC"}
+                    variant={isWaterDone ? "fill" : "outlined"}
+                    type="single"
+                  />
                 ) : (
-                  // <Ionicons name="leaf" size={18} color="#1E3A5F" />
                   <LeafIcon
                     size={18}
-                    color="#1E3A5F"
+                    color={isWaterDone ? "#1E3A5F" : "#1E3A5FCC"}
                     variant={isWaterDone ? "fill" : "outlined"}
                   />
                 )}

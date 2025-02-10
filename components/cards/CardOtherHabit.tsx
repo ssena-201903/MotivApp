@@ -203,7 +203,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
               style={styles.subTextDone}
             >{`${habit.goalNumber} days`}</CustomText>
             <View style={styles.streakContainer}>
-              {habit.streakDays > 21 ? (
+              {habit.streakDays > 20 ? (
                 <TreeIcon
                   size={22}
                   color={habit.isDone ? "#1E3A5F" : "#1E3A5FCC"}
