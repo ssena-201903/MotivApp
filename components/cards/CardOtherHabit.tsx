@@ -18,6 +18,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase.config";
 import CardFeedback from "./CardFeedback";
+import SparklesIcon from "../icons/SparklesIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -53,11 +54,11 @@ export default function CardOtherHabit({ variant, userId }: Props) {
           ...doc.data(),
         })) as HabitData[];
 
-        // Custom dışındaki variantlar için sadece ilk kartı al
+        // get the first habit if variant is not "Custom"
         if (variant !== "Custom") {
           setHabits([habitsList[0]]);
         } else {
-          // Custom için tüm kartları al
+          // set all habits if variant is "Custom"
           setHabits(habitsList);
         }
       } else {
@@ -72,10 +73,15 @@ export default function CardOtherHabit({ variant, userId }: Props) {
     fetchHabitData();
   }, [userId, variant]);
 
-  const updateHabit = async (habitId: string, isDone: boolean, newStreak: number, newDoneNumber: number) => {
+  const updateHabit = async (
+    habitId: string,
+    isDone: boolean,
+    newStreak: number,
+    newDoneNumber: number
+  ) => {
     try {
       const habitDocRef = doc(db, `users/${userId}/habits/${habitId}`);
-      
+
       await updateDoc(habitDocRef, {
         isDone,
         streakDays: newStreak,
@@ -101,35 +107,33 @@ export default function CardOtherHabit({ variant, userId }: Props) {
           },
           {
             text: "Evet",
-            onPress: () => updateHabit(
-              habit.id,
-              false,
-              habit.streakDays - 1,
-              habit.doneNumber - 1
-            ),
+            onPress: () =>
+              updateHabit(
+                habit.id,
+                false,
+                habit.streakDays - 1,
+                habit.doneNumber - 1
+              ),
           },
         ]
       );
     } else {
-      Alert.alert(
-        "Onay",
-        "Bunu yapıldı olarak işaretlemek istiyor musunuz?",
-        [
-          {
-            text: "Vazgeç",
-            style: "cancel",
-          },
-          {
-            text: "Evet",
-            onPress: () => updateHabit(
+      Alert.alert("Onay", "Bunu yapıldı olarak işaretlemek istiyor musunuz?", [
+        {
+          text: "Vazgeç",
+          style: "cancel",
+        },
+        {
+          text: "Evet",
+          onPress: () =>
+            updateHabit(
               habit.id,
               true,
               habit.streakDays + 1,
               habit.doneNumber + 1
             ),
-          },
-        ]
-      );
+        },
+      ]);
     }
   };
 
@@ -149,41 +153,90 @@ export default function CardOtherHabit({ variant, userId }: Props) {
   const getIcon = (isDone: boolean) => {
     switch (variant) {
       case "Book":
-        return <BookIcon size={22} color="#1E3A5F" variant={isDone ? "fill" : "outlined"} />;
+        return (
+          <BookIcon
+            size={22}
+            color={isDone ? "#1E3A5F" : "#1E3A5FCC"}
+            variant="fill"
+          />
+        );
       case "Sport":
-        return <SportIcon size={22} color="#1E3A5F" variant={isDone ? "fill" : "outlined"} />;
+        return (
+          <SportIcon
+            size={22}
+            color={isDone ? "#1E3A5F" : "#1E3A5FCC"}
+            variant="fill"
+          />
+        );
       case "Vocabulary":
-        return <VocabularyIcon size={22} color="#1E3A5F" variant={isDone ? "fill" : "outlined"} />;
+        return (
+          <VocabularyIcon
+            size={26}
+            color={isDone ? "#1E3A5F" : "#1E3A5FCC"}
+            variant="fill"
+          />
+        );
       case "Custom":
-        return <PuzzleIcon size={22} color="#1E3A5F" variant={isDone ? "fill" : "outlined"} />;
+        return (
+          <SparklesIcon
+            size={22}
+            color={isDone ? "#1E3A5F" : "#1E3A5FCC"}
+            variant="fill"
+          />
+        );
       default:
         return null;
     }
   };
 
   const renderHabitCard = (habit: HabitData) => (
-    <View key={habit.id} style={habit.isDone ? styles.doneHabit : styles.container}>
+    <View
+      key={habit.id}
+      style={habit.isDone ? styles.doneHabit : styles.container}
+    >
       <View style={styles.leftView}>
-        {getIcon(habit.isDone)}
-        <CustomText style={styles.text}>
+        <View style={styles.leftIconContainer}>{getIcon(habit.isDone)}</View>
+        <View style={styles.leftTextContainer}>
+          <CustomText style={styles.leftText}>
+            {variant === "Custom" ? habit.text : variant}
+          </CustomText>
+        </View>
+        {/* {getIcon(habit.isDone)}
+        <CustomText style={styles.leftTextContainer}>
           {variant === "Custom" ? habit.text : variant}
-        </CustomText>
+        </CustomText> */}
       </View>
       <View style={styles.rightContainer}>
         <View style={styles.top}>
           <View style={styles.textContainer}>
-            <CustomText style={styles.subTextDone}>{`${habit.goalNumber} days`}</CustomText>
+            <CustomText
+              style={styles.subTextDone}
+            >{`${habit.goalNumber} days`}</CustomText>
             <View style={styles.streakContainer}>
               {habit.streakDays > 13 ? (
-                <TreeIcon size={18} color="#1E3A5F" variant="fill" />
+                <TreeIcon
+                  size={18}
+                  color={habit.isDone ? "#1E3A5F" : "#1E3A5FCC"}
+                  variant={habit.isDone ? "fill" : "outlined"}
+                />
               ) : (
-                <LeafIcon size={18} color="#1E3A5F" variant={habit.isDone ? "fill" : "outlined"} />
+                <LeafIcon
+                  size={18}
+                  color={habit.isDone ? "#1E3A5F" : "#1E3A5FCC"}
+                  variant={habit.isDone ? "fill" : "outlined"}
+                />
               )}
-              <CustomText style={styles.streakText}>{habit.streakDays}</CustomText>
+              <CustomText style={styles.streakText}>
+                {habit.streakDays}
+              </CustomText>
             </View>
           </View>
           <Pressable onPress={() => handleDonePress(habit)}>
-            <BoxIcon size={20} color="#1E3A5F" variant={habit.isDone ? "fill" : "outlined"} />
+            <BoxIcon
+              size={20}
+              color="#1E3A5F"
+              variant={habit.isDone ? "fill" : "outlined"}
+            />
           </Pressable>
         </View>
         <View style={styles.bottom}>
@@ -252,17 +305,33 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   leftView: {
-    width: "35%",
+    width: "50%",
     height: "auto",
     flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  leftIconContainer: {
+    width: 22,
+    height: 22,
+    justifyContent: "center",
     alignItems: "center",
+    marginRight: 10,
+  },
+  leftTextContainer: {
+    flex: 1,
+    overflow: "hidden",
+  },
+  leftText: {
+    color: "#1E3A5F",
+    fontWeight: "400",
+    fontSize: 14,
   },
   rightContainer: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-between",
-    width: "65%",
+    width: "50%",
     height: "100%",
   },
   top: {
@@ -304,11 +373,5 @@ const styles = StyleSheet.create({
     color: "#1E3A5F",
     fontWeight: "semibold",
     marginLeft: 2,
-  },
-  text: {
-    color: "#1E3A5F",
-    marginLeft: 12,
-    fontWeight: "400",
-    fontSize: 14,
   },
 });

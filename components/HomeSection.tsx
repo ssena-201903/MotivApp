@@ -258,7 +258,7 @@ export default function HomeSection({ variant }: Props) {
                 id={todo.id}
                 text={todo.text}
                 isCompleted={todo.isDone}
-                variant="todo"
+                type="todo"
                 onToggle={() => toggleTodo(todo.id, todo.isDone)}
                 onDelete={() => deleteTodo(todo.id)}
               />
