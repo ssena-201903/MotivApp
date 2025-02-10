@@ -1,8 +1,7 @@
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  FontAwesome,
-} from "@expo/vector-icons";
+import CalendarIcon from "@/components/icons/CalendarIcon";
+import HomeIcon from "@/components/icons/HomeIcon";
+import PeopleIcon from "@/components/icons/PeopleIcon";
+import { CustomText } from "@/CustomText";
 import { Tabs } from "expo-router";
 
 export default function TabLayout() {
@@ -28,7 +27,18 @@ export default function TabLayout() {
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home" size={24} color={color} />
+            <HomeIcon size={24} color={color} variant="fill"/>
+          ),
+          tabBarLabel: ({ color, focused }) => (
+            <CustomText
+              style={{
+                color,
+                fontSize: 10,
+                fontWeight: focused ? "600" : "400",
+              }}
+            >
+              Home
+            </CustomText>
           ),
         }}
       />
@@ -39,7 +49,18 @@ export default function TabLayout() {
           title: "Calendar",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="calendar-clear" size={24} color={color} />
+            <CalendarIcon size={24} color={color} variant="fill"/>
+          ),
+          tabBarLabel: ({ color, focused }) => (
+            <CustomText
+              style={{
+                color,
+                fontSize: 10,
+                fontWeight: focused ? "600" : "400",
+              }}
+            >
+              Calendar
+            </CustomText>
           ),
         }}
       />
@@ -50,7 +71,18 @@ export default function TabLayout() {
           title: "Friends",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="people" size={24} color={color} />
+            <PeopleIcon size={24} color={color} variant="fill"/>
+          ),
+          tabBarLabel: ({ color, focused }) => (
+            <CustomText
+              style={{
+                color,
+                fontSize: 10,
+                fontWeight: focused ? "600" : "400",
+              }}
+            >
+              Friends
+            </CustomText>
           ),
         }}
       />

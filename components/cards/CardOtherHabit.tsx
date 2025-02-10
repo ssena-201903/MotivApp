@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
+import { View, StyleSheet, Pressable, Dimensions } from "react-native";
 import BookIcon from "@/components/icons/BookIcon";
-import PuzzleIcon from "@/components/icons/PuzzleIcon";
 import SportIcon from "@/components/icons/SportIcon";
 import VocabularyIcon from "@/components/icons/VocabularyIcon";
 import TreeIcon from "@/components/icons/TreeIcon";
 import LeafIcon from "@/components/icons/LeafIcon";
-import BoxIcon from "../icons/BoxIcon";
+import BoxIcon from "@/components/icons/BoxIcon";
+import SparklesIcon from "../icons/SparklesIcon";
+import ConfirmationModal from "@/components/modals/ConfirmationModal";
 import { CustomText } from "@/CustomText";
 import {
   doc,
@@ -18,7 +19,6 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase.config";
 import CardFeedback from "./CardFeedback";
-import SparklesIcon from "../icons/SparklesIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -41,6 +41,13 @@ interface HabitData {
 export default function CardOtherHabit({ variant, userId }: Props) {
   const [habits, setHabits] = useState<HabitData[]>([]);
   const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
+  const [isConfirmationVisible, setIsConfirmationVisible] =
+    useState<boolean>(false);
+  const [ConfirmationModalData, setIsConfirmationModalData] = useState({
+    title: "",
+    message: "",
+    onConfirm: () => {},
+  });
 
   const fetchHabitData = async () => {
     try {
@@ -97,45 +104,32 @@ export default function CardOtherHabit({ variant, userId }: Props) {
 
   const handleDonePress = (habit: HabitData) => {
     if (habit.isDone) {
-      Alert.alert(
-        "Geri Alma",
-        "Bunu yapılmamış olarak işaretlemek istiyor musunuz?",
-        [
-          {
-            text: "Vazgeç",
-            style: "cancel",
-          },
-          {
-            text: "Evet",
-            onPress: () =>
-              updateHabit(
-                habit.id,
-                false,
-                habit.streakDays - 1,
-                habit.doneNumber - 1
-              ),
-          },
-        ]
-      );
+      setIsConfirmationModalData({
+        title: "Undo Action",
+        message: "Are you sure you want to mark this as not done?",
+        onConfirm: () =>
+          updateHabit(
+            habit.id,
+            false,
+            habit.streakDays - 1,
+            habit.doneNumber - 1
+          ),
+      });
     } else {
-      Alert.alert("Onay", "Bunu yapıldı olarak işaretlemek istiyor musunuz?", [
-        {
-          text: "Vazgeç",
-          style: "cancel",
-        },
-        {
-          text: "Evet",
-          onPress: () =>
-            updateHabit(
-              habit.id,
-              true,
-              habit.streakDays + 1,
-              habit.doneNumber + 1
-            ),
-        },
-      ]);
+      setIsConfirmationModalData({
+        title: "Complete Action",
+        message: "Are you sure you want to mark this as done?",
+        onConfirm: () =>
+          updateHabit(
+            habit.id,
+            true,
+            habit.streakDays + 1,
+            habit.doneNumber + 1
+          ),
+      });
     }
-  };
+    setIsConfirmationVisible(true);
+};
 
   const getSubTextType = (habit: HabitData) => {
     switch (variant) {
@@ -201,10 +195,6 @@ export default function CardOtherHabit({ variant, userId }: Props) {
             {variant === "Custom" ? habit.text : variant}
           </CustomText>
         </View>
-        {/* {getIcon(habit.isDone)}
-        <CustomText style={styles.leftTextContainer}>
-          {variant === "Custom" ? habit.text : variant}
-        </CustomText> */}
       </View>
       <View style={styles.rightContainer}>
         <View style={styles.top}>
@@ -213,11 +203,19 @@ export default function CardOtherHabit({ variant, userId }: Props) {
               style={styles.subTextDone}
             >{`${habit.goalNumber} days`}</CustomText>
             <View style={styles.streakContainer}>
-              {habit.streakDays > 13 ? (
+              {habit.streakDays > 21 ? (
                 <TreeIcon
-                  size={18}
+                  size={22}
                   color={habit.isDone ? "#1E3A5F" : "#1E3A5FCC"}
                   variant={habit.isDone ? "fill" : "outlined"}
+                  type="plural"
+                />
+              ) : habit.streakDays > 13 ? (
+                <TreeIcon
+                  size={22}
+                  color={habit.isDone ? "#1E3A5F" : "#1E3A5FCC"}
+                  variant={habit.isDone ? "fill" : "outlined"}
+                  type="single"
                 />
               ) : (
                 <LeafIcon
@@ -257,6 +255,16 @@ export default function CardOtherHabit({ variant, userId }: Props) {
         type="celebration"
         onComplete={() => setIsFeedbackVisible(false)}
         isStreak={true}
+      />
+      <ConfirmationModal
+        visible={isConfirmationVisible}
+        title={ConfirmationModalData.title}
+        message={ConfirmationModalData.message}
+        onConfirm={() => {
+          ConfirmationModalData.onConfirm();
+          setIsConfirmationVisible(false);
+        }}
+        onCancel={() => setIsConfirmationVisible(false)}
       />
     </>
   );

@@ -1,6 +1,7 @@
-Anasayfa ikonlarını düzelt
-Tabbar ikonlarını düzelt.
-Alert mesajı sadece androidde çalışıyor, web için de onay mesajı olsun
+DONE Anasayfa ikonlarını düzelt
+DONE Tabbar ikonlarını düzelt.
+DONE Alert mesajı sadece androidde çalışıyor, web için de onay mesajı olsun
+Modal genişliği düzelt
 Habit ekleme kontrolü yap
 Goal ekranını responsive düzenle
 calendar ekranı responsive düzenle
@@ -20,6 +21,7 @@ memories bölümü olsun
 todo eklerken çeşit seç (birthday, todo)
 android apk yap
 
+DAHA SONRA YAPILACAKLAR:
 streak eğer bir gün işaretlenmezse sıfırlansın
 tamamlanan alışkanlıklar arşive alınsın
 okumaya başladığın veya okuduğun kitaplar listesini görüntüle
@@ -28,4 +30,6 @@ izlediğin filmler
 kitaba tıkladığımda sayaç çıksın kaç dakika ise ona göre kronometre olsun
 arkadaş ekleme kısmı
 arkadaşa bildirim gönder
+section header da todo için artı butonu ekle
+home section habits için pin ikonu koy
 
