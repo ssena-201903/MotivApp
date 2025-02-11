@@ -185,38 +185,32 @@ export default function HomeSection({ variant }: Props) {
           />
           <View style={styles.gridViewRow}>
             <CardGoal
-              type="movie"
-              inlineText="Movie"
-              categoryId="Movie"
-              onCategoryPress={handleCategoryPress}
-            />
-            <CardGoal
-              type="car"
-              inlineText="Place"
+              inlineText="Go"
               categoryId="Place"
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal
-              type="wallet"
+              inlineText="Watch"
+              categoryId="Movie"
+              onCategoryPress={handleCategoryPress}
+            />
+            <CardGoal
               inlineText="Buy"
               categoryId="Buy"
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal
-              type="food"
-              inlineText="Food"
+              inlineText="Eat"
               categoryId="Food"
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal
-              type="accessibility"
-              inlineText="Activity"
+              inlineText="Try"
               categoryId="Activity"
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal
-              type="book"
-              inlineText="Book"
+              inlineText="Read"
               categoryId="Book"
               onCategoryPress={handleCategoryPress}
             />

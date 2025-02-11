@@ -291,8 +291,8 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.2,
     // shadowRadius: 4,
     // elevation: 3,
-    borderWidth: 1,
-    borderColor: "#D1D4D9",
+    // borderWidth: 1,
+    // borderColor: "#D1D4D9",
     flex: 1,
   },
   doneHabit: {
@@ -311,8 +311,8 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.2,
     // shadowRadius: 4,
     // elevation: 3,
-    borderWidth: 1,
-    borderColor: "#D1D4D9",
+    // borderWidth: 1,
+    // borderColor: "#D1D4D9",
     flex: 1,
   },
   leftView: {

@@ -1,9 +1,13 @@
 import { CustomText } from "@/CustomText";
-import { View, StyleSheet, Modal, Pressable } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, StyleSheet, Modal, Pressable, Image } from "react-native";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase.config";
 import { router } from "expo-router";
+import LogoutIcon from "../icons/LogoutIcon";
+import PersonIcon from "../icons/PersonIcon";
+import GoalsIcon from "../icons/GoalsIcon";
+import LeafIcon from "../icons/LeafIcon";
+import SettingsIcon from "../icons/SettingsIcon";
 
 type ProfileModalProps = {
   isModalVisible: boolean;
@@ -51,33 +55,34 @@ export default function ProfileModal({
         <Pressable style={styles.container}>
           <View style={styles.topSection}>
             <View style={styles.topSectionSubHeaderContainer}>
-            <CustomText style={styles.topSectionHeader}>MotivApp</CustomText>
-            <CustomText style={styles.topSectionSubHeader}>{currentUser}</CustomText>
+              <Image
+                source={require("@/assets/images/brandName2.png")}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <CustomText style={styles.topSectionSubHeader}>
+                {currentUser}
+              </CustomText>
             </View>
             <Pressable style={styles.logoutButton}>
-              <Ionicons
-                name="log-out-outline"
-                size={24}
-                color="#FCFCFC"
-                onPress={handleLogout}
-              />
+              <LogoutIcon size={24} color="#f8f8f8" />
             </Pressable>
           </View>
           <View style={styles.menus}>
             <Pressable style={styles.menuItem} onPress={handleProfileRoute}>
-              <Ionicons name="person" size={20} color="#1E3A5F" />
+              <PersonIcon size={20} color="#1E3A5F"/>
               <CustomText style={styles.menuItemText}>Profile</CustomText>
             </Pressable>
             <View style={styles.menuItem}>
-              <Ionicons name="flag" size={20} color="#1E3A5F" />
+              <GoalsIcon size={20} color="#1E3A5F" variant="fill"/>
               <CustomText style={styles.menuItemText}>Goals</CustomText>
             </View>
             <Pressable style={styles.menuItem} onPress={handleHabitsRoute}>
-              <Ionicons name="footsteps" size={20} color="#1E3A5F" />
+              <LeafIcon size={20} color="#1E3A5F" variant="fill"/>
               <CustomText style={styles.menuItemText}>Habits</CustomText>
             </Pressable>
             <View style={styles.menuItem}>
-              <Ionicons name="settings" size={20} color="#1E3A5F" />
+              <SettingsIcon size={20} color="#1E3A5F" variant="fill"/>
               <CustomText style={styles.menuItemText}>Settings</CustomText>
             </View>
           </View>
@@ -129,6 +134,12 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     color: "#1E3A5F",
     opacity: 0.8,
+    marginTop: -4,
+    marginLeft: 6,
+  },
+  logo: {
+    width: 100,
+    height: 40,
   },
   logoutButton: {
     display: "flex",
@@ -154,7 +165,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#E5EEFF",
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 12,
+    borderRadius: 8,
   },
   menuItemText: {
     marginLeft: 10,

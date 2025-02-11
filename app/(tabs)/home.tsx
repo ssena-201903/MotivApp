@@ -1,4 +1,11 @@
-import { View, StyleSheet, ScrollView, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  ImageBackground,
+  Platform,
+} from "react-native";
 import TopBar from "@/components/cards/TopBar";
 import CustomButton from "@/components/CustomButton";
 import HomeSection from "@/components/HomeSection";
@@ -25,52 +32,75 @@ export default function Home() {
     setIsMemoryModalVisible(false);
   };
 
-  return (
-    <ScrollView style={styles.scrollView}>
-      <View style={styles.container}>
-        <View style={[styles.topbarContainer, width >= 768 && styles.gridItemLarge]}>
-          <TopBar
-            onDiamondPress={() => setIsMemoryModalVisible(true)}
-            onDatePress={() => setIsAddTodoModalVisible(true)}
-          />
-        </View>
-        <View style={styles.gridContainer}>
-          <View style={[styles.gridItem, width >= 768 && styles.gridItemLarge]}>
-            <HomeSection variant="goals" />
-          </View>
-          <View style={[styles.gridItem, width >= 768 && styles.gridItemLarge]}>
-            <HomeSection variant="habits" />
-          </View>
-          <View style={[styles.gridItem, width >= 768 && styles.gridItemLarge]}>
-            <HomeSection variant="todos" />
-          </View>
-        </View>
-      </View>
+  const backgroundImage =
+      Platform.OS === "web"
+        ? require("@/assets/images/habitCardBg.png")
+        : require("@/assets/images/mobileBg.png");
 
-      {/* when user press diamond icon to add new memory */}
-      {userId && (
-        <AddMemoryModal
-          visible={isMemoryModalVisible}
-          onClose={handleCloseMemoryModal}
-          userId={userId}
-        />
-      )}
-      {/* when user press date card to add new todo */}
-      {userId && (
-        <AddTodoModal
-          visible={isAddTodoModalVisible}
-          onClose={handleCloseTodoModal}
-          userId={userId}
-        />
-      )}
-    </ScrollView>
+  return (
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage} >
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.container}>
+          <View
+            style={[
+              styles.topbarContainer,
+              width >= 768 && styles.gridItemLarge,
+            ]}
+          >
+            <TopBar
+              onDiamondPress={() => setIsMemoryModalVisible(true)}
+              onDatePress={() => setIsAddTodoModalVisible(true)}
+            />
+          </View>
+          <View style={styles.gridContainer}>
+            <View
+              style={[styles.gridItem, width >= 768 && styles.gridItemLarge]}
+            >
+              <HomeSection variant="goals" />
+            </View>
+            <View
+              style={[styles.gridItem, width >= 768 && styles.gridItemLarge]}
+            >
+              <HomeSection variant="habits" />
+            </View>
+            <View
+              style={[styles.gridItem, width >= 768 && styles.gridItemLarge]}
+            >
+              <HomeSection variant="todos" />
+            </View>
+          </View>
+        </View>
+
+        {/* when user press diamond icon to add new memory */}
+        {userId && (
+          <AddMemoryModal
+            visible={isMemoryModalVisible}
+            onClose={handleCloseMemoryModal}
+            userId={userId}
+          />
+        )}
+        {/* when user press date card to add new todo */}
+        {userId && (
+          <AddTodoModal
+            visible={isAddTodoModalVisible}
+            onClose={handleCloseTodoModal}
+            userId={userId}
+          />
+        )}
+      </ScrollView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
   scrollView: {
     flexGrow: 1,
-    backgroundColor: "#FCFCFC",
+    // backgroundColor: "#FCFCFC",
   },
   container: {
     flex: 1,

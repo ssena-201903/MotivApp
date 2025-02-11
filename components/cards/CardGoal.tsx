@@ -11,7 +11,6 @@ import SellIcon from "../icons/SellIcon";
 const { width } = Dimensions.get("window");
 
 type Props = {
-  type: string;
   inlineText: string;
   categoryId: string;
   onCategoryPress: (categoryId: string) => void;
@@ -19,7 +18,6 @@ type Props = {
 };
 
 export default function CardGoal({
-  type,
   inlineText,
   categoryId,
   onCategoryPress,
@@ -42,7 +40,7 @@ export default function CardGoal({
         <WalletIcon size={22} color="#1E3A5F" variant="fill" />
       )}
       {categoryId === "Activity" && (
-        <ActivityIcon size={28} color="#1E3A5F" variant="fill" />
+        <ActivityIcon size={26} color="#1E3A5F" variant="fill" />
       )}
       {categoryId === "Book" && (
         <BookIcon size={22} color="#1E3A5F" variant="fill" />
@@ -67,12 +65,12 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.2,
     // shadowRadius: 4,
     // elevation: 3,
-    borderWidth: 1,
-    borderColor: "#D1D4D9",
+    // borderWidth: 1,
+    // borderColor: "#D1D4D9",
   },
   inlineText: {
     color: "#1E3A5F",
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "400",
     marginLeft: width > 768 ? 0 : 8,
     marginTop: width > 768 ? 8 : 0,
