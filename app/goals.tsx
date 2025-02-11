@@ -18,6 +18,14 @@ import CardGoalTodo from "@/components/cards/CardGoalTodo";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from "@/firebase.config";
 import SectionHeader from "@/components/headers/SectionHeader";
+import MovieIcon from "@/components/icons/MovieIcon";
+import BookIcon from "@/components/icons/BookIcon";
+import ActivityIcon from "@/components/icons/ActivityIcon";
+import CarIcon from "@/components/icons/CarIcon";
+import SellIcon from "@/components/icons/SellIcon";
+import WalletIcon from "@/components/icons/WalletIcon";
+import FoodIcon from "@/components/icons/FoodIcon";
+import PlusIcon from "@/components/icons/PlusIcon";
 
 type iconFamily = "fontawesome" | "ionicons" | "material-community";
 
@@ -120,40 +128,49 @@ export default function Goals() {
             onPress={() => handleCategoryPress(category.id)}
             key={category.id}
           >
-            {category.iconFamily === "fontawesome" && (
-              <FontAwesome
-                name={
-                  activeCategory === category.id
-                    ? category.name as any
-                    : (`${category.name}-outline` as any)
-                }
-                size={22}
-                color="#1E3A5F"
+            {category.id === "Movie" && (
+              <MovieIcon
+                size={18}
+                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                variant={activeCategory === category.id ? "fill" : "outlined"}
               />
             )}
-            {category.iconFamily === "ionicons" && (
-              <Ionicons
-                name={
-                  activeCategory === category.id
-                  ? category.name as any
-                  : (`${category.name}-outline` as any)
-                }
+            {category.id === "Book" && (
+              <BookIcon
                 size={22}
-                color="#1E3A5F"
+                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                variant={activeCategory === category.id ? "fill" : "outlined"}
               />
             )}
-            {category.iconFamily === "material-community" && (
-              <MaterialCommunityIcons
-                name={
-                  activeCategory === category.id
-                  ? category.name as any
-                  : (`${category.name}-outline` as any)
-                }
-                size={22}
-                color="#1E3A5F"
+            {category.id === "Activity" && (
+              <ActivityIcon
+                size={24}
+                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                variant={activeCategory === category.id ? "fill" : "outlined"}
               />
             )}
-            <CustomText style={styles.buttonText}>{category.label}</CustomText>
+            {category.id === "Place" && (
+              <CarIcon
+                size={24}
+                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                variant={activeCategory === category.id ? "fill" : "outlined"}
+              />
+            )}
+            {category.id === "Buy" && (
+              <WalletIcon
+                size={22}
+                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                variant={activeCategory === category.id ? "fill" : "outlined"}
+              />
+            )}
+            {category.id === "Food" && (
+              <FoodIcon
+                size={22}
+                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                variant={activeCategory === category.id ? "fill" : "outlined"}
+              />
+            )}
+            <CustomText style={activeCategory === category.id ? styles.activeButtonText : styles.buttonText}>{category.label}</CustomText>
           </TouchableOpacity>
         ))}
       </View>
@@ -185,7 +202,7 @@ export default function Goals() {
       </ScrollView>
 
       <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
-        <FontAwesome name="plus" size={22} color="white" />
+        <PlusIcon size={22} color="white" />
       </TouchableOpacity>
 
       <AddGoalModal
@@ -204,41 +221,45 @@ const styles = StyleSheet.create({
     backgroundColor: "#FCFCFC",
     paddingTop: 20,
     alignItems: "center",
+    justifyContent: "flex-start",
   },
   categoriesContainer: {
+    display: "flex",
+    flexWrap: "wrap",
     flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    marginBottom: 20,
-    marginHorizontal: width > 760 ? "auto" : 0,
-    paddingHorizontal: width > 760 ? 0 : 20,
+    justifyContent: "space-between",
+    width: width > 768 ? width - 900 : "100%",
+    paddingVertical: 5,
+    gap: 3,
+    flexGrow: 1
   },
   button: {
-    width: width > 760 ? 100 : 60,
-    height: width > 760 ? 60 : 60,
+    width: "13%",
+    height: width > 768 ? 60 : 60,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: width > 760 ? 20 : 4,
+    marginRight: width > 768 ? 20 : 4,
     backgroundColor: "#f8f8f8",
     borderRadius: 8,
-    shadowColor: "#1E3A5F",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
   },
   buttonText: {
     color: "#1E3A5F",
     opacity: 0.6,
     fontSize: 10,
-    marginTop: 4,
+    marginTop: 6,
   },
   activeButton: {
     backgroundColor: "#E5EEFF",
   },
+  activeButtonText: {
+    color: "#1E3A5F",
+    fontSize: 10,
+    fontWeight: 600,
+    marginTop: 6,
+  },
   contentHeader: {
-    width: width > 760 ? width - 860 : "auto",
-    marginHorizontal: "auto",
+    width: width > 768 ? width - 860 : "100%",
+    marginHorizontal: 20,
     alignSelf: "center",
   },
   contentContainer: {
@@ -247,8 +268,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     paddingTop: 10,
-    width: width,
-    paddingHorizontal: width > 760 ? "auto" : 40,
+    width: width > 768 ? width - 860 : "100%",
+    paddingHorizontal: width > 768 ? "auto" : 40,
   },
   addButton: {
     backgroundColor: "#1E3A5F",

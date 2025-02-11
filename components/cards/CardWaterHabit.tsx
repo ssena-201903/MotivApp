@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     minHeight: 70,
-    backgroundColor: "#F4F4F4",
+    backgroundColor: "#f8f8f8",
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 20,

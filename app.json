@@ -29,7 +29,12 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/motivapp_logo.png"
+      "favicon": "./assets/images/motivapp_logo.png",
+      "config": {
+        "meta": {
+          "title": "MotivApp - Kişisel Ajanda"
+        }
+      }
     },
     "plugins": [
       "expo-router",

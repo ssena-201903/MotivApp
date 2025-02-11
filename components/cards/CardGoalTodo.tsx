@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Dimensions, Pressable } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { CustomText } from "@/CustomText";
 import GoalDetailsModal from "@/components/modals/GoalDetailsModal";
-import StarRating from "../icons/StarRating";
+import StarRating from "@/components/icons/StarRating";
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase.config";
+import BoxIcon from "../icons/BoxIcon";
+import PlusIcon from "@/components/icons/PlusIcon";
+import InfoIcon from "@/components/icons/InfoIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -41,6 +43,7 @@ export default function CardGoalTodo({
       await updateDoc(goalRef, {
         isDone: updateIsDone,
         ...(category === "Book" && { readingStatus: updateReadingStatus }),
+        finishedAt: updateIsDone ? new Date() : null,
       });
 
       setIsDone(updateIsDone);
@@ -64,6 +67,7 @@ export default function CardGoalTodo({
       await updateDoc(goalRef, {
         readingStatus: newStatus,
         isDone: updateIsDone,
+        finishedAt: updateIsDone ? new Date() : null,
       });
       setSelectedStatus(newStatus);
       setIsDone(updateIsDone);
@@ -98,16 +102,11 @@ export default function CardGoalTodo({
       <View style={styles.start}>
         <View style={styles.startNameContainer}>
           <Pressable style={styles.checkbox} onPress={toggleCard}>
-            <Ionicons
-              name={isDone ? "checkbox" : "square-outline"}
-              size={width > 760 ? 22 : 22}
-              color="#1E3A5F"
-            />
-            {/* <FontAwesome
-            name={isDone ? "check-square" : "square-o"}
-            size={width > 760 ? 22 : 22}
-            color="#1E3A5F"
-          /> */}
+            {isDone ? (
+              <BoxIcon size={20} color="#1E3A5F" variant="fill" />
+            ) : (
+              <BoxIcon size={20} color="#1E3A5F" variant="outlined" />
+            )}
           </Pressable>
           <CustomText
             style={category === "Book" ? styles.nameBook : styles.nameOther}
@@ -115,29 +114,11 @@ export default function CardGoalTodo({
             {goal.name}
           </CustomText>
         </View>
-        {/* {category === "Book" && (
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={selectedStatus}
-              onValueChange={handleReadingStatusChange}
-              style={styles.picker}
-              itemStyle={styles.pickerItem}
-              dropdownIconColor="#1E3A5F"
-            >
-              <Picker.Item label="Not Started" value="not started" />
-              <Picker.Item label="Reading" value="reading" />
-              <Picker.Item label="Read" value="read" />
-            </Picker>
-          </View>
-        )} */}
+
         <Pressable style={styles.addNote}>
-          {/* <Ionicons name="add" size={22} color="#1E3A5F" /> */}
-          <FontAwesome name="plus" size={20} color="#1E3A5F" />
+          <PlusIcon size={20} color="#1E3A5F" />
           <CustomText style={styles.addNoteText}>Add Note</CustomText>
         </Pressable>
-        {/* {category !== "Book" && (
-          <CustomText style={styles.textCreated}>{goal.created}</CustomText>
-        )} */}
       </View>
       <View style={styles.end}>
         {category === "Book" && (
@@ -156,14 +137,12 @@ export default function CardGoalTodo({
           </View>
         )}
         <View style={styles.starRate}>
-          <StarRating rating={rating} onRatingChange={handleRatingChange} />
-          <Ionicons
-            name="information-circle-outline"
-            size={20}
-            color="#1E3A5F"
-            style={styles.infoIcon}
-            onPress={handleViewDetails}
-          />
+          <View style={styles.starContainer}>
+            <StarRating rating={rating} onRatingChange={handleRatingChange} />
+          </View>
+          <View style={styles.infoIcon}>
+            <InfoIcon size={20} color="#1E3A5F" variant="outlined" />
+          </View>
         </View>
       </View>
     </View>
@@ -184,11 +163,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
+    // elevation: 3,
     // flex: 1,
   },
   completed: {
@@ -206,11 +185,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
+    // elevation: 3,
     // flex: 1,
   },
   start: {
@@ -299,8 +278,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500",
   },
+  starContainer: {
+    marginLeft: 10,
+  },
   infoIcon: {
-    marginLeft: 20,
-    opacity: 0.6,
+    marginLeft: 10,
+    opacity: 0.8,
   },
 });

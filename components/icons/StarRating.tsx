@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import StarIcon from './StarIcon';
 
 type StarRatingProps = {
   rating: number;
@@ -10,13 +10,8 @@ export default function StarRating ({ rating, onRatingChange }: StarRatingProps)
   return (
     <View style={styles.starContainer}>
       {Array.from({ length: 5 }, (_, index) => (
-        <TouchableOpacity key={index} onPress={() => onRatingChange(index + 1)}>
-          <FontAwesome
-            name={index < rating ? "star" : "star-o"}
-            size={20}
-            color={index < rating ? "#FFA38F" : "#1E3A5F"}
-            style={styles.icon}
-          />
+        <TouchableOpacity style={styles.icon} key={index} onPress={() => onRatingChange(index + 1)}>
+          <StarIcon size={20} color={index < rating ? "#FFA38F" : "#1E3A5F"} variant={index < rating ? "fill" : "outlined"}/>
         </TouchableOpacity>
       ))}
     </View>
