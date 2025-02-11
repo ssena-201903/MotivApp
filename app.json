@@ -4,7 +4,7 @@
     "slug": "MotivApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/motivapp_logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "platforms": [
@@ -29,7 +29,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/motivapp_logo.png"
     },
     "plugins": [
       "expo-router",
