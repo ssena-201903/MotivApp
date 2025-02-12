@@ -1,6 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Dimensions, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+
+const { width } = Dimensions.get("window");
 
 type Props = {
   label?: string;
@@ -24,13 +26,17 @@ export default function InputPicker({
   containerStyle,
 }: Props) {
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={[styles.wrapper, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
       {description && <Text style={styles.description}>{description}</Text>}
       <Picker
         selectedValue={selectedValue}
         onValueChange={onValueChange}
-        style={[styles.picker, pickerStyle, errorMessage ? styles.errorPicker : {}]}
+        style={[
+          styles.picker,
+          errorMessage ? styles.errorPicker : {},
+          pickerStyle
+        ]}
       >
         {items.map((item, index) => (
           <Picker.Item key={index} label={item.label} value={item.value} />
@@ -42,42 +48,29 @@ export default function InputPicker({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 10,
+  wrapper: {
+    width: "100%",
   },
   label: {
-    fontSize: 14,
+    fontSize: Platform.OS === "web" ? 14 : 16,
     color: "#1E3A5F",
-    fontWeight: 600,
-    marginBottom: 8,
+    fontWeight: "600",
+    marginBottom: 10,
   },
   description: {
-    fontSize: 12,
+    fontSize: Platform.OS === "web" ? 12 : 14,
     color: "#666",
-    marginBottom: 8,
+    marginBottom: 10,
   },
   picker: {
-    // borderRadius: 8,
-    // padding: 12,
-    // fontSize: 16,
-    // backgroundColor: "#E5EEFF",
-    // marginBottom: 10,
-    borderRadius: 12,
-    padding: 14,
-    fontSize: 16,
+    width: "100%",
     color: "#1E3A5F",
     backgroundColor: "#F5F8FF",
-    marginBottom: 16,
+    height: 50,
     borderWidth: 1,
     borderColor: "#E5EEFF",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    borderRadius: 8,
+    paddingHorizontal: 10,
   },
   errorPicker: {
     borderColor: "#FF6B6B",

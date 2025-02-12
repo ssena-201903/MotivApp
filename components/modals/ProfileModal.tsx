@@ -64,7 +64,7 @@ export default function ProfileModal({
                 {currentUser}
               </CustomText>
             </View>
-            <Pressable style={styles.logoutButton}>
+            <Pressable style={styles.logoutButton} onPress={handleLogout}>
               <LogoutIcon size={24} color="#f8f8f8" />
             </Pressable>
           </View>

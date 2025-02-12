@@ -167,8 +167,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
-    maxWidth: 500, // Maksimum genişlik
-    alignSelf: "center", // Merkeze alma
+    maxWidth: 500,
+    alignSelf: "center",
   },
   label: {
     fontSize: Platform.OS === "web" ? 14 : width * 0.035,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     position: "relative",
     borderRadius: 8,
-    backgroundColor: "#E5EEFF",
+    backgroundColor: "#F5F8FF",
     borderWidth: 1,
     borderColor: "#E5EEFF",
     flexDirection: "row",

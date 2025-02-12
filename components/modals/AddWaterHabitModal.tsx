@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Alert,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import {
   GestureHandlerRootView,
@@ -28,6 +29,7 @@ import { db, auth } from "@/firebase.config";
 import { doc, setDoc } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore";
 import { Timestamp } from "firebase/firestore";
+import CloseIcon from "../icons/CloseIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -356,7 +358,7 @@ export default function AddWaterHabitModal({
         isDone: false,
         createdAt: new Date(),
         finishedAt: null,
-        isArhived: false, 
+        isArhived: false,
       };
 
       await setDoc(userDocRef, waterData, { merge: true });
@@ -378,139 +380,166 @@ export default function AddWaterHabitModal({
         case 1:
           return (
             <View style={styles.inputContainer}>
-              <CustomText style={styles.modalTitle}>
+              <CustomText style={styles.modalSubTitle}>
                 {step} step of 5
               </CustomText>
-              <InputField
-                label="Weight (kg)"
-                placeholder="Enter your weight"
-                keyboardType="numeric"
-                value={formData.weight}
-                onChangeText={(value) => handleInputChange("weight", value)}
-              />
-              <InputField
-                label="Height (cm)"
-                placeholder="Enter your height"
-                keyboardType="numeric"
-                value={formData.height}
-                onChangeText={(value) => handleInputChange("height", value)}
-              />
+              <View style={styles.formItem}>
+                <InputField
+                  label="Weight (kg)"
+                  placeholder="Enter your weight"
+                  keyboardType="numeric"
+                  value={formData.weight}
+                  onChangeText={(value) => handleInputChange("weight", value)}
+                />
+              </View>
+              <View style={styles.formItem}>
+                <InputField
+                  label="Height (cm)"
+                  placeholder="Enter your height"
+                  keyboardType="numeric"
+                  value={formData.height}
+                  onChangeText={(value) => handleInputChange("height", value)}
+                />
+              </View>
             </View>
           );
         case 2:
           return (
             <View style={styles.inputContainer}>
-              <CustomText style={styles.modalTitle}>
+              <CustomText style={styles.modalSubTitle}>
                 {step} step of 5
               </CustomText>
-              <InputField
-                label="Age"
-                placeholder="Enter your age"
-                keyboardType="numeric"
-                value={formData.age}
-                onChangeText={(value) => handleInputChange("age", value)}
-              />
-              <InputPicker
-                label="Gender"
-                selectedValue={formData.gender}
-                onValueChange={(value) => handleInputChange("gender", value)}
-                items={[
-                  { label: "Male", value: "Male" },
-                  { label: "Female", value: "Female" },
-                ]}
-              />
+              <View style={styles.formItem}>
+                <InputField
+                  label="Age"
+                  placeholder="Enter your age"
+                  keyboardType="numeric"
+                  value={formData.age}
+                  onChangeText={(value) => handleInputChange("age", value)}
+                />
+              </View>
+              <View style={styles.formItem}>
+                <InputPicker
+                  label="Gender"
+                  selectedValue={formData.gender}
+                  onValueChange={(value) => handleInputChange("gender", value)}
+                  items={[
+                    { label: "Male", value: "Male" },
+                    { label: "Female", value: "Female" },
+                  ]}
+                />
+              </View>
             </View>
           );
         case 3:
           return (
             <View style={styles.inputContainer}>
-              <CustomText style={styles.modalTitle}>
+              <CustomText style={styles.modalSubTitle}>
                 {step} step of 5
               </CustomText>
-              <InputPicker
-                label="Activity Level"
-                selectedValue={formData.activityLevel}
-                onValueChange={(value) =>
-                  handleInputChange("activityLevel", value)
-                }
-                items={[
-                  { label: "Sedentary", value: "Sedentary" },
-                  { label: "Light", value: "Light" },
-                  { label: "Moderate", value: "Moderate" },
-                  { label: "High", value: "High" },
-                  { label: "Intense", value: "Intense" },
-                ]}
-              />
-              <InputPicker
-                label="Climate"
-                selectedValue={formData.climate}
-                onValueChange={(value) => handleInputChange("climate", value)}
-                items={[
-                  { label: "Cold", value: "Cold" },
-                  { label: "Moderate", value: "Moderate" },
-                  { label: "Hot", value: "Hot" },
-                  { label: "Very Hot", value: "VeryHot" },
-                ]}
-              />
+              <View style={styles.formItem}>
+                <InputPicker
+                  label="Activity Level"
+                  selectedValue={formData.activityLevel}
+                  onValueChange={(value) =>
+                    handleInputChange("activityLevel", value)
+                  }
+                  items={[
+                    { label: "Sedentary", value: "Sedentary" },
+                    { label: "Light", value: "Light" },
+                    { label: "Moderate", value: "Moderate" },
+                    { label: "High", value: "High" },
+                    { label: "Intense", value: "Intense" },
+                  ]}
+                />
+              </View>
+              <View style={styles.formItem}>
+                <InputPicker
+                  label="Climate"
+                  selectedValue={formData.climate}
+                  onValueChange={(value) => handleInputChange("climate", value)}
+                  items={[
+                    { label: "Cold", value: "Cold" },
+                    { label: "Moderate", value: "Moderate" },
+                    { label: "Hot", value: "Hot" },
+                    { label: "Very Hot", value: "VeryHot" },
+                  ]}
+                />
+              </View>
             </View>
           );
         case 4:
           return (
             <View style={styles.inputContainer}>
-              <CustomText style={styles.modalTitle}>
+              <CustomText style={styles.modalSubTitle}>
                 {step} step of 5
               </CustomText>
-              <InputField
-                label="Activity Time (min)"
-                placeholder="Daily exercise minutes"
-                keyboardType="numeric"
-                value={formData.activityTime}
-                onChangeText={(value) =>
-                  handleInputChange("activityTime", value)
-                }
-              />
-              <InputPicker
-                label="Health Condition"
-                selectedValue={formData.healthCondition}
-                onValueChange={(value) =>
-                  handleInputChange("healthCondition", value)
-                }
-                items={[
-                  { label: "Normal", value: "Normal" },
-                  { label: "Pregnant", value: "Pregnant" },
-                  { label: "Breastfeeding", value: "Breastfeeding" },
-                  { label: "Athletic", value: "Athletic" },
-                  { label: "High Blood Pressure", value: "HighBloodPressure" },
-                  { label: "Kidney Issues", value: "KidneyIssues" },
-                ]}
-              />
+              <View style={styles.formItem}>
+                <InputField
+                  label="Activity Time (min)"
+                  placeholder="Daily exercise minutes"
+                  keyboardType="numeric"
+                  value={formData.activityTime}
+                  onChangeText={(value) =>
+                    handleInputChange("activityTime", value)
+                  }
+                />
+              </View>
+              <View style={styles.formItem}>
+                <InputPicker
+                  label="Health Condition"
+                  selectedValue={formData.healthCondition}
+                  onValueChange={(value) =>
+                    handleInputChange("healthCondition", value)
+                  }
+                  items={[
+                    { label: "Normal", value: "Normal" },
+                    { label: "Pregnant", value: "Pregnant" },
+                    { label: "Breastfeeding", value: "Breastfeeding" },
+                    { label: "Athletic", value: "Athletic" },
+                    {
+                      label: "High Blood Pressure",
+                      value: "HighBloodPressure",
+                    },
+                    { label: "Kidney Issues", value: "KidneyIssues" },
+                  ]}
+                />
+              </View>
             </View>
           );
         case 5:
           return (
             <View style={styles.inputContainer}>
-              <CustomText style={styles.modalTitle}>
+              <CustomText style={styles.modalSubTitle}>
                 {step} step of 5
               </CustomText>
-              <InputPicker
-                label="Diet Type"
-                selectedValue={formData.dietType}
-                onValueChange={(value) => handleInputChange("dietType", value)}
-                items={[
-                  { label: "Regular", value: "Regular" },
-                  { label: "High Protein", value: "HighProtein" },
-                  { label: "High Salt", value: "HighSalt" },
-                  { label: "Vegetarian", value: "Vegetarian" },
-                  { label: "Keto", value: "Keto" },
-                ]}
-              />
-              <InputField
-                label="Sleep Hours"
-                placeholder="Hours of sleep"
-                keyboardType="numeric"
-                value={formData.sleepHours}
-                onChangeText={(value) => handleInputChange("sleepHours", value)}
-              />
+              <View style={styles.formItem}>
+                <InputPicker
+                  label="Diet Type"
+                  selectedValue={formData.dietType}
+                  onValueChange={(value) =>
+                    handleInputChange("dietType", value)
+                  }
+                  items={[
+                    { label: "Regular", value: "Regular" },
+                    { label: "High Protein", value: "HighProtein" },
+                    { label: "High Salt", value: "HighSalt" },
+                    { label: "Vegetarian", value: "Vegetarian" },
+                    { label: "Keto", value: "Keto" },
+                  ]}
+                />
+              </View>
+              <View style={styles.formItem}>
+                <InputField
+                  label="Sleep Hours"
+                  placeholder="Hours of sleep"
+                  keyboardType="numeric"
+                  value={formData.sleepHours}
+                  onChangeText={(value) =>
+                    handleInputChange("sleepHours", value)
+                  }
+                />
+              </View>
             </View>
           );
         default:
@@ -519,15 +548,15 @@ export default function AddWaterHabitModal({
     };
 
     return (
-      <ScrollView style={styles.modalContent}>
+      <>
         {renderStepContent()}
         <View style={styles.buttonContainer}>
           {step > 1 && (
             <CustomButton
               label="Back"
               onPress={() => setStep(step - 1)}
-              width={120}
-              height={45}
+              width="40%"
+              height={50}
               variant="cancel"
             />
           )}
@@ -535,8 +564,8 @@ export default function AddWaterHabitModal({
             <CustomButton
               label="Next"
               onPress={() => setStep(step + 1)}
-              width={120}
-              height={45}
+              width="40%"
+              height={50}
               variant="fill"
               marginLeft={10}
             />
@@ -544,23 +573,23 @@ export default function AddWaterHabitModal({
             <CustomButton
               label="Calculate"
               onPress={calculateWaterIntake}
-              width={120}
-              height={45}
+              width="40%"
+              height={50}
               variant="fill"
               marginLeft={10}
             />
           )}
         </View>
-      </ScrollView>
+      </>
     );
   };
 
   const renderCupSelection = () => (
-    <View style={styles.modalContent}>
-      <CustomText style={styles.modalTitle}>Select Cup Size</CustomText>
+    <>
+      <CustomText style={styles.modalSubTitle}>Select Cup Size</CustomText>
       <View style={styles.resultContainer}>
         <CustomText style={styles.resultText}>
-          Your recommended daily water intake:{" "}
+          Daily water intake:{" "}
           <CustomText style={styles.resultBold}>
             {calculatedIntake.toFixed(1)} liters
           </CustomText>
@@ -577,17 +606,21 @@ export default function AddWaterHabitModal({
             onPress={() => handleCupSelection(size, name)}
           >
             {component}
-            <CustomText style={styles.cupName}>{name}</CustomText>
-            <CustomText style={styles.cupSize}>{size} ml</CustomText>
+            <View style={styles.cupNameContainer}>
+              <CustomText style={styles.cupName}>{name}</CustomText>
+              <CustomText style={styles.cupSize}>{size} ml</CustomText>
+            </View>
           </TouchableOpacity>
         ))}
       </View>
-    </View>
+    </>
   );
 
   const renderResult = () => (
-    <View style={styles.modalContent}>
-      <CustomText style={styles.modalTitle}>Your Daily Water Goal</CustomText>
+    <>
+      <CustomText style={styles.modalSubTitle}>
+        Your Daily Water Goal
+      </CustomText>
       <View style={styles.resultContainer}>
         <CustomText style={styles.resultText}>
           Daily water intake:{" "}
@@ -608,12 +641,12 @@ export default function AddWaterHabitModal({
         <CustomButton
           label="Done"
           onPress={handleSendDataToDb}
-          width={200}
-          height={45}
+          width="40%"
+          height={50}
           variant="fill"
         />
       </View>
-    </View>
+    </>
   );
 
   return (
@@ -623,18 +656,19 @@ export default function AddWaterHabitModal({
       visible={visible}
       onRequestClose={onClose}
     >
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaView style={styles.overlay}>
-          <View style={styles.modalView}>
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <Ionicons name="close" size={24} color="#1E3A5F" />
-            </TouchableOpacity>
+      <View style={styles.overlay}>
+        <View style={styles.modalView}>
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <CloseIcon size={24} color="#1E3A5F" />
+          </TouchableOpacity>
+          <CustomText style={styles.modalTitle}>Add Water Habit</CustomText>
+          <View style={styles.modalContent}>
             {step <= 5 && renderInputForm()}
             {step === 6 && renderCupSelection()}
             {step === 7 && renderResult()}
           </View>
-        </SafeAreaView>
-      </GestureHandlerRootView>
+        </View>
+      </View>
     </Modal>
   );
 }
@@ -647,17 +681,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalView: {
-    width: width > 760 ? width - 900 : width - 40,
-    backgroundColor: "#FCFCFC",
-    padding: 20,
-    borderRadius: 12,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    width: "100%",
+    maxWidth: 400,
     maxHeight: "90%",
+    backgroundColor: "#FCFCFC",
+    paddingHorizontal: 30,
+    paddingVertical: 30,
     paddingTop: 60,
+    borderRadius: 8,
+    alignItems: "center",
   },
   closeButton: {
     position: "absolute",
@@ -666,6 +698,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "100%",
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 20,
@@ -674,73 +707,82 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     textAlign: "center",
   },
+  modalSubTitle: {
+    fontSize: 16,
+    fontWeight: "normal",
+    color: "#1E3A5F",
+    opacity: 0.8,
+    marginBottom: 30,
+    textAlign: "center",
+  },
   scrollViewContent: {
     paddingBottom: 20,
   },
   inputContainer: {
-    flexDirection: "column",
-    justifyContent: "space-between",
+    marginBottom: 30,
+    width: "100%",
+    alignItems: "center",
+  },
+  formItem: {
+    width: "100%",
     marginBottom: 20,
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: width > 760 ? "center" : "center",
+    justifyContent: "center",
     width: "100%",
-    marginTop: 20,
   },
   resultContainer: {
-    display: "flex",
-    flexDirection: width > 760 ? "row" : "row",
+    width: "100%",
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 30,
   },
   cupGrid: {
     flexDirection: "row",
+    width: "100%",
     flexWrap: "wrap",
-    justifyContent: "space-around",
-    gap: width > 760 ? 10 : 5,
-    marginTop: 20,
+    gap: 10,
+    padding: 4,
+    marginTop: 10,
+    backgroundColor: "yellow",
   },
   cupButton: {
-    width: width > 760 ? 170 : 150,
-    height: width > 760 ? 140 : 120,
+    width: "31%",
+    height: 120,
     backgroundColor: "#f8f8f8",
-    borderRadius: 12,
+    borderRadius: 8,
     alignItems: "center",
-    justifyContent: "center",
-    margin: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
+    justifyContent: "center", // İçeriği dikey olarak da ortalar
+    padding: 10,
+  },  
   selectedCup: {
     backgroundColor: "#1E3A5F",
   },
-  cupLabel: {
-    marginTop: 10,
-    fontSize: 14,
-    color: "#444",
-    fontWeight: "500",
+  cupNameContainer: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
   },
   cupName: {
-    fontSize: width > 760 ? 16 : 14,
+    fontSize: Platform.OS === "web" ? 12 : 12 * 0.8,
     color: "#1E3A5F",
     fontWeight: "bold",
     marginTop: 10,
   },
   cupSize: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#1E3A5F",
     opacity: 0.7,
     fontWeight: "400",
     marginTop: 6,
   },
   resultText: {
-    fontSize: width > 760 ? 16 : 14,
+    fontSize: width > 768 ? 16 : 14,
     color: "#1E3A5F",
+    opacity: 0.8,
     textAlign: "center",
   },
   resultBold: {
