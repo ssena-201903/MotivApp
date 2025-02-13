@@ -1,13 +1,16 @@
 DONE Anasayfa ikonlarını düzelt
 DONE Tabbar ikonlarını düzelt.
 DONE Alert mesajı sadece androidde çalışıyor, web için de onay mesajı olsun
-Habit ekleme modallarının responsivelerini düzelt
-CardWaterHabit düzenle.
-isArchieved ekle habitlere
-Vocabulary eklemede sıkıntı var.
+DONEHabit ekleme modallarının responsivelerini düzelt
+DONE CardWaterHabit düzenle.
+DONE isArchieved ekle habitlere
+DONE Vocabulary eklemede sıkıntı var.
+DONE android apk yap
+DONE custom habiti eklerken tüm harfleri büyük eklesin
+DONE Habit ekleme kontrolü yap
+
 montserrat yazı ailesini yükle, görünmüyor
 Modal genişliği düzelt
-Habit ekleme kontrolü yap
 Goal ekranını responsive düzenle
 calendar ekranı responsive düzenle
 tüm ekranların responsive kontrol et
@@ -15,8 +18,7 @@ Anasayfada todo eklerken refresh kaldır
 tamamlanan elemanları listenin sonuna alsın
 habits sayfasını yap
 habit ekleme ekle
-eklemelerde büyük harf olarak ekle
-custom habiti eklerken tüm harfleri büyük eklesin
+goal eklemelerde büyük harf olarak ekle
 Add note modalı ekle
 goal details modalı ekle
 goal objesine finished at ekle
@@ -24,7 +26,7 @@ renk temasına bak
 dil seçeneğine bak
 memories bölümü olsun
 todo eklerken çeşit seç (birthday, todo)
-android apk yap
+
 
 DAHA SONRA YAPILACAKLAR:
 streak eğer bir gün işaretlenmezse sıfırlansın

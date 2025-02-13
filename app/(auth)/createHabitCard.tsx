@@ -8,15 +8,15 @@ import {
   ImageBackground,
   Platform,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
 import AddWaterHabitModal from "@/components/modals/AddWaterHabitModal";
 import AddOtherHabitModal from "@/components/modals/AddOtherHabitModal";
 import { CustomText } from "@/CustomText";
 import { auth, db } from "@/firebase.config";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { router } from "expo-router";
 import PlusIcon from "@/components/icons/PlusIcon";
+import CheckIcon from "@/components/icons/CheckIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -24,6 +24,7 @@ export default function CreateHabitCard() {
   const [isWaterModalOpen, setIsWaterModalOpen] = useState<boolean>(false);
   const [isOtherModalOpen, setIsOtherModalOpen] = useState<boolean>(false);
   const [variant, setVariant] = useState<string>("");
+  const [existingHabits, setExistingHabits] = useState<string[]>([]);
 
   const [userName, setUserName] = useState<string>("");
   const handleWaterHabitModalPress = () => {
@@ -74,9 +75,30 @@ export default function CreateHabitCard() {
     }
   };
 
+  const fetchExistingHabits = async () => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+
+      const habitsRef = collection(db, "users", userId, "habits");
+      const querySnapshot = await getDocs(habitsRef);
+
+      const HabitVariants = querySnapshot.docs.map((doc) => doc.data().variant);
+      setExistingHabits(HabitVariants);
+    } catch (error) {}
+  };
+
   useEffect(() => {
     getUserInfos();
+    fetchExistingHabits();
+
+    const interval = setInterval(fetchExistingHabits, 1000);
+    return () => clearInterval(interval);
   }, []);
+
+  const isHabitExits = (habitType: string) => {
+    return existingHabits.includes(habitType);
+  };
 
   const backgroundImage =
     Platform.OS === "web"
@@ -100,55 +122,98 @@ export default function CreateHabitCard() {
             <View style={styles.habits}>
               <View style={styles.habitRow}>
                 <TouchableOpacity
-                  style={styles.plusButton}
+                  style={
+                    isHabitExits("Water")
+                      ? styles.isExistButton
+                      : styles.plusButton
+                  }
                   onPress={handleWaterHabitModalPress}
                 >
-                  <PlusIcon size={16} color="#fff"/>
+                  {isHabitExits("Water") ? (
+                    <CheckIcon size={22} color="#1E3A5F" />
+                  ) : (
+                    <PlusIcon size={16} color="#fff" />
+                  )}
                 </TouchableOpacity>
                 <CustomText style={styles.habitText}>Water</CustomText>
               </View>
 
               <View style={styles.habitRow}>
                 <TouchableOpacity
-                  style={styles.plusButton}
+                  style={
+                    isHabitExits("Book")
+                      ? styles.isExistButton
+                      : styles.plusButton
+                  }
                   onPress={handleBookModalPress}
                 >
-                  <PlusIcon size={16} color="#fff"/>
+                  {isHabitExits("Book") ? (
+                    <CheckIcon size={22} color="#1E3A5F" />
+                  ) : (
+                    <PlusIcon size={16} color="#fff" />
+                  )}
                 </TouchableOpacity>
                 <CustomText style={styles.habitText}>Book</CustomText>
               </View>
 
               <View style={styles.habitRow}>
                 <TouchableOpacity
-                  style={styles.plusButton}
+                  style={
+                    isHabitExits("Sport")
+                      ? styles.isExistButton
+                      : styles.plusButton
+                  }
                   onPress={handleSportModalPress}
                 >
-                  <PlusIcon size={16} color="#fff"/>
+                  {isHabitExits("Sport") ? (
+                    <CheckIcon size={22} color="#1E3A5F" />
+                  ) : (
+                    <PlusIcon size={16} color="#fff" />
+                  )}
                 </TouchableOpacity>
                 <CustomText style={styles.habitText}>Sport</CustomText>
               </View>
 
               <View style={styles.habitRow}>
                 <TouchableOpacity
-                  style={styles.plusButton}
+                  style={
+                    isHabitExits("Vocabulary")
+                      ? styles.isExistButton
+                      : styles.plusButton
+                  }
                   onPress={handleVocabularyModalPress}
                 >
-                  <PlusIcon size={16} color="#fff"/>
+                  {isHabitExits("Vocabulary") ? (
+                    <CheckIcon size={22} color="#1E3A5F" />
+                  ) : (
+                    <PlusIcon size={16} color="#fff" />
+                  )}
                 </TouchableOpacity>
                 <CustomText style={styles.habitText}>Vocabulary</CustomText>
               </View>
 
               <View style={styles.habitRow}>
                 <TouchableOpacity
-                  style={styles.plusButton}
+                  style={
+                    isHabitExits("Custom")
+                      ? styles.isExistButton
+                      : styles.plusButton
+                  }
                   onPress={handleCustomModalPress}
                 >
-                  <PlusIcon size={16} color="#fff"/>
+                  {isHabitExits("Custom") ? (
+                    <CheckIcon size={22} color="#1E3A5F" />
+                  ) : (
+                    <PlusIcon size={16} color="#fff" />
+                  )}
                 </TouchableOpacity>
-                <CustomText style={styles.habitText}>Custom Habit</CustomText>
+                <CustomText style={styles.habitText}>Custom</CustomText>
               </View>
             </View>
           </View>
+          <CustomText style={styles.noteText}>
+                You can add more habits later from the habits page
+          </CustomText>
           <View style={styles.buttonContainer}>
             <CustomButton
               label="Maybe later"
@@ -158,10 +223,12 @@ export default function CreateHabitCard() {
               variant="cancel"
               width="50%"
               height={50}
-            />  
+            />
             <CustomButton
               label="Continue"
-              onPress={() => {router.push("/home")}}
+              onPress={() => {
+                router.push("/home");
+              }}
               variant="fill"
               width="50%"
               height={50}
@@ -173,13 +240,17 @@ export default function CreateHabitCard() {
         {isWaterModalOpen && (
           <AddWaterHabitModal
             visible={isWaterModalOpen}
-            onClose={() => setIsWaterModalOpen(false)}
+            onClose={() => {
+              setIsWaterModalOpen(false);
+            }}
           />
         )}
         {isOtherModalOpen && (
           <AddOtherHabitModal
             visible={isOtherModalOpen}
-            onClose={() => setIsOtherModalOpen(false)}
+            onClose={() => {
+              setIsOtherModalOpen(false);
+            }}
             variant={variant}
           />
         )}
@@ -249,10 +320,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 16,
   },
+  isExistButton: {
+    width: 40,
+    height: 40,
+    backgroundColor: "#FFA38F",
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 16,
+  },
   habitText: {
     fontSize: Platform.OS === "web" ? 18 : width * 0.04,
     fontWeight: "medium",
     color: "#1E3A5F",
+  },
+  noteText: {
+    marginBottom: 30,
+    fontSize: 14,
+    color: "#1E3A5F",
+    width: "60%",
+    opacity: 0.6,
+    textAlign: "center",
   },
   buttonContainer: {
     flexDirection: "row",

@@ -141,56 +141,6 @@ export default function AddOtherHabitModal({
       .join(" ");
   };
 
-  // const handleSendDataToDb = async () => {
-  //   if (isSaving) return;
-
-  //   try {
-  //     if (!validateInputs()) {
-  //       return;
-  //     }
-
-  //     setIsSaving(true);
-
-  //     if (!userId) {
-  //       console.error("User not found");
-  //       return;
-  //     }
-
-  //     const habitData = {
-  //       duration:
-  //         variant !== "Vocabulary" ? parseFloat(formData.dailyDuration) : null,
-  //       goalNumber: parseFloat(formData.goalDays),
-  //       customText:
-  //         variant === "Custom" ? capitalizeText(formData.customText) : null,
-  //       dailyAmount:
-  //         variant === "Vocabulary"
-  //           ? parseFloat(formData.dailyAmount)
-  //           : variant === "Custom"
-  //           ? parseFloat(formData.dailyAmount)
-  //           : null,
-  //       isDone: false,
-  //       isArchieved: false,
-  //       variant,
-  //       streakDays: 0,
-  //       doneNumber: 0,
-  //       createdAt: new Date(),
-  //       finishedAt: null,
-  //     };
-
-  //     const userDocRef = doc(db, "users", userId);
-  //     const habitsDocRef = collection(userDocRef, "habits");
-
-  //     await addDoc(habitsDocRef, habitData);
-  //     Keyboard.dismiss();
-  //     onClose();
-  //   } catch (error) {
-  //     console.error("Error saving data to db:", error);
-  //     Alert.alert("Error", "Failed to save habit. Please try again.");
-  //   } finally {
-  //     setIsSaving(false);
-  //   }
-  // };
-
   const handleSendDataToDb = async () => {
     if (isSaving) return;
 

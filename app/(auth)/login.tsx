@@ -56,7 +56,7 @@ export default function Login() {
   };
 
   const handleForgotPassword = () => {
-    router.push("/(auth)/createHabitCard");
+    router.push("/emailVerification");
   };
 
   const backgroundImage =
