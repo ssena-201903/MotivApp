@@ -39,26 +39,52 @@ export default function Home() {
         const userRef = doc(db, "users", userId); // get user ıd document
         const userDocSnap = await getDoc(userRef);
 
-        // resetting user data
+        // updating last signed in date
         userDocSnap.data()?.lastSignedIn !==
           new Date().toISOString().split("T")[0] &&
           (await updateDoc(userRef, {
             lastSignedIn: new Date().toISOString().split("T")[0],
           }));
 
+        // resetting habits data(streak days, isDone, filledCup)
         if (userDocSnap.exists()) {
           const habitsRef = collection(db, "users", userId, "habits");
           const querySnapshot = await getDocs(habitsRef);
 
           const currentDate = new Date().toISOString().split("T")[0];
+          const currentMonth = new Date().getMonth();
+          const currentYear = new Date().getFullYear();
+          // total days in current month
+          const daysInCurrentMonth = new Date(
+            currentYear,
+            currentMonth + 1,
+            0
+          ).getDate();
 
           querySnapshot.docs.forEach(async (doc) => {
             const habitData = doc.data();
             const lastCompleted = habitData.lastChangeAt;
 
-            if (lastCompleted !== currentDate) {
+            // Check if lastChangeAt is 2 days before today or in the previous month
+            const lastChangeDate = new Date(lastCompleted);
+            const currentDateObj = new Date(currentDate);
+
+            // Check if the habit's lastChangeAt is 2 days before today, considering month change
+            const diffDays = Math.floor(
+              (currentDateObj.getTime() - lastChangeDate.getTime()) / (1000 * 60 * 60 * 24)
+            );
+
+            if (diffDays === 2 || (currentDateObj.getDate() === 1 && lastChangeDate.getDate() === daysInCurrentMonth)) {
+              // If lastChangeAt is 2 days ago or lastChangeAt is from the previous month and today is 1st
               await updateDoc(doc.ref, {
-                // lastChangeAt: currentDate,
+                streakDays: 0, // Reset streakDays
+                isDone: false, // Reset completion status
+                filledCup: 0, // Reset cup status
+              });
+              console.log("Habit streak reset due to month change or 2-day gap!");
+            } else if (lastCompleted !== currentDate) {
+              // Reset habit if it is not completed today
+              await updateDoc(doc.ref, {
                 isDone: false,
                 filledCup: 0,
               });
