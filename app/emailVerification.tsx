@@ -1,9 +1,17 @@
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ImageBackground,
+  Platform,
+} from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { push } from "expo-router/build/global-state/routing";
+import InputField from "@/components/cards/InputField";
 
 export default function EmailVerification() {
   const [email, setEmail] = useState("");
@@ -34,44 +42,56 @@ export default function EmailVerification() {
     }
   };
 
+  const backgroundImage =
+    Platform.OS === "web"
+      ? require("@/assets/images/habitCardBg.png")
+      : require("@/assets/images/mobileBg.png");
+
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.title}>Reset Password</Text>
-        <Text style={styles.subtitle}>
-          Please enter your email address to receive a reset link
-        </Text>
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.title}>Reset Password</Text>
+          <Text style={styles.subtitle}>
+            Please enter your email address to receive a reset link
+          </Text>
+        </View>
+
+        {error && <Text style={styles.error}>{error}</Text>}
+        {success && <Text style={styles.success}>{success}</Text>}
+
+        <View style={styles.formContainer}>
+          <InputField
+            label="Email Address"
+            placeholder="Email Address (e.g. user@example.com)"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+          <View style={styles.formButton}>
+            <CustomButton
+              label="Send Reset Link"
+              onPress={handleEmailSubmit}
+              variant="fill"
+              width="60%"
+              height={45}
+            />
+          </View>
+        </View>
       </View>
-
-      {error && <Text style={styles.error}>{error}</Text>}
-      {success && <Text style={styles.success}>{success}</Text>}
-
-      <View style={styles.formContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Email Address (e.g. user@example.com)"
-          placeholderTextColor="#827F7F"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-      </View>
-
-      <CustomButton
-        label="Send Reset Link"
-        onPress={handleEmailSubmit}
-        variant="fill"
-        width={370}
-        height={45}
-      />
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
   container: {
     display: "flex",
-    backgroundColor: "#F9F9F9",
+    // backgroundColor: "#F9F9F9",
     padding: 20,
     justifyContent: "center",
     alignItems: "center",
@@ -102,12 +122,9 @@ const styles = StyleSheet.create({
     width: 370,
     marginBottom: 20,
   },
-  input: {
-    backgroundColor: "#E5EEFF",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-    fontSize: 16,
+  formButton: {
+    width: "100%",
+    marginTop: 40,
   },
   error: {
     color: "red",
