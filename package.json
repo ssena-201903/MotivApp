@@ -52,7 +52,6 @@
     "expo-system-ui": "~4.0.7",
     "expo-web-browser": "~14.0.2",
     "firebase": "^11.2.0",
-    "firebase-functions": "^6.3.1",
     "lottie-react-native": "^7.1.0",
     "lucide-react-native": "^0.474.0",
     "moment": "^2.30.1",
