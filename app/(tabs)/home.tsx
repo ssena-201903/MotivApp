@@ -9,10 +9,18 @@ import {
 import TopBar from "@/components/cards/TopBar";
 import CustomButton from "@/components/CustomButton";
 import HomeSection from "@/components/HomeSection";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddTodoModal from "@/components/modals/AddTodoModal";
-import { auth } from "@/firebase.config";
 import AddMemoryModal from "@/components/modals/AddMemoryModal";
+
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  getDocs,
+  collection,
+} from "firebase/firestore";
+import { db, auth } from "@/firebase.config";
 
 const { width } = Dimensions.get("window");
 
@@ -22,6 +30,51 @@ export default function Home() {
 
   // getting current user id from auth
   const userId = auth.currentUser?.uid;
+
+  useEffect(() => {
+    const checkAndResetUserData = async () => {
+      if (!userId) return;
+      try {
+        // fetching user data
+        const userRef = doc(db, "users", userId); // get user ıd document
+        const userDocSnap = await getDoc(userRef);
+
+        // resetting user data
+        userDocSnap.data()?.lastSignedIn !==
+          new Date().toISOString().split("T")[0] &&
+          (await updateDoc(userRef, {
+            lastSignedIn: new Date().toISOString().split("T")[0],
+          }));
+
+        if (userDocSnap.exists()) {
+          const habitsRef = collection(db, "users", userId, "habits");
+          const querySnapshot = await getDocs(habitsRef);
+
+          const currentDate = new Date().toISOString().split("T")[0];
+
+          querySnapshot.docs.forEach(async (doc) => {
+            const habitData = doc.data();
+            const lastCompleted = habitData.lastChangeAt;
+
+            if (lastCompleted !== currentDate) {
+              await updateDoc(doc.ref, {
+                // lastChangeAt: currentDate,
+                isDone: false,
+                filledCup: 0,
+              });
+              console.log("Habit data updated successfully!");
+            }
+          });
+        } else {
+          console.log("User not found in Firestore!");
+        }
+      } catch (error) {
+        console.error("Error resetting user data:", error);
+      }
+    };
+
+    checkAndResetUserData();
+  }, [userId]);
 
   // handle close modals
   const handleCloseTodoModal = () => {
@@ -33,12 +86,12 @@ export default function Home() {
   };
 
   const backgroundImage =
-      Platform.OS === "web"
-        ? require("@/assets/images/habitCardBg.png")
-        : require("@/assets/images/mobileBg.png");
+    Platform.OS === "web"
+      ? require("@/assets/images/habitCardBg.png")
+      : require("@/assets/images/mobileBg.png");
 
   return (
-    <ImageBackground source={backgroundImage} style={styles.backgroundImage} >
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.container}>
           <View

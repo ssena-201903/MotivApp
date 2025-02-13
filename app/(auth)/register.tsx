@@ -85,7 +85,12 @@ export default function Register() {
       );
       const user = userCredential.user;
       const userRef = doc(db, "users", user.uid);
-      await setDoc(userRef, { formattedName, email, nickname });
+      await setDoc(userRef, { 
+        formattedName, 
+        email, 
+        nickname,
+        lastSignedIn: new Date().toISOString().split("T")[0], 
+      });
 
       const collections = ["goals", "habits", "memories", "todos", "friends"];
       for (const collection of collections) {

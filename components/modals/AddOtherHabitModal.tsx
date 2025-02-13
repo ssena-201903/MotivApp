@@ -173,6 +173,7 @@ export default function AddOtherHabitModal({
         doneNumber: 0,
         createdAt: new Date(),
         finishedAt: null,
+        lastChangeAt: new Date().toISOString().split("T")[0],
       };
 
       const userDocRef = doc(db, "users", userId);

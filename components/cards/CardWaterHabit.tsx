@@ -117,6 +117,7 @@ export default function CardWaterHabit({ userId }: Props) {
   const [filledGlass, setFilledGlass] = useState<number>(0);
   const [totalWater, setTotalWater] = useState<number>(0);
   const [cupSize, setCupSize] = useState<number>(0);
+  const [lastChangeAt, setLastChangeAt] = useState<string>("");
   const [cupType, setCupType] = useState<string>("");
   const [isWaterDone, setIsWaterDone] = useState<boolean>(false);
   const [waterStreak, setWaterStreak] = useState<number>(0);
@@ -139,6 +140,7 @@ export default function CardWaterHabit({ userId }: Props) {
       setCupType(habitDoc.cupType);
       setIsWaterDone(habitDoc.isDone);
       setWaterStreak(habitDoc.streakDays);
+      setLastChangeAt(habitDoc.lastChangeAt);
     }
   };
 
@@ -186,6 +188,7 @@ export default function CardWaterHabit({ userId }: Props) {
         setWaterStreak(newStreakDays);
         setIsFeedbackVisible(true);
         setIsWaterDone(true);
+        setLastChangeAt(new Date().toISOString().split("T")[0]);
       }
 
       try {
@@ -201,7 +204,11 @@ export default function CardWaterHabit({ userId }: Props) {
           // Update data in Firestore
           await updateDoc(habitDocRef, {
             filledCup: newFilledGlass,
-            ...(isCompleted && { isDone: true, streakDays: newStreakDays }),
+            ...(isCompleted && { 
+              isDone: true, 
+              streakDays: newStreakDays,
+              lastChangeAt: new Date().toISOString().split("T")[0], 
+            }),
           });
 
           console.log("Updated water habit data!");

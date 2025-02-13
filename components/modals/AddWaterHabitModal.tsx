@@ -359,6 +359,7 @@ export default function AddWaterHabitModal({
         createdAt: new Date(),
         finishedAt: null,
         isArhived: false,
+        lastChangeAt: new Date().toISOString().split("T")[0],
       };
 
       await setDoc(userDocRef, waterData, { merge: true });

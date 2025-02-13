@@ -84,7 +84,8 @@ export default function CardOtherHabit({ variant, userId }: Props) {
     habitId: string,
     isDone: boolean,
     newStreak: number,
-    newDoneNumber: number
+    newDoneNumber: number,
+    newLastChangeAt: string = new Date().toISOString().split("T")[0],
   ) => {
     try {
       const habitDocRef = doc(db, `users/${userId}/habits/${habitId}`);
@@ -93,6 +94,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
         isDone,
         streakDays: newStreak,
         doneNumber: newDoneNumber,
+        lastChangeAt: newLastChangeAt,
       });
 
       setIsFeedbackVisible(isDone);
@@ -103,6 +105,8 @@ export default function CardOtherHabit({ variant, userId }: Props) {
   };
 
   const handleDonePress = (habit: HabitData) => {
+    const currentDate = new Date().toISOString().split("T")[0];
+
     if (habit.isDone) {
       setIsConfirmationModalData({
         title: "Undo Action",
@@ -112,7 +116,8 @@ export default function CardOtherHabit({ variant, userId }: Props) {
             habit.id,
             false,
             habit.streakDays - 1,
-            habit.doneNumber - 1
+            habit.doneNumber - 1,
+            currentDate
           ),
       });
     } else {
@@ -124,7 +129,8 @@ export default function CardOtherHabit({ variant, userId }: Props) {
             habit.id,
             true,
             habit.streakDays + 1,
-            habit.doneNumber + 1
+            habit.doneNumber + 1,
+            currentDate
           ),
       });
     }
