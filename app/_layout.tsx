@@ -1,9 +1,11 @@
-import { Stack } from "expo-router";
+import { Stack, useNavigation } from "expo-router";
 import { useState, useEffect, ReactNode } from "react";
 import { useRouter } from "expo-router";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/firebase.config";
 import React from "react";
+import { TouchableOpacity } from "react-native";
+import ArrowIcon from "@/components/icons/ArrowIcon";
 
 type AuthContextType = {
   user: User | null;
@@ -18,6 +20,16 @@ const AuthContext = React.createContext<AuthContextType>({
   user: null,
   isLoading: true,
 });
+
+const CustomBackButton = () => {
+  const Navigation = useNavigation();
+
+  return (
+    <TouchableOpacity onPress={() => Navigation.goBack()} style={{ marginLeft: 10, marginRight: 10 }}>
+      <ArrowIcon size={16} color="#1E3A5F" variant="left"/>
+    </TouchableOpacity>
+  );
+}
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
@@ -96,6 +108,8 @@ export default function RootLayout() {
           options={{
             headerShown: true,
             title: "Notifications",
+            headerTintColor: "#1E3A5F",
+            headerLeft: () => <CustomBackButton />,
           }}
         />
         <Stack.Screen
@@ -103,6 +117,8 @@ export default function RootLayout() {
           options={{
             headerShown: true,
             title: "Profile",
+            headerTintColor: "#1E3A5F",
+            headerLeft: () => <CustomBackButton />,
           }}
         />
         <Stack.Screen
@@ -110,6 +126,8 @@ export default function RootLayout() {
           options={{
             headerShown: true,
             title: "Habits",
+            headerTintColor: "#1E3A5F",
+            headerLeft: () => <CustomBackButton />,
           }}
         />
         <Stack.Screen
@@ -117,6 +135,8 @@ export default function RootLayout() {
           options={{
             headerShown: true,
             title: "Goals",
+            headerTintColor: "#1E3A5F",
+            headerLeft: () => <CustomBackButton />,
           }}
         />
         <Stack.Screen
@@ -124,6 +144,8 @@ export default function RootLayout() {
           options={{
             headerShown: true,
             title: "Go Back To Login",
+            headerTintColor: "#1E3A5F",
+            headerLeft: () => <CustomBackButton />,
           }}
         />
       </Stack>

@@ -23,6 +23,7 @@ import {
   where,
   Timestamp,
 } from "firebase/firestore";
+import PlusIcon from "@/components/icons/PlusIcon";
 
 const { width } = Dimensions.get("screen");
 
@@ -211,7 +212,7 @@ export default function CalendarPage() {
                 id={todo.id}
                 text={todo.text}
                 isCompleted={todo.isDone}
-                variant="todo"
+                type="todo"
                 onToggle={() => toggleTodo(todo.id)}
                 onDelete={() => deleteTodo(todo.id)}
               />
@@ -225,7 +226,7 @@ export default function CalendarPage() {
         style={styles.addButton}
         onPress={() => setModalVisible(true)}
       >
-        <Ionicons name="add" size={width > 760 ? 24 : 20} color="white" />
+        <PlusIcon size={20} color="white"/>
       </TouchableOpacity>
 
       {userId && (
@@ -291,10 +292,10 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: "absolute",
-    right: width > 760 ? 340 : 20,
+    right: width > 768 ? 590 : 220,
     top: 570,
-    width: width > 760 ? 40 : 40,
-    height: width > 760 ? 40 : 40,
+    width: width > 768 ? 40 : 40,
+    height: width > 768 ? 40 : 40,
     borderRadius: 50,
     backgroundColor: "#1E3A5F",
     justifyContent: "center",
