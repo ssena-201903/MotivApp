@@ -1,11 +1,11 @@
 import { Stack, useNavigation } from "expo-router";
 import { useState, useEffect, ReactNode } from "react";
-import { useRouter } from "expo-router";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/firebase.config";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import ArrowIcon from "@/components/icons/ArrowIcon";
+import { LanguageProvider } from "./LanguageContext"; // 🌍 Dil sağlayıcıyı ekledik
 
 type AuthContextType = {
   user: User | null;
@@ -29,7 +29,7 @@ const CustomBackButton = () => {
       <ArrowIcon size={16} color="#1E3A5F" variant="left"/>
     </TouchableOpacity>
   );
-}
+};
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
@@ -54,101 +54,100 @@ export function AuthProvider({ children }: AuthProviderProps) {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <Stack>
-        {/* (tabs) */}
-        <Stack.Screen 
-          name="(tabs)"
-          options={{ headerShown: false }}
-        />
-
-        {/* opening screen */}
-        <Stack.Screen
-          name="index"
-          options={{
-            headerShown: false,
-            gestureEnabled: false,
-          }}
-        />
-
-        {/* Auth group */}
-        <Stack.Screen
-          name="(auth)/login"
-          options={{
-            headerShown: false,
-            presentation: "modal",
-            gestureEnabled: false,
-          }}
-        />
-        <Stack.Screen
-          name="(auth)/register"
-          options={{
-            headerShown: false,
-            presentation: "modal",
-            gestureEnabled: false,
-          }}
-        />
-        {/* onboarding */}
-        <Stack.Screen
-          name="(auth)/createHabitCard"
-          options={{
-            headerShown: false,
-          }}
-        />
-
-        {/* main screens */}
-        <Stack.Screen
-          name="home"
-          options={{
-            headerShown: false,
-            gestureEnabled: false,
-          }}
-        />
-        <Stack.Screen
-          name="notifications"
-          options={{
-            headerShown: true,
-            title: "Notifications",
-            headerTintColor: "#1E3A5F",
-            headerLeft: () => <CustomBackButton />,
-          }}
-        />
-        <Stack.Screen
-          name="profile"
-          options={{
-            headerShown: true,
-            title: "Profile",
-            headerTintColor: "#1E3A5F",
-            headerLeft: () => <CustomBackButton />,
-          }}
-        />
-        <Stack.Screen
-          name="habits"
-          options={{
-            headerShown: true,
-            title: "Habits",
-            headerTintColor: "#1E3A5F",
-            headerLeft: () => <CustomBackButton />,
-          }}
-        />
-        <Stack.Screen
-          name="goals"
-          options={{
-            headerShown: true,
-            title: "Goals",
-            headerTintColor: "#1E3A5F",
-            headerLeft: () => <CustomBackButton />,
-          }}
-        />
-        <Stack.Screen
-          name="emailVerification"
-          options={{
-            headerShown: true,
-            title: "Go Back To Login",
-            headerTintColor: "#1E3A5F",
-            headerLeft: () => <CustomBackButton />,
-          }}
-        />
-      </Stack>
+      <LanguageProvider> {/* 🌍 Tüm uygulamayı saran dil sağlayıcı */}
+        <Stack>
+          {/* (tabs) */}
+          <Stack.Screen 
+            name="(tabs)"
+            options={{ headerShown: false }}
+          />
+          {/* opening screen */}
+          <Stack.Screen
+            name="index"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+            }}
+          />
+          {/* Auth group */}
+          <Stack.Screen
+            name="(auth)/login"
+            options={{
+              headerShown: false,
+              presentation: "modal",
+              gestureEnabled: false,
+            }}
+          />
+          <Stack.Screen
+            name="(auth)/register"
+            options={{
+              headerShown: false,
+              presentation: "modal",
+              gestureEnabled: false,
+            }}
+          />
+          {/* onboarding */}
+          <Stack.Screen
+            name="(auth)/createHabitCard"
+            options={{
+              headerShown: false,
+            }}
+          />
+          {/* main screens */}
+          <Stack.Screen
+            name="home"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+            }}
+          />
+          <Stack.Screen
+            name="notifications"
+            options={{
+              headerShown: true,
+              title: "Notifications",
+              headerTintColor: "#1E3A5F",
+              headerLeft: () => <CustomBackButton />,
+            }}
+          />
+          <Stack.Screen
+            name="profile"
+            options={{
+              headerShown: true,
+              title: "Profile",
+              headerTintColor: "#1E3A5F",
+              headerLeft: () => <CustomBackButton />,
+            }}
+          />
+          <Stack.Screen
+            name="habits"
+            options={{
+              headerShown: true,
+              title: "Habits",
+              headerTintColor: "#1E3A5F",
+              headerLeft: () => <CustomBackButton />,
+            }}
+          />
+          <Stack.Screen
+            name="goals"
+            options={{
+              headerShown: true,
+              title: "Goals",
+              headerTintColor: "#1E3A5F",
+              headerLeft: () => <CustomBackButton />,
+            }}
+          />
+          <Stack.Screen
+            name="emailVerification"
+            options={{
+              headerShown: true,
+              title: "Go Back To Login",
+              headerTintColor: "#1E3A5F",
+              headerLeft: () => <CustomBackButton />,
+            }}
+          />
+        </Stack>
+      </LanguageProvider>
     </AuthProvider>
   );
 }

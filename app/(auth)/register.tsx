@@ -17,6 +17,10 @@ import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/cards/InputField";
 import { CustomText } from "@/CustomText";
 
+import { useLanguage } from "../LanguageContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import InputPicker from "@/components/cards/InputPicker";
+
 const { width, height } = Dimensions.get("window");
 
 export default function Register() {
@@ -30,6 +34,17 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  // language context
+  const { t, language, setLanguage } = useLanguage();
+  const [selectedLanguage, setSelectedLanguage] = useState(language);
+
+  // handle change language
+  const handleChangeLanguage = async (lang: string) => {
+    setSelectedLanguage(lang);
+    await setLanguage(lang); // update context
+    await AsyncStorage.setItem("userLanguage", lang); //save to AsyncStorage
+  };
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -90,6 +105,7 @@ export default function Register() {
         email, 
         nickname,
         lastSignedIn: new Date().toISOString().split("T")[0], 
+        language: "en",
       });
 
       const collections = ["goals", "habits", "memories", "todos", "friends"];
@@ -117,8 +133,8 @@ export default function Register() {
       <View style={styles.pageContainer}>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-            <CustomText style={styles.title}>Create Account</CustomText>
-            <CustomText style={styles.subtitle}>Step {step} of 3</CustomText>
+            <CustomText style={styles.title}>{t("register.title")}</CustomText>
+            <CustomText style={styles.subtitle}>{step}/3</CustomText>
           </View>
           {/* <Text style={styles.title}>Create Account</Text>
         <Text style={styles.subtitle}>Step {step} of 3</Text> */}
@@ -129,8 +145,8 @@ export default function Register() {
             <View style={styles.formContainer}>
               <View style={styles.formItem}>
                 <InputField
-                  label="Full Name"
-                  placeholder="Enter your full name"
+                  label={t("register.name")}
+                  placeholder={t("register.namePlaceholder")}
                   value={name}
                   onChangeText={setName}
                   variant="name"
@@ -138,8 +154,8 @@ export default function Register() {
               </View>
               <View style={styles.formItem}>
                 <InputField
-                  label="Nickname"
-                  placeholder="Enter your nickname"
+                  label={t("register.nickname")}
+                  placeholder={t("register.nicknamePlaceholder")}
                   value={nickname}
                   onChangeText={setNickname}
                   variant="nickname"
@@ -152,8 +168,8 @@ export default function Register() {
             <View style={styles.formContainer}>
               <View style={styles.formItem}>
                 <InputField
-                  label="Email"
-                  placeholder="Enter your email"
+                  label={t("register.email")}
+                  placeholder={t("register.emailPlaceholder")}
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
@@ -167,8 +183,8 @@ export default function Register() {
             <View style={styles.formContainer}>
               <View style={styles.formItem}>
                 <InputField
-                  label="Password"
-                  placeholder="Enter your password"
+                  label={t("register.password")}
+                  placeholder={t("register.passwordPlaceholder")}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry={true}
@@ -182,8 +198,8 @@ export default function Register() {
               </View>
               <View style={styles.formItem}>
                 <InputField
-                  label="Confirm Password"
-                  placeholder="Confirm your password"
+                  label={t("register.confirmPassword")}
+                  placeholder={t("register.confirmPasswordPlaceholder")}
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
                   secureTextEntry={true}
@@ -201,7 +217,7 @@ export default function Register() {
           <View style={styles.buttonRow}>
             {step === 1 && (
               <CustomButton
-                label="Back to Login"
+                label={t("register.backToLoginButtonText")}
                 onPress={() => router.push("/login")}
                 variant="cancel"
                 width="50%"
@@ -210,7 +226,7 @@ export default function Register() {
             )}
             {step > 1 && (
               <CustomButton
-                label="Back"
+                label={t("register.backButtonText")}
                 onPress={handleBack}
                 variant="cancel"
                 width="50%"
@@ -219,7 +235,7 @@ export default function Register() {
             )}
             {step < 3 && (
               <CustomButton
-                label="Next"
+                label={t("register.nextButtonText")}
                 onPress={handleNext}
                 variant="fill"
                 width="50%"
@@ -229,7 +245,7 @@ export default function Register() {
             )}
             {step === 3 && (
               <CustomButton
-                label={loading ? "Creating..." : "Create Account"}
+                label={loading ? t("register.isCreatingAccount") : t("register.registerButtonText")}
                 onPress={handleRegister}
                 variant="fill"
                 width="50%"
