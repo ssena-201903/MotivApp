@@ -124,5 +124,30 @@ export default {
         subTitle: "We'll show your saved memories at the end of each month and year in a timeline",
         memoryPlaceholder: "Write your memory here...",
         saveButtonText: "Save",
-      }
+      },
+      goals: {
+        noGoalsYet: "No goals yet",
+      },
+      addGoalsModal: {
+        titleBuy: "Shopping Goal",
+        titleEat: "Food Goal",
+        titleWatch: "Movie Goal",
+        titleRead: "Book Goal",
+        titleGo: "Travel Goal",
+        titleTry: "Activity Goal",
+        namePlaceholder: "Name your goal",
+        authorPlaceholder: "Enter the author",
+        directorPlaceholder: "Enter the director",
+        quotePlaceholder: "Enter a quote",
+        notePlaceholder: "Enter a note",
+        rateText: "Rate your goal",
+        cancelButtonText: "Cancel",
+        addButtonText: "Add",
+      },
+      topNavbar: {
+        goals: "Goals",
+        habits: "Habits",
+        profile: "Profile",
+        notifications: "Notifications",
+      },
   } as const;

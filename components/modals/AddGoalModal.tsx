@@ -14,6 +14,8 @@ import StarRating from "@/components/icons/StarRating";
 import { addDoc, collection } from "firebase/firestore";
 import { CustomText } from "@/CustomText";
 
+import { useLanguage } from "@/app/LanguageContext";
+
 const { width } = Dimensions.get("window");
 
 type AddGoalModalProps = {
@@ -37,6 +39,9 @@ export default function AddGoalModal({
     quote: "",
     note: "",
   });
+
+  // language context
+  const { t, language, setLanguage } = useLanguage();
 
   const handleRatingChange = (rating: number) => {
     setGoalData({ ...goalData, rating });
@@ -113,21 +118,40 @@ export default function AddGoalModal({
     }
   };
 
+  const getModalTitle = () => {
+    switch (categoryId) {
+      case "Movie":
+        return t("addGoalsModal.titleWatch");
+      case "Book":
+        return t("addGoalsModal.titleRead");
+      case "Activity":
+        return t("addGoalsModal.titleTry");
+      case "Place":
+        return t("addGoalsModal.titleGo");
+      case "Buy":
+        return t("addGoalsModal.titleBuy");
+      case "Food":
+        return t("addGoalsModal.titleEat");
+      default:
+        return "";
+    }
+  };
+
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.title}>{categoryId} Details</Text>
+          <Text style={styles.title}>{getModalTitle()}</Text>
           <TextInput
             style={styles.input}
-            placeholder="Name"
+            placeholder={t("addGoalsModal.namePlaceholder")}
             value={goalData.name}
             onChangeText={(text) => setGoalData({ ...goalData, name: text })}
           />
           {categoryId === "Book" && (
             <TextInput
               style={styles.input}
-              placeholder="Author"
+              placeholder={t("addGoalsModal.authorPlaceholder")}
               value={goalData.director}
               onChangeText={(text) =>
                 setGoalData({ ...goalData, director: text })
@@ -137,7 +161,7 @@ export default function AddGoalModal({
           {categoryId === "Book" && (
             <TextInput
               style={styles.input}
-              placeholder="Quote"
+              placeholder={t("addGoalsModal.quotePlaceholder")}
               value={goalData.quote}
               onChangeText={(text) => setGoalData({ ...goalData, quote: text })}
             />
@@ -145,7 +169,7 @@ export default function AddGoalModal({
           {categoryId === "Movie" && (
             <TextInput
               style={styles.input}
-              placeholder="Director"
+              placeholder={t("addGoalsModal.directorPlaceholder")}
               value={goalData.director}
               onChangeText={(text) =>
                 setGoalData({ ...goalData, director: text })
@@ -155,7 +179,7 @@ export default function AddGoalModal({
           {categoryId === "Movie" && (
             <TextInput
               style={styles.input}
-              placeholder="Quote"
+              placeholder={t("addGoalsModal.quotePlaceholder")}
               value={goalData.quote}
               onChangeText={(text) => setGoalData({ ...goalData, quote: text })}
             />
@@ -166,13 +190,13 @@ export default function AddGoalModal({
             categoryId === "Place") && (
             <TextInput
               style={styles.input}
-              placeholder="Note"
+              placeholder={t("addGoalsModal.notePlaceholder")}
               value={goalData.note}
               onChangeText={(text) => setGoalData({ ...goalData, note: text })}
             />
           )}
           <View style={styles.ratingContainer}>
-            <CustomText style={styles.ratingText}>Rate:</CustomText>
+            <CustomText style={styles.ratingText}>{t("addGoalsModal.rateText")}</CustomText>
             <StarRating
               rating={goalData.rating}
               onRatingChange={handleRatingChange}
@@ -180,14 +204,14 @@ export default function AddGoalModal({
           </View>
           <View style={styles.buttonContainer}>
             <CustomButton
-              label="Cancel"
+              label={t("addGoalsModal.cancelButtonText")}
               onPress={onClose}
               variant="cancel"
               width={80}
               height={45}
             />
             <CustomButton
-              label="Add"
+              label={t("addGoalsModal.addButtonText")}
               onPress={handleSave}
               variant="fill"
               width={80}

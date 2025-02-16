@@ -124,5 +124,30 @@ export default {
         subTitle: "Kaydedilen anılarınızı her ayın ve yılın sonunda bir zaman çizelgesinde göstereceğiz",
         memoryPlaceholder: "Anını buraya yaz...",
         saveButtonText: "Kaydet",
-      }
+      },
+      goals: {
+        noGoalsYet: "Henüz hedefiniz yok",
+      },
+      addGoalsModal: {
+        titleBuy: "Alışveriş Hedefi Ekle",
+        titleEat: "Yeni Tat Hedefi Ekle",
+        titleWatch: "İzleme Hedefi Ekle",
+        titleRead: "Okuma Hedefi Ekle",
+        titleGo: "Yolculuk Hedefi Ekle",
+        titleTry: "Aktivite Hedefi Ekle",
+        namePlaceholder: "Adını girin",
+        authorPlaceholder: "Yazarını girin",
+        directorPlaceholder: "Yönetmenini girin",
+        quotePlaceholder: "Alıntı girin",
+        notePlaceholder: "Not ekle",
+        rateText: "Puanlama girin",
+        cancelButtonText: "İptal",
+        addButtonText: "Ekle",
+      },
+      topNavbar: {
+        goals: "Hedefler",
+        habits: "Alışkanlıklar",
+        profile: "Profil",
+        notifications: "Bildirimler",
+      },
   } as const;

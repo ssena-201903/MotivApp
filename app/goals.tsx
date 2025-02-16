@@ -27,33 +27,7 @@ import WalletIcon from "@/components/icons/WalletIcon";
 import FoodIcon from "@/components/icons/FoodIcon";
 import PlusIcon from "@/components/icons/PlusIcon";
 
-type iconFamily = "fontawesome" | "ionicons" | "material-community";
-
-interface Category {
-  id: string;
-  label: string;
-  name: string;
-  iconFamily: iconFamily;
-}
-
-const categories: Category[] = [
-  {
-    id: "Movie",
-    label: "Movie",
-    name: "movie",
-    iconFamily: "material-community",
-  },
-  { id: "Book", label: "Book", name: "book", iconFamily: "material-community" },
-  {
-    id: "Activity",
-    label: "Activity",
-    name: "accessibility",
-    iconFamily: "ionicons",
-  },
-  { id: "Place", label: "Place", name: "car", iconFamily: "ionicons" },
-  { id: "Buy", label: "Buy", name: "wallet", iconFamily: "material-community" },
-  { id: "Food", label: "Food", name: "food", iconFamily: "material-community" },
-];
+import { useLanguage } from "@/app/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -65,6 +39,35 @@ export default function Goals() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [goals, setGoals] = useState<any[]>([]);
   const [percentDone, setPercentDone] = useState(0);
+
+  // language context
+  const { t, language, setLanguage } = useLanguage();
+
+  const categories = [
+    { id: "Movie", label: t("home.cardGoalWatch") },
+    { id: "Book", label: t("home.cardGoalRead") },
+    { id: "Activity", label: t("home.cardGoalTry") },
+    { id: "Place", label: t("home.cardGoalGo") },
+    { id: "Buy", label: t("home.cardGoalBuy") },
+    { id: "Food", label: t("home.cardGoalEat") },
+  ];
+
+  const getSectionHeaderText = () => {
+    switch (activeCategory) {
+      case "Movie":
+        return t("home.cardGoalWatch");
+      case "Book":
+        return t("home.cardGoalRead");
+      case "Activity":
+        return t("home.cardGoalTry");
+      case "Place":
+        return t("home.cardGoalGo");
+      case "Buy":
+        return t("home.cardGoalBuy");
+      case "Food":
+        return t("home.cardGoalEat");
+    }
+  };
 
   // fetch goals
   const fetchGoals = async () => {
@@ -170,13 +173,21 @@ export default function Goals() {
                 variant={activeCategory === category.id ? "fill" : "outlined"}
               />
             )}
-            <CustomText style={activeCategory === category.id ? styles.activeButtonText : styles.buttonText}>{category.label}</CustomText>
+            <CustomText
+              style={
+                activeCategory === category.id
+                  ? styles.activeButtonText
+                  : styles.buttonText
+              }
+            >
+              {category.label}
+            </CustomText>
           </TouchableOpacity>
         ))}
       </View>
       <View style={styles.contentHeader}>
         <SectionHeader
-          text={activeCategory}
+          text={getSectionHeaderText()}
           percentDone={calculatePercentDone(activeCategory)}
           variant="other"
         />
@@ -196,7 +207,7 @@ export default function Goals() {
         ))}
         {goals.length === 0 && (
           <View>
-            <CustomText style={styles.noGoalsText}>No goals yet</CustomText>
+            <CustomText style={styles.noGoalsText}>{t("goals.noGoalsYet")}</CustomText>
           </View>
         )}
       </ScrollView>
@@ -231,7 +242,7 @@ const styles = StyleSheet.create({
     width: width > 768 ? width - 900 : "100%",
     paddingVertical: 5,
     gap: 3,
-    flexGrow: 1
+    flexGrow: 1,
   },
   button: {
     width: "13%",
