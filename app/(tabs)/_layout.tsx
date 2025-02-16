@@ -4,7 +4,12 @@ import PeopleIcon from "@/components/icons/PeopleIcon";
 import { CustomText } from "@/CustomText";
 import { Tabs } from "expo-router";
 
+import { useLanguage } from "@/app/LanguageContext";
+
 export default function TabLayout() {
+  // language context
+  const { t } = useLanguage();
+
   return (
     <Tabs
       screenOptions={{
@@ -37,7 +42,7 @@ export default function TabLayout() {
                 fontWeight: focused ? "600" : "400",
               }}
             >
-              Home
+              {t("bottomNavbar.home")}
             </CustomText>
           ),
         }}
@@ -59,7 +64,7 @@ export default function TabLayout() {
                 fontWeight: focused ? "600" : "400",
               }}
             >
-              Calendar
+              {t("bottomNavbar.calendar")}
             </CustomText>
           ),
         }}
@@ -81,7 +86,7 @@ export default function TabLayout() {
                 fontWeight: focused ? "600" : "400",
               }}
             >
-              Friends
+              {t("bottomNavbar.friends")}
             </CustomText>
           ),
         }}

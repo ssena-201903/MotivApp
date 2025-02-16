@@ -6,21 +6,15 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { CustomText } from "@/CustomText";
-import { Ionicons } from "@expo/vector-icons";
 import { router, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import ProfileModal from "../modals/ProfileModal";
 import { auth } from "@/firebase.config";
-import MovieIcon from "@/components/icons/MovieIcon";
 import NotificationIcon from "@/components/icons/NotificationIcon";
 import MenuIcon from "@/components/icons/MenuIcon";
 import SparklesIcon from "@/components/icons/SparklesIcon";
-import WalletIcon from "@/components/icons/WalletIcon";
-import SellIcon from "@/components/icons/SellIcon";
-import CarIcon from "@/components/icons/CarIcon";
-import FoodIcon from "@/components/icons/FoodIcon";
-import ActivityIcon from "@/components/icons/ActivityIcon";
-import BookIcon from "../icons/BookIcon";
+
+import { useLanguage } from "@/app/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -34,6 +28,10 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
   const [dateMonth, setDateMonth] = useState<string>("");
   const [dateDay, setDateDay] = useState<string>("");
   const [dateDayName, setDateDayName] = useState<string>("");
+  const router = useRouter();
+
+  // language context
+  const { t, language, setLanguage } = useLanguage();
 
   const [isProfileModalVisible, setIsProfileModalVisible] =
     useState<boolean>(false);
@@ -56,14 +54,32 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
   const getCurrentDate = () => {
     const date = new Date();
     const months = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      t("monthName.0"),
+      t("monthName.1"),
+      t("monthName.2"),
+      t("monthName.3"),
+      t("monthName.4"),
+      t("monthName.5"),
+      t("monthName.6"),
+      t("monthName.7"),
+      t("monthName.8"),
+      t("monthName.9"),
+      t("monthName.10"),
+      t("monthName.11"),
     ];
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const days = [
+      t("dayName.0"),
+      t("dayName.1"),
+      t("dayName.2"),
+      t("dayName.3"),
+      t("dayName.4"),
+      t("dayName.5"),
+      t("dayName.6"),
+    ];
 
-    const month = months[date.getMonth()]; 
-    const day = date.getDate().toString(); 
-    const dayName = days[date.getDay()]; 
+    const month = months[date.getMonth()];
+    const day = date.getDate().toString();
+    const dayName = days[date.getDay()];
 
     setDateMonth(month);
     setDateDay(day);
@@ -73,17 +89,21 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
   useEffect(() => {
     getCurrentDate();
   }, []);
-    
 
   return (
     <View style={styles.container}>
       <Pressable style={styles.date} onPress={onDatePress}>
-        <CustomText style={styles.dateMonth}>{dateMonth} {dateDay}</CustomText>
+        <CustomText style={styles.dateMonth}>
+          {dateMonth} {dateDay}
+        </CustomText>
         <CustomText style={styles.dateDay}>{dateDayName}</CustomText>
       </Pressable>
       <View style={styles.topMenu}>
-        <TouchableOpacity style={styles.topMenuItem} onPress={handleNotificationsPress}>
-          <NotificationIcon size={24} color="#f8f8f8" variant="fill"/>
+        <TouchableOpacity
+          style={styles.topMenuItem}
+          onPress={handleNotificationsPress}
+        >
+          <NotificationIcon size={24} color="#f8f8f8" variant="fill" />
         </TouchableOpacity>
         <View style={styles.notificationsDot}>
           <CustomText style={styles.notificationsDotText}>3</CustomText>
@@ -91,7 +111,10 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
         <TouchableOpacity style={styles.topMenuItem} onPress={onDiamondPress}>
           <SparklesIcon size={24} color="#f8f8f8" variant="fill" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.topMenuItem} onPress={handleProfileModals}>
+        <TouchableOpacity
+          style={styles.topMenuItem}
+          onPress={handleProfileModals}
+        >
           <MenuIcon size={24} color="#f8f8f8" />
         </TouchableOpacity>
       </View>

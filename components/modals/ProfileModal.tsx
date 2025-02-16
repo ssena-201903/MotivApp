@@ -9,6 +9,8 @@ import GoalsIcon from "../icons/GoalsIcon";
 import LeafIcon from "../icons/LeafIcon";
 import SettingsIcon from "../icons/SettingsIcon";
 
+import { useLanguage } from "@/app/LanguageContext";
+
 type ProfileModalProps = {
   isModalVisible: boolean;
   onClose: () => void;
@@ -23,6 +25,9 @@ export default function ProfileModal({
   if (!isModalVisible) return null;
 
   const currentUser = auth.currentUser?.email;
+
+  // language context
+  const { t, language, setLanguage } = useLanguage();
 
   const handleLogout = async () => {
     try {
@@ -71,19 +76,19 @@ export default function ProfileModal({
           <View style={styles.menus}>
             <Pressable style={styles.menuItem} onPress={handleProfileRoute}>
               <PersonIcon size={20} color="#1E3A5F"/>
-              <CustomText style={styles.menuItemText}>Profile</CustomText>
+              <CustomText style={styles.menuItemText}>{t("profileModal.profile")}</CustomText>
             </Pressable>
             <View style={styles.menuItem}>
               <GoalsIcon size={20} color="#1E3A5F" variant="fill"/>
-              <CustomText style={styles.menuItemText}>Goals</CustomText>
+              <CustomText style={styles.menuItemText}>{t("profileModal.goals")}</CustomText>
             </View>
             <Pressable style={styles.menuItem} onPress={handleHabitsRoute}>
               <LeafIcon size={20} color="#1E3A5F" variant="fill"/>
-              <CustomText style={styles.menuItemText}>Habits</CustomText>
+              <CustomText style={styles.menuItemText}>{t("profileModal.habits")}</CustomText>
             </Pressable>
             <View style={styles.menuItem}>
               <SettingsIcon size={20} color="#1E3A5F" variant="fill"/>
-              <CustomText style={styles.menuItemText}>Settings</CustomText>
+              <CustomText style={styles.menuItemText}>{t("profileModal.settings")}</CustomText>
             </View>
           </View>
         </Pressable>

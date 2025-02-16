@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase.config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Localization from "expo-localization"; // Cihaz dilini almak için
 import tr from "@/languages/tr";
 import en from "@/languages/en";
 
@@ -21,7 +22,9 @@ type BaseTranslations = {
 };
 
 const LANGUAGES: Record<string, BaseTranslations> = { en, tr };
-const DEFAULT_LANGUAGE = "en";
+const SUPPORTED_LANGUAGES = Object.keys(LANGUAGES); // ["en", "tr"]
+const DEVICE_LANGUAGE = Localization.locale.split("-")[0]; // "en-US" gibi değerlerden sadece "en" almak için
+const DEFAULT_LANGUAGE = SUPPORTED_LANGUAGES.includes(DEVICE_LANGUAGE) ? DEVICE_LANGUAGE : "en";
 
 type LanguageContextType = {
   language: string;
@@ -48,7 +51,7 @@ export function LanguageProvider({ children, user }: LanguageProviderProps) {
           // Kullanıcı giriş yaptıysa Firestore’dan dili al
           const userDoc = await getDoc(doc(db, "users", user.uid));
           const userLanguage = userDoc.exists() ? userDoc.data().language : null;
-  
+
           if (userLanguage && LANGUAGES[userLanguage]) {
             setLanguageState(userLanguage);
             setTranslations(LANGUAGES[userLanguage]);
@@ -56,31 +59,36 @@ export function LanguageProvider({ children, user }: LanguageProviderProps) {
             return;
           }
         }
-  
+
         // Kullanıcı giriş yapmadıysa veya Firestore’da dil kaydı yoksa AsyncStorage’dan çek
         const cachedLanguage = await AsyncStorage.getItem("userLanguage");
         if (cachedLanguage && LANGUAGES[cachedLanguage]) {
           setLanguageState(cachedLanguage);
           setTranslations(LANGUAGES[cachedLanguage]);
+          return;
         }
+
+        // Eğer hiçbir kayıt yoksa, cihazın dilini kontrol et
+        setLanguageState(DEFAULT_LANGUAGE);
+        setTranslations(LANGUAGES[DEFAULT_LANGUAGE]);
+        await AsyncStorage.setItem("userLanguage", DEFAULT_LANGUAGE);
       } catch (error) {
         console.error("Error fetching language:", error);
       }
     };
-  
+
     loadLanguage();
   }, [user]);
-  
 
   const setLanguage = async (lang: string) => {
     if (!LANGUAGES[lang] || lang === language) return;
-  
+
     try {
       if (user) {
         // Önce Firestore’a yaz
         await setDoc(doc(db, "users", user.uid), { language: lang }, { merge: true });
       }
-  
+
       // Başarılı olursa state güncelle
       setLanguageState(lang);
       setTranslations(LANGUAGES[lang]);
@@ -89,7 +97,6 @@ export function LanguageProvider({ children, user }: LanguageProviderProps) {
       console.error("Error changing language:", error);
     }
   };
-  
 
   const t = (key: string): string => key.split(".").reduce((acc: any, part: string) => acc?.[part] ?? key, translations);
 
