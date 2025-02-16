@@ -119,4 +119,10 @@ export default {
         calendar: "Takvim",
         friends: "Arkadaşlarım",
       },
+      addMemoryModal: {
+        title: "Işıltılı Anını Kaydet",
+        subTitle: "Kaydedilen anılarınızı her ayın ve yılın sonunda bir zaman çizelgesinde göstereceğiz",
+        memoryPlaceholder: "Anını buraya yaz...",
+        saveButtonText: "Kaydet",
+      }
   } as const;

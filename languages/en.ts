@@ -119,4 +119,10 @@ export default {
         calendar: "Calendar",
         friends: "Friends",
       },
+      addMemoryModal: {
+        title: "Save your sparkle moment",
+        subTitle: "We'll show your saved memories at the end of each month and year in a timeline",
+        memoryPlaceholder: "Write your memory here...",
+        saveButtonText: "Save",
+      }
   } as const;

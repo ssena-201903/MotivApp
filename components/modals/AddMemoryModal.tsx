@@ -14,6 +14,8 @@ import CustomButton from "../CustomButton";
 import { db } from "@/firebase.config";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
+import { useLanguage } from "@/app/LanguageContext";
+
 const { width } = Dimensions.get('window');
 
 interface AddMemoryModalProps {
@@ -30,6 +32,9 @@ export default function AddMemoryModal({
   userId,
 }: AddMemoryModalProps) {
   const [memoryText, setMemoryText] = useState("");
+
+  // language context
+  const { t, language, setLanguage } = useLanguage();
 
   const handleSaveMemory = async () => {
     if (memoryText.trim()) {
@@ -65,23 +70,22 @@ export default function AddMemoryModal({
               <View style={styles.topMemoryCard}>
                 <Ionicons name="sparkles" color="#264653" size={20} />
                 <Text style={styles.headerMemoryCard}>
-                  Save Your Sparkle Moment
+                  {t("addMemoryModal.title")}
                 </Text>
               </View>
               <Text style={styles.textMemoryCard}>
-                We'll show your saved memories at the end of each month and year
-                in a timeline
+                {t("addMemoryModal.subTitle")}
               </Text>
               <TextInput
                 style={styles.textInput}
-                placeholder="Write your memory..."
+                placeholder={t("addMemoryModal.memoryPlaceholder")}
                 value={memoryText}
                 onChangeText={setMemoryText}
                 multiline={true}
               />
               <TouchableOpacity style={styles.modelButton}>
                 <CustomButton
-                  label="Save"
+                  label={t("addMemoryModal.saveButtonText")}
                   onPress={handleSaveMemory}
                   variant="fill"
                   width={120}
