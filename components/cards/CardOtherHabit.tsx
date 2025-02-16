@@ -20,6 +20,9 @@ import {
 import { db } from "@/firebase.config";
 import CardFeedback from "./CardFeedback";
 
+import { useLanguage } from "@/app/LanguageContext";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+
 const { width } = Dimensions.get("window");
 
 interface Props {
@@ -48,6 +51,10 @@ export default function CardOtherHabit({ variant, userId }: Props) {
     message: "",
     onConfirm: () => {},
   });
+
+  // language context
+  const { t, language, setLanguage } = useLanguage();
+  const [selectedLanguage, setSelectedLanguage] = useState(language);
 
   const fetchHabitData = async () => {
     try {
@@ -141,13 +148,28 @@ export default function CardOtherHabit({ variant, userId }: Props) {
     switch (variant) {
       case "Sport":
       case "Book":
-        return `${habit.duration} minutes`;
+        return `${habit.duration} ${t("home.cardHabitMinute")}`;
       case "Custom":
         return habit.duration && !isNaN(habit.duration)
-          ? `${habit.duration} minutes`
-          : "no time limit";
+          ? `${habit.duration} ${t("home.cardHabitMinute")}`
+          : t("home.cardHabitNoTimeLimit");
       case "Vocabulary":
-        return `${habit.dailyAmount} words`;
+        return `${habit.dailyAmount} ${t("home.cardHabitWord")}`;
+      default:
+        return "";
+    }
+  };
+
+  const getHabitVariant = () => {
+    switch (variant) {
+      case "Sport":
+        return t("home.cardHabitSport");
+      case "Book":
+        return t("home.cardHabitBook");
+      case "Vocabulary":
+        return t("home.cardHabitVocabulary");
+      case "Custom":
+        return t("home.cardHabitCustom");
       default:
         return "";
     }
@@ -201,7 +223,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
         <View style={styles.leftIconContainer}>{getIcon(habit.isDone)}</View>
         <View style={styles.leftTextContainer}>
           <CustomText style={styles.leftText}>
-            {variant === "Custom" ? habit.customText : variant}
+            {variant === "Custom" ? habit.customText : getHabitVariant()}
           </CustomText>
         </View>
       </View>
@@ -210,7 +232,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
           <View style={styles.textContainer}>
             <CustomText
               style={styles.subTextDone}
-            >{`${habit.goalNumber} days`}</CustomText>
+            >{`${habit.goalNumber} ${t("home.cardHabitGoalDays")}`}</CustomText>
             <View style={styles.streakContainer}>
               {habit.streakDays > 20 ? (
                 <TreeIcon
@@ -260,7 +282,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
       {habits.map(renderHabitCard)}
       <CardFeedback
         isVisible={isFeedbackVisible}
-        text={`Congratulations! You have completed the daily goal...`}
+        text={t("feedbackProps.success")}
         type="celebration"
         onComplete={() => setIsFeedbackVisible(false)}
         isStreak={true}

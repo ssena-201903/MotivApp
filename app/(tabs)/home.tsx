@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import AddTodoModal from "@/components/modals/AddTodoModal";
 import AddMemoryModal from "@/components/modals/AddMemoryModal";
 
+// import { useLanguage } from "@/app/LanguageContext";
+
 import {
   doc,
   getDoc,

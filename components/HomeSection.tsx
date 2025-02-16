@@ -19,6 +19,8 @@ import { CustomText } from "@/CustomText";
 import { router } from "expo-router";
 import CardOtherHabit from "./cards/CardOtherHabit";
 
+import { useLanguage } from "@/app/LanguageContext";
+
 const { width } = Dimensions.get("window");
 
 type Props = {
@@ -37,6 +39,10 @@ export default function HomeSection({ variant }: Props) {
   const [isSportCard, setIsSportCard] = useState<boolean>(false);
   const [isCustomCard, setIsCustomCard] = useState<boolean>(false);
   const [isVocabularyCard, setIsVocabularyCard] = useState<boolean>(false);
+
+  // language context
+  const { t, language, setLanguage } = useLanguage();
+  const [selectedLanguage, setSelectedLanguage] = useState(language);
 
   const fetchHabitDatas = async () => {
     try {
@@ -179,38 +185,38 @@ export default function HomeSection({ variant }: Props) {
       return (
         <>
           <SectionHeader
-            text="Goals"
+            text={t("home.sectionHeaderGoals")}
             percentDone={calculateGoalsPercentage(goals)}
             variant="home"
           />
           <View style={styles.gridViewRow}>
             <CardGoal
-              inlineText="Go"
+              inlineText={t("home.cardGoalGo")}
               categoryId="Place"
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal
-              inlineText="Watch"
+              inlineText={t("home.cardGoalWatch")}
               categoryId="Movie"
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal
-              inlineText="Buy"
+              inlineText={t("home.cardGoalBuy")}
               categoryId="Buy"
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal
-              inlineText="Eat"
+              inlineText={t("home.cardGoalEat")}  
               categoryId="Food"
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal
-              inlineText="Try"
+              inlineText={t("home.cardGoalTry")}
               categoryId="Activity"
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal
-              inlineText="Read"
+              inlineText={t("home.cardGoalRead")}
               categoryId="Book"
               onCategoryPress={handleCategoryPress}
             />
@@ -220,14 +226,22 @@ export default function HomeSection({ variant }: Props) {
     } else if (variant === "habits") {
       return (
         <>
-          <SectionHeader text="Habits" percentDone={60} variant="home" />
+          <SectionHeader
+            text={t("home.sectionHeaderHabits")}
+            percentDone={60}
+            variant="home"
+          />
           <View style={styles.gridView}>
             {userId && isWaterCard && <CardWaterHabit userId={userId} />}
-            {userId && isBookCard && <CardOtherHabit userId={userId} variant="Book" />}
+            {userId && isBookCard && (
+              <CardOtherHabit userId={userId} variant="Book" />
+            )}
             {userId && isVocabularyCard && (
               <CardOtherHabit userId={userId} variant="Vocabulary" />
             )}
-            {userId && isSportCard && <CardOtherHabit userId={userId} variant="Sport" />}
+            {userId && isSportCard && (
+              <CardOtherHabit userId={userId} variant="Sport" />
+            )}
             {userId && isCustomCard && (
               <CardOtherHabit userId={userId} variant="Custom" />
             )}
@@ -241,7 +255,7 @@ export default function HomeSection({ variant }: Props) {
       return (
         <>
           <SectionHeader
-            text="To-Do"
+            text={t("home.sectionHeaderTodo")}
             percentDone={todosPercentage}
             variant="home"
           />
@@ -272,7 +286,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
-    flex: 1,  
+    flex: 1,
     paddingHorizontal: 20,
     marginBottom: 20,
   },
@@ -283,7 +297,7 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 5,
     gap: 8,
-    flexGrow: 1
+    flexGrow: 1,
   },
   gridViewRow: {
     display: "flex",
@@ -293,6 +307,6 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 5,
     gap: 8,
-    flexGrow: 1
+    flexGrow: 1,
   },
 });
