@@ -18,7 +18,7 @@ import BottleIcon from "@/components/icons/BottleIcon";
 import CupIcon from "@/components/icons/CupIcon";
 import MugIcon from "@/components/icons/MugIcon";
 
-import { FontAwesome } from "@expo/vector-icons";
+import { useLanguage } from "@/app/LanguageContext";
 
 import {
   collection,
@@ -124,6 +124,9 @@ export default function CardWaterHabit({ userId }: Props) {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isFeedbackVisible, setIsFeedbackVisible] = useState<boolean>(false);
 
+  // language context
+  const { t, language, setLanguage } = useLanguage();
+
   // Fetch water habit data
   const fetchWaterHabitData = async () => {
     const habitsRef = collection(db, "users", userId, "habits");
@@ -170,6 +173,26 @@ export default function CardWaterHabit({ userId }: Props) {
       }
     };
   }, []);
+
+  // get cup names
+  const getCupName = () => {
+    switch (cupType) {
+      case "Cup":
+        return t("waterCupName.typeCup");
+      case "Mug":
+        return t("waterCupName.typeMug");
+      case "Glass":
+        return t("waterCupName.typeGlass");
+      case "Small Bottle":
+        return t("waterCupName.typeSmallBottle");
+      case "Large Bottle":
+        return t("waterCupName.typeLargeBottle");
+      case "Extra Large Bottle":
+        return t("waterCupName.typeExtraLargeBottle");
+      default:
+        return t("waterCupName.typeGlass");
+    }
+  };
 
   // Handle water press
   const handleWaterPress = async () => {
@@ -235,11 +258,19 @@ export default function CardWaterHabit({ userId }: Props) {
   const getFeedbackProps = () => {
     if (waterStreak === 14) {
       return {
-        text: "Tebrikler 14 gün su içtiniz!",
+        text: t("feedbackProps.successWater14"),
+      };
+    } else if (waterStreak === 21) {
+      return {
+        text: t("feedbackProps.successWater21"),
+      };
+    } else if (waterStreak === 40) {
+      return {
+        text: t("feedbackProps.successWater40"),
       };
     } else {
       return {
-        text: "Congratulations! Completed the daily water goal...",
+        text: t("feedbackProps.successHabit"),
       };
     }
   };
@@ -298,7 +329,7 @@ export default function CardWaterHabit({ userId }: Props) {
           </View>
           <View style={styles.bottom}>
             <CustomText style={styles.subTextType}>
-              {cupType} | {cupSize} ml
+              {getCupName()} | {cupSize} ml
             </CustomText>
           </View>
         </View>

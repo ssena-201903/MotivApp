@@ -52,7 +52,7 @@ export default {
         cardHabitNoTimeLimit: "no time limit",
       },
       feedbackProps: {
-        success: "Congratulations, your goal is complete!",
+        successHabit: "Congratulations, your goal is complete!",
         successWater14: "Congratulations! You have 1 water tree!",
         successWater21: "Congratulations! You have a water forest!",
         successWater40: "Congratulations! You have 40 days of water, your habit is established!",
@@ -68,5 +68,21 @@ export default {
         successCustom14: "Congratulations! You have 1 custom tree!",
         successCustom21: "Congratulations! You have a custom forest!",
         successCustom40: "Congratulations! You have 40 days of custom, your habit is established!",
+      },
+      confirmationHabit: {
+        titlePossitive: "Do Habit",
+        messagePossitive: "Do you want to complete this habit?",
+        titleNegative: "Undo Habit",
+        messageNegative: "Do you want to undo this habit?",
+        cancelButtonText: "Cancel",
+        confirmButtonText: "Yes",
+      },
+      waterCupName: {
+        typeCup: "Cup",
+        typeMug: "Mug",
+        typeGlass: "Glass",
+        typeSmallBottle: "Small Bottle",
+        typeLargeBottle: "Large Bottle",
+        typeExtraLargeBottle: "Extra Large Bottle",
       },
   } as const;

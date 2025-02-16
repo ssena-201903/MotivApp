@@ -116,8 +116,8 @@ export default function CardOtherHabit({ variant, userId }: Props) {
 
     if (habit.isDone) {
       setIsConfirmationModalData({
-        title: "Undo Action",
-        message: "Are you sure you want to mark this as not done?",
+        title: t("confirmationHabit.titleNegative"),
+        message: t("confirmationHabit.messageNegative"),
         onConfirm: () =>
           updateHabit(
             habit.id,
@@ -129,8 +129,8 @@ export default function CardOtherHabit({ variant, userId }: Props) {
       });
     } else {
       setIsConfirmationModalData({
-        title: "Complete Action",
-        message: "Are you sure you want to mark this as done?",
+        title: t("confirmationHabit.titlePossitive"),
+        message: t("confirmationHabit.messagePossitive"),
         onConfirm: () =>
           updateHabit(
             habit.id,
@@ -282,7 +282,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
       {habits.map(renderHabitCard)}
       <CardFeedback
         isVisible={isFeedbackVisible}
-        text={t("feedbackProps.success")}
+        text={t("feedbackProps.successHabit")}
         type="celebration"
         onComplete={() => setIsFeedbackVisible(false)}
         isStreak={true}

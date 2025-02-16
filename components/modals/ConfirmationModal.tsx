@@ -10,6 +10,8 @@ import {
 import CustomButton from "../CustomButton";
 import { CustomText } from "@/CustomText";
 
+import { useLanguage } from "@/app/LanguageContext";
+
 const { width } = Dimensions.get("window");
 
 interface ConfirmationModalProps {
@@ -27,6 +29,9 @@ export default function ConfirmationModal({
   onConfirm,
   onCancel,
 }: ConfirmationModalProps) {
+  // language context
+  const { t } = useLanguage();
+
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
@@ -35,14 +40,14 @@ export default function ConfirmationModal({
           <CustomText style={styles.message}>{message}</CustomText>
           <View style={styles.buttonContainer}>
             <CustomButton
-              label="Cancel"
+              label={t("confirmationHabit.cancelButtonText")}
               onPress={onCancel}
               variant="cancel"
               width="50%"
               height={50}
             />
             <CustomButton
-              label="Yes"
+              label={t("confirmationHabit.confirmButtonText")}
               onPress={onConfirm}
               variant="fill"
               width="50%"
