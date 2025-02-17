@@ -93,10 +93,22 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
   return (
     <View style={styles.container}>
       <Pressable style={styles.date} onPress={onDatePress}>
-        <CustomText style={styles.dateMonth}>
+        <CustomText 
+          style={styles.dateMonth}
+          color="#1E3A5F"
+          type="bold"
+          fontSize={24}
+          >
           {dateMonth} {dateDay}
         </CustomText>
-        <CustomText style={styles.dateDay}>{dateDayName}</CustomText>
+        <CustomText 
+          style={styles.dateDay}
+          color="#1E3A5F"
+          type="medium"
+          fontSize={16}
+        >
+          {dateDayName}
+        </CustomText>
       </Pressable>
       <View style={styles.topMenu}>
         <TouchableOpacity
@@ -106,7 +118,13 @@ export default function TopBar({ onDiamondPress, onDatePress }: Props) {
           <NotificationIcon size={24} color="#f8f8f8" variant="fill" />
         </TouchableOpacity>
         <View style={styles.notificationsDot}>
-          <CustomText style={styles.notificationsDotText}>3</CustomText>
+          <CustomText 
+          color="#1E3A5F"
+          type= "medium"
+          fontSize={12}
+          >
+            3
+          </CustomText>
         </View>
         <TouchableOpacity style={styles.topMenuItem} onPress={onDiamondPress}>
           <SparklesIcon size={24} color="#f8f8f8" variant="fill" />
@@ -151,9 +169,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f8f8",
   },
   dateMonth: {
-    color: "#1E3A5F",
-    fontSize: 24,
-    fontWeight: 800,
     marginRight: 16,
   },
   dateDay: {

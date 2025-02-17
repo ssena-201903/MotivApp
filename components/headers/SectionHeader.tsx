@@ -2,7 +2,6 @@ import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { CustomText } from "@/CustomText";
 import { useEffect, useRef } from "react";
 import { Animated } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import ArrowIcon from "../icons/ArrowIcon";
 
@@ -41,7 +40,13 @@ export default function SectionHeader({ variant, text, percentDone }: Props) {
     <View style={styles.container}>
       {/* Header */}
       <TouchableOpacity style={styles.header} onPress={handlePress}>
-        <CustomText style={styles.headerText}>{text}</CustomText>
+        <CustomText 
+          color="#f8f8f8"
+          fontSize={14}
+          type="semibold"
+        >
+          {text}
+        </CustomText>
         {variant === "home" && (
           // <Ionicons name="chevron-forward-outline" size={16} color="#f8f8f8" />
           <ArrowIcon size={10} color="#f8f8f8" variant="right" />

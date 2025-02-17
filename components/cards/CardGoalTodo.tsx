@@ -117,7 +117,10 @@ export default function CardGoalTodo({
       <View style={styles.mobileTop}>
         <View style={styles.mobileNameContainer}>
           <CustomText
-            style={category === "Book" ? styles.nameBook : styles.nameOther}
+            style={styles.nameOther}
+            color="#1E3A5F"
+            fontSize={16}
+            type="semibold"
           >
             {goal.name}
           </CustomText>
@@ -125,7 +128,12 @@ export default function CardGoalTodo({
         <View style={styles.mobileTopRight}>
           <Pressable style={styles.addNote} onPress={handleAddNote}>
             <PlusIcon size={16} color="#1E3A5F" />
-            <CustomText style={styles.addNoteText}>
+            <CustomText 
+              style={styles.addNoteText}
+              color="#1E3A5F"
+              fontSize={12}
+              type="medium"
+            >
               {t("cardGoalTodo.addNote")}
             </CustomText>
           </Pressable>
@@ -151,7 +159,14 @@ export default function CardGoalTodo({
             <Picker.Item label="Read" value="read" />
           </Picker>
         ) : (
-          <CustomText style={styles.createdAtText}>{formatDate(goal.createdAt)}</CustomText>
+          <CustomText 
+            style={styles.createdAtText}
+            color="#1E3A5F"
+            fontSize={12}
+            type="medium"
+          >
+            {formatDate(goal.createdAt)}
+          </CustomText>
         )}
         <View style={styles.mobileRating}>
           <View style={styles.starContainer}>
@@ -195,16 +210,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
-  nameBook: {
-    color: "#1E3A5F",
-    fontSize: width > 768 ? 16 : 16,
-    fontWeight: "600",
-    overflow: "hidden",
-  },
   nameOther: {
-    color: "#1E3A5F",
-    fontSize: width > 768 ? 16 : 16,
-    fontWeight: "600",
     overflow: "hidden",
   },
   picker: {
@@ -218,7 +224,6 @@ const styles = StyleSheet.create({
     color: "#1E3A5F",
   },
   createdAtText: {
-    color: "#1E3A5F",
     opacity: 0.6,
   },
   addNote: {
@@ -232,10 +237,7 @@ const styles = StyleSheet.create({
   },
   addNoteText: {
     marginLeft: 8,
-    color: "#1E3A5F",
     opacity: 0.9,
-    fontSize: 12,
-    fontWeight: "500",
   },
   starContainer: {
     marginLeft: 10,
@@ -272,7 +274,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   mobileCheckbox: {
-    marginLeft: 10,
+    marginLeft: 20,
   },
   mobileRating: {
     display: "flex",
