@@ -58,6 +58,8 @@ export default function InputField({
     variant === "name" ||
     variant === "nickname";
 
+  const [isFocused, setIsFocused] = useState(false);
+
   const toggleSecureEntry = () => {
     setIsSecure(!isSecure);
   };
@@ -78,7 +80,11 @@ export default function InputField({
       ]}
       pointerEvents={isEditable ? "auto" : "none"}
     >
-      {label && <CustomText style={styles.label}>{label}</CustomText>}
+      {label && (
+        <CustomText style={styles.label} type="semibold" color="#1E3A5F">
+          {label}
+        </CustomText>
+      )}
       {description && (
         <CustomText style={styles.description}>{description}</CustomText>
       )}
@@ -86,7 +92,8 @@ export default function InputField({
         style={[
           styles.inputContainer,
           errorMessage ? styles.errorInput : {},
-          { width: "100%" }, 
+          { width: "100%" },
+          isFocused ? styles.focusedInput : {}, // Focus durumunda border değiştir
         ]}
       >
         {variant === "password" && (
@@ -112,13 +119,15 @@ export default function InputField({
         <TextInput
           style={[
             styles.input,
+            {
+              borderWidth: 0, // TextInput içinde border olmasın
+            },
             Platform.select({
               ios: { fontWeight: "400" },
               android: { fontWeight: "400" },
               web: { fontWeight: "400" },
             }),
             inputStyle,
-            errorMessage ? styles.errorInput : {},
             !hasIcon && { marginLeft: 6 },
             !isEditable && styles.disabledInput,
             {
@@ -133,7 +142,10 @@ export default function InputField({
           secureTextEntry={isPasswordField && isSecure}
           keyboardType={keyboardType}
           editable={isEditable && variant !== "edit"}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
         />
+
         {variant === "password" && (
           <TouchableOpacity
             style={styles.iconRight}
@@ -172,14 +184,16 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: Platform.OS === "web" ? 14 : width * 0.035,
-    color: "#1E3A5F",
-    fontWeight: "600",
     marginBottom: 10,
   },
   description: {
     fontSize: Platform.OS === "web" ? 12 : width * 0.03,
     color: "#666",
     marginBottom: 10,
+  },
+  focusedInput: {
+    borderColor: "#1E3A5F", // Focus olduğunda border rengini koyulaştır
+    borderWidth: 1, // Biraz daha belirgin hale getirmek için
   },
   inputContainer: {
     position: "relative",
@@ -189,16 +203,16 @@ const styles = StyleSheet.create({
     borderColor: "#E5EEFF",
     flexDirection: "row",
     alignItems: "center",
-    maxWidth: 500, // Maksimum genişlik
-    alignSelf: "center", // Merkeze alma
+    maxWidth: 500,
+    alignSelf: "center",
   },
   input: {
     flex: 1,
-    padding: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 40,
     color: "#1E3A5F",
     fontWeight: "500",
-    borderRadius: 12,
-    marginLeft: 30,
+    borderRadius: 8,
   },
   iconLeft: {
     position: "absolute",

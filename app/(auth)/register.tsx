@@ -100,11 +100,11 @@ export default function Register() {
       );
       const user = userCredential.user;
       const userRef = doc(db, "users", user.uid);
-      await setDoc(userRef, { 
-        formattedName, 
-        email, 
+      await setDoc(userRef, {
+        formattedName,
+        email,
         nickname,
-        lastSignedIn: new Date().toISOString().split("T")[0], 
+        lastSignedIn: new Date().toISOString().split("T")[0],
         language: "en",
       });
 
@@ -133,11 +133,13 @@ export default function Register() {
       <View style={styles.pageContainer}>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-            <CustomText style={styles.title}>{t("register.title")}</CustomText>
-            <CustomText style={styles.subtitle}>{step}/3</CustomText>
+            <CustomText style={styles.title} type="bold">
+              {t("register.title")}
+            </CustomText>
+            <CustomText style={styles.subtitle} type="medium">
+              {step}/3
+            </CustomText>
           </View>
-          {/* <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Step {step} of 3</Text> */}
 
           {error && <Text style={styles.error}>{error}</Text>}
 
@@ -245,7 +247,11 @@ export default function Register() {
             )}
             {step === 3 && (
               <CustomButton
-                label={loading ? t("register.isCreatingAccount") : t("register.registerButtonText")}
+                label={
+                  loading
+                    ? t("register.isCreatingAccount")
+                    : t("register.registerButtonText")
+                }
                 onPress={handleRegister}
                 variant="fill"
                 width="50%"

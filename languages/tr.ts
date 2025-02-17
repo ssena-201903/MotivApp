@@ -156,4 +156,17 @@ export default {
         addNote: "Not Ekle",
         createdAt: "Oluşturulma zamanı"
       },
+      welcomePage: {
+        title: "Hoşgeldin,",
+        subTitle: "Alışkanlık Kartı Oluştur",
+        subTitleDescription: "Yeni bir alışkanlığa başla ve ilerlemeni izle",
+        waterText: "Su",
+        bookText: "Kitap",
+        vocabularyText: "Kelime Ezberi",
+        sportText: "Spor",
+        customText: "Özel Alışkanlık",
+        description: "Alışkanlıklar sayfasından daha fazla alışkanlık ekleyebilirsin",
+        laterButtonText: "Belki sonra",
+        continueButtonText: "Devam et",
+      }
   } as const;

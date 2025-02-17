@@ -18,6 +18,8 @@ import { router } from "expo-router";
 import PlusIcon from "@/components/icons/PlusIcon";
 import CheckIcon from "@/components/icons/CheckIcon";
 
+import { useLanguage } from "@/app/LanguageContext";
+
 const { width } = Dimensions.get("window");
 
 export default function CreateHabitCard() {
@@ -25,6 +27,9 @@ export default function CreateHabitCard() {
   const [isOtherModalOpen, setIsOtherModalOpen] = useState<boolean>(false);
   const [variant, setVariant] = useState<string>("");
   const [existingHabits, setExistingHabits] = useState<string[]>([]);
+
+  // language context
+  const { t, language, setLanguage } = useLanguage();
 
   const [userName, setUserName] = useState<string>("");
   const handleWaterHabitModalPress = () => {
@@ -111,12 +116,16 @@ export default function CreateHabitCard() {
         <View style={styles.container}>
           <View style={styles.top}>
             <View style={styles.welcomeContainer}>
-              <CustomText style={styles.welcomeText}>Welcome !</CustomText>
+              <CustomText style={styles.welcomeText} type="medium">
+                {t("welcomePage.title")}
+              </CustomText>
               <CustomText style={styles.userName}>{userName}</CustomText>
             </View>
-            <CustomText style={styles.title}>Create Habit Streak</CustomText>
+            <CustomText style={styles.title} type="bold">
+              {t("welcomePage.subTitle")}
+            </CustomText>
             <CustomText style={styles.subtitle}>
-              Start a new habit and track your progress
+              {t("welcomePage.subTitleDescription")}
             </CustomText>
 
             <View style={styles.habits}>
@@ -135,7 +144,9 @@ export default function CreateHabitCard() {
                     <PlusIcon size={16} color="#fff" />
                   )}
                 </TouchableOpacity>
-                <CustomText style={styles.habitText}>Water</CustomText>
+                <CustomText style={styles.habitText}>
+                  {t("welcomePage.waterText")}
+                </CustomText>
               </View>
 
               <View style={styles.habitRow}>
@@ -153,7 +164,9 @@ export default function CreateHabitCard() {
                     <PlusIcon size={16} color="#fff" />
                   )}
                 </TouchableOpacity>
-                <CustomText style={styles.habitText}>Book</CustomText>
+                <CustomText style={styles.habitText}>
+                  {t("welcomePage.bookText")}
+                </CustomText>
               </View>
 
               <View style={styles.habitRow}>
@@ -171,7 +184,9 @@ export default function CreateHabitCard() {
                     <PlusIcon size={16} color="#fff" />
                   )}
                 </TouchableOpacity>
-                <CustomText style={styles.habitText}>Sport</CustomText>
+                <CustomText style={styles.habitText}>
+                  {t("welcomePage.sportText")}
+                </CustomText>
               </View>
 
               <View style={styles.habitRow}>
@@ -189,7 +204,9 @@ export default function CreateHabitCard() {
                     <PlusIcon size={16} color="#fff" />
                   )}
                 </TouchableOpacity>
-                <CustomText style={styles.habitText}>Vocabulary</CustomText>
+                <CustomText style={styles.habitText}>
+                  {t("welcomePage.vocabularyText")}
+                </CustomText>
               </View>
 
               <View style={styles.habitRow}>
@@ -207,16 +224,18 @@ export default function CreateHabitCard() {
                     <PlusIcon size={16} color="#fff" />
                   )}
                 </TouchableOpacity>
-                <CustomText style={styles.habitText}>Custom</CustomText>
+                <CustomText style={styles.habitText}>
+                  {t("welcomePage.customText")}
+                </CustomText>
               </View>
             </View>
           </View>
           <CustomText style={styles.noteText}>
-                You can add more habits later from the habits page
+            {t("welcomePage.description")}
           </CustomText>
           <View style={styles.buttonContainer}>
             <CustomButton
-              label="Maybe later"
+              label={t("welcomePage.laterButtonText")}
               onPress={() => {
                 router.push("/home");
               }}
@@ -225,7 +244,7 @@ export default function CreateHabitCard() {
               height={50}
             />
             <CustomButton
-              label="Continue"
+              label={t("welcomePage.continueButtonText")}
               onPress={() => {
                 router.push("/home");
               }}
@@ -294,7 +313,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   subtitle: {
-    marginBottom: 40,
+    marginBottom: 30,
     fontSize: Platform.OS === "web" ? 16 : width * 0.04,
     color: "#1E3A5F",
     opacity: 0.8,
@@ -353,19 +372,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 20,
   },
   welcomeText: {
     color: "#1E3A5F",
     marginRight: 20,
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 500,
-    marginBottom: 10,
+    // marginBottom: 10,
     textAlign: "center",
   },
   userName: {
     color: "#1E3A5F",
     opacity: 0.7,
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "semibold",
     textAlign: "center",
   },

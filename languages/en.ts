@@ -156,4 +156,17 @@ export default {
         addNote: "Add Note",
         createdAt: "Created At"
       },
+      welcomePage: {
+        title: "Welcome,",
+        subTitle: "Create Habit Streak",
+        subTitleDescription: "Start a new habit and track your progress",
+        waterText: "Water",
+        bookText: "Book",
+        vocabularyText: "Vocabulary",
+        sportText: "Sport",
+        customText: "Custom",
+        description: "You can add more habits later from the habits page",
+        laterButtonText: "Maybe later",
+        continueButtonText: "Continue",
+      }
   } as const;

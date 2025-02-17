@@ -87,8 +87,15 @@ export default function Login() {
       >
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-            <CustomText style={styles.title}>{t("login.title")}</CustomText>
-            <CustomText style={styles.subtitle}>
+            <CustomText
+              style={styles.title}
+              type="bold"
+              color="#1E3A5F"
+              fontSize={24}
+            >
+              {t("login.title")}
+            </CustomText>
+            <CustomText style={styles.subtitle} type="medium" color="#1E3A5F">
               {t("login.subTitle")}
             </CustomText>
           </View>
@@ -133,9 +140,9 @@ export default function Login() {
               style={styles.forgotPassword}
               onPress={handleForgotPassword}
             >
-              <Text style={styles.forgotPasswordText}>
+              <CustomText type="regular" color="#666" fontSize={12}>
                 {t("login.forgotPassword")}
-              </Text>
+              </CustomText>
             </TouchableOpacity>
 
             <View style={styles.buttonContainer}>
@@ -150,12 +157,12 @@ export default function Login() {
                 style={styles.registerLink}
                 onPress={() => router.push("/register")}
               >
-                <Text style={styles.registerText}>
+                <CustomText type="regular" color="#1E3A5F" fontSize={14}>
                   {t("login.dontHaveAccount")}{" "}
-                  <CustomText style={styles.registerLinkText}>
+                  <CustomText type="bold" color="#1E3A5F" fontSize={14}>
                     {t("login.registerLinkText")}
                   </CustomText>
-                </Text>
+                </CustomText>
               </TouchableOpacity>
             </View>
           </View>
@@ -271,14 +278,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: Platform.OS === "web" ? 32 : width * 0.08,
-    fontWeight: "bold",
-    color: "#1E3A5F",
     marginBottom: 10,
     textAlign: "center",
   },
   subtitle: {
     fontSize: Platform.OS === "web" ? 16 : width * 0.04,
-    color: "#1E3A5F",
     opacity: 0.8,
     textAlign: "center",
   },
@@ -299,21 +303,9 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginBottom: 20,
   },
-  forgotPasswordText: {
-    color: "#666",
-    fontSize: 12,
-  },
   registerLink: {
     marginTop: 20,
     alignItems: "center",
-  },
-  registerText: {
-    fontSize: 14,
-    color: "#666",
-  },
-  registerLinkText: {
-    color: "#1E3A5F",
-    fontWeight: "bold",
   },
   error: {
     color: "red",

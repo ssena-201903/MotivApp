@@ -199,6 +199,7 @@ export default function CardWaterHabit({ userId }: Props) {
     if (filledGlass < totalWater) {
       const newFilledGlass = filledGlass + 1;
       setFilledGlass(newFilledGlass);
+      setLastChangeAt(new Date().toISOString().split("T")[0]);
 
       playSound();
 
