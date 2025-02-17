@@ -11,9 +11,12 @@ DONE Habit ekleme kontrolü yap
 DONE habit verilerini bir sonraki güne ayarlama ve  bazı ayarları sıfırlama
 DONE forgot password sayfasının responsive olmasını duzelt,
 DONE Goal ekranını responsive düzenle
-CardGoalTodo düzenle
+DONE CardGoalTodo düzenle
+montserrat yazı ailesini yükle, görünmüyor mobilde
+goal details ekle
+goal buttonları düzenle
 
-montserrat yazı ailesini yükle, görünmüyor
+aylık özet ekle
 Modal genişliği düzelt
 calendar ekranı responsive düzenle
 tüm ekranların responsive kontrol et

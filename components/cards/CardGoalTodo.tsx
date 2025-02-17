@@ -151,7 +151,7 @@ export default function CardGoalTodo({
             <Picker.Item label="Read" value="read" />
           </Picker>
         ) : (
-          <CustomText style={styles.createdAtText}>{t("cardGoalTodo.createdAt")}: {formatDate(goal.createdAt)}</CustomText>
+          <CustomText style={styles.createdAtText}>{formatDate(goal.createdAt)}</CustomText>
         )}
         <View style={styles.mobileRating}>
           <View style={styles.starContainer}>

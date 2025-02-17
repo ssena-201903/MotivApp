@@ -16,6 +16,7 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 import { useLanguage } from "@/app/LanguageContext";
 import { CustomText } from "@/CustomText";
+import SparklesIcon from "../icons/SparklesIcon";
 
 const { width } = Dimensions.get('window');
 
@@ -69,7 +70,8 @@ export default function AddMemoryModal({
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
               <View style={styles.topMemoryCard}>
-                <Ionicons name="sparkles" color="#264653" size={20} />
+                {/* <Ionicons name="sparkles" color="#264653" size={20} /> */}
+                <SparklesIcon size={20} color="#1E3A5F" variant="fill"/>
                 <CustomText style={styles.headerMemoryCard}>
                   {t("addMemoryModal.title")}
                 </CustomText>
