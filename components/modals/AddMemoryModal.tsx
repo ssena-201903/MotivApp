@@ -88,7 +88,7 @@ export default function AddMemoryModal({
                   label={t("addMemoryModal.saveButtonText")}
                   onPress={handleSaveMemory}
                   variant="fill"
-                  width={120}
+                  width="30%"
                   height={50}
                 />
               </TouchableOpacity>
@@ -108,20 +108,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    width: width > 760 ? width - 700 : width - 40,
+    width: width > 760 ? width - 930 : width - 40,
     backgroundColor: "#FCFCFC",
     padding: 20,
-    borderRadius: 12,
-    elevation: 5,
+    borderRadius: 8,
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     height: "auto",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 4 },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 4,
+    // elevation: 5,
   },
   topMemoryCard: {
     display: "flex",
@@ -145,10 +145,11 @@ const styles = StyleSheet.create({
   },
   textInput: {
     display: "flex",
-    backgroundColor: "#fff",
+    backgroundColor: "#F5F8FF",
     borderWidth: 1,
     borderColor: "rgba(38, 70, 83, 0.3)",
-    opacity: 0.6,
+    color: "#1E3A5F",
+    opacity: 0.8,
     borderRadius: 8,
     marginBottom: 20,
     padding: 10,
@@ -159,5 +160,6 @@ const styles = StyleSheet.create({
   },
   modelButton: {
     margin: 0,
+    width: "100%",
   },
 });

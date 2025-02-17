@@ -8,12 +8,10 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  ImageBackground,
+  Platform,
 } from "react-native";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  FontAwesome,
-} from "@expo/vector-icons";
+
 import CardGoalTodo from "@/components/cards/CardGoalTodo";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from "@/firebase.config";
@@ -119,117 +117,137 @@ export default function Goals() {
     return Math.round((completedGoals / totalGoals) * 100);
   };
 
+  const backgroundImage =
+    Platform.OS === "web"
+      ? require("@/assets/images/habitCardBg.png")
+      : require("@/assets/images/mobileBg.png");
+
   return (
-    <View style={styles.container}>
-      <View style={styles.categoriesContainer}>
-        {categories.map((category) => (
-          <TouchableOpacity
-            style={[
-              styles.button,
-              activeCategory === category.id ? styles.activeButton : {},
-            ]}
-            onPress={() => handleCategoryPress(category.id)}
-            key={category.id}
-          >
-            {category.id === "Movie" && (
-              <MovieIcon
-                size={18}
-                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
-                variant={activeCategory === category.id ? "fill" : "outlined"}
-              />
-            )}
-            {category.id === "Book" && (
-              <BookIcon
-                size={22}
-                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
-                variant={activeCategory === category.id ? "fill" : "outlined"}
-              />
-            )}
-            {category.id === "Activity" && (
-              <ActivityIcon
-                size={24}
-                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
-                variant={activeCategory === category.id ? "fill" : "outlined"}
-              />
-            )}
-            {category.id === "Place" && (
-              <CarIcon
-                size={24}
-                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
-                variant={activeCategory === category.id ? "fill" : "outlined"}
-              />
-            )}
-            {category.id === "Buy" && (
-              <WalletIcon
-                size={22}
-                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
-                variant={activeCategory === category.id ? "fill" : "outlined"}
-              />
-            )}
-            {category.id === "Food" && (
-              <FoodIcon
-                size={22}
-                color={activeCategory === category.id ? "#1E3A5F" : "#888"}
-                variant={activeCategory === category.id ? "fill" : "outlined"}
-              />
-            )}
-            <CustomText
-              style={
-                activeCategory === category.id
-                  ? styles.activeButtonText
-                  : styles.buttonText
-              }
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <View style={styles.categoriesContainer}>
+          {categories.map((category) => (
+            <TouchableOpacity
+              style={[
+                styles.button,
+                activeCategory === category.id ? styles.activeButton : {},
+              ]}
+              onPress={() => handleCategoryPress(category.id)}
+              key={category.id}
             >
-              {category.label}
-            </CustomText>
-          </TouchableOpacity>
-        ))}
-      </View>
-      <View style={styles.contentHeader}>
-        <SectionHeader
-          text={getSectionHeaderText()}
-          percentDone={calculatePercentDone(activeCategory)}
-          variant="other"
+              {category.id === "Movie" && (
+                <MovieIcon
+                  size={18}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                />
+              )}
+              {category.id === "Book" && (
+                <BookIcon
+                  size={22}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                />
+              )}
+              {category.id === "Activity" && (
+                <ActivityIcon
+                  size={24}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                />
+              )}
+              {category.id === "Place" && (
+                <CarIcon
+                  size={24}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                />
+              )}
+              {category.id === "Buy" && (
+                <WalletIcon
+                  size={22}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                />
+              )}
+              {category.id === "Food" && (
+                <FoodIcon
+                  size={22}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                />
+              )}
+              <CustomText
+                style={
+                  activeCategory === category.id
+                    ? styles.activeButtonText
+                    : styles.buttonText
+                }
+              >
+                {category.label}
+              </CustomText>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.contentBody}>
+          <View style={styles.headerContainer}>
+            <SectionHeader
+              text={getSectionHeaderText()}
+              percentDone={calculatePercentDone(activeCategory)}
+              variant="other"
+            />
+          </View>
+
+          <ScrollView
+            style={styles.scrollViewStyle}
+            contentContainerStyle={[
+              styles.contentContainer,
+              goals.length === 0 && styles.emptyContentContainer,
+            ]}
+            showsVerticalScrollIndicator={false}
+          >
+            {goals.map((goal) => (
+              <CardGoalTodo
+                key={goal.id}
+                goal={goal}
+                category={activeCategory}
+                onUpdate={fetchGoals}
+              />
+            ))}
+            {goals.length === 0 && (
+              <View style={styles.emptyStateContainer}>
+                <CustomText style={styles.noGoalsText}>
+                  {t("goals.noGoalsYet")}
+                </CustomText>
+              </View>
+            )}
+          </ScrollView>
+        </View>
+
+        <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
+          <PlusIcon size={22} color="white" />
+        </TouchableOpacity>
+
+        <AddGoalModal
+          visible={isModalVisible}
+          categoryId={activeCategory}
+          onClose={toggleModal}
+          onAdd={handleGoalAdd}
         />
       </View>
-
-      <ScrollView
-        contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        {goals.map((goal) => (
-          <CardGoalTodo
-            key={goal.id}
-            goal={goal}
-            category={activeCategory}
-            onUpdate={fetchGoals}
-          />
-        ))}
-        {goals.length === 0 && (
-          <View>
-            <CustomText style={styles.noGoalsText}>{t("goals.noGoalsYet")}</CustomText>
-          </View>
-        )}
-      </ScrollView>
-
-      <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
-        <PlusIcon size={22} color="white" />
-      </TouchableOpacity>
-
-      <AddGoalModal
-        visible={isModalVisible}
-        categoryId={activeCategory}
-        onClose={toggleModal}
-        onAdd={handleGoalAdd}
-      />
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
   container: {
     flex: 1,
-    backgroundColor: "#FCFCFC",
+    width: "100%",
     paddingTop: 20,
     alignItems: "center",
     justifyContent: "flex-start",
@@ -242,11 +260,12 @@ const styles = StyleSheet.create({
     width: width > 768 ? width - 900 : "100%",
     paddingVertical: 5,
     gap: 3,
-    flexGrow: 1,
+    height: 60, // fixed height without flexGrow
+    marginBottom: 20, // fixed marginBottom without flexGrow
   },
   button: {
-    width: "13%",
-    height: width > 768 ? 60 : 60,
+    width: width > 768 ? "13%" : "15%",
+    height: width > 768 ? 60 : 70,
     justifyContent: "center",
     alignItems: "center",
     marginRight: width > 768 ? 20 : 4,
@@ -268,10 +287,19 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     marginTop: 6,
   },
-  contentHeader: {
+  headerContainer: {
+    width: "100%",
+    paddingHorizontal: 20,
+    alignItems: "center",
+  },
+  contentBody: {
     width: width > 768 ? width - 860 : "100%",
     marginHorizontal: 20,
-    alignSelf: "center",
+    flex: 1,
+  },
+  scrollViewStyle: {
+    width: "100%",
+    flex: 1,
   },
   contentContainer: {
     display: "flex",
@@ -281,6 +309,16 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     width: width > 768 ? width - 860 : "100%",
     paddingHorizontal: width > 768 ? "auto" : 40,
+    paddingBottom: 80, // leave some space for the floating button
+  },
+  emptyContentContainer: {
+    flex: 1, // fill the remaining space of the ScrollView
+    justifyContent: "center",
+  },
+  emptyStateContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   addButton: {
     backgroundColor: "#1E3A5F",

@@ -139,12 +139,18 @@ export default function AddGoalModal({
 
   return (
     <Modal visible={visible} transparent animationType="fade">
-      <View style={styles.container}>
+      <View style={styles.overlay}>
         <View style={styles.content}>
           <Text style={styles.title}>{getModalTitle()}</Text>
           <TextInput
             style={styles.input}
-            placeholder={t("addGoalsModal.namePlaceholder")}
+            placeholder={
+              categoryId === "Book"
+                ? t("addGoalsModal.nameBookPlaceholder")
+                : categoryId === "Movie"
+                ? t("addGoalsModal.nameMoviePlaceholder")
+                : t("addGoalsModal.namePlaceholder")
+            }
             value={goalData.name}
             onChangeText={(text) => setGoalData({ ...goalData, name: text })}
           />
@@ -196,7 +202,9 @@ export default function AddGoalModal({
             />
           )}
           <View style={styles.ratingContainer}>
-            <CustomText style={styles.ratingText}>{t("addGoalsModal.rateText")}</CustomText>
+            <CustomText style={styles.ratingText}>
+              {t("addGoalsModal.rateText")}
+            </CustomText>
             <StarRating
               rating={goalData.rating}
               onRatingChange={handleRatingChange}
@@ -207,15 +215,16 @@ export default function AddGoalModal({
               label={t("addGoalsModal.cancelButtonText")}
               onPress={onClose}
               variant="cancel"
-              width={80}
+              width="50%"
               height={45}
             />
             <CustomButton
               label={t("addGoalsModal.addButtonText")}
               onPress={handleSave}
               variant="fill"
-              width={80}
+              width="50%"
               height={45}
+              marginLeft={10}
             />
           </View>
         </View>
@@ -225,7 +234,7 @@ export default function AddGoalModal({
 }
 
 const styles = StyleSheet.create({
-  container: {
+  overlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -233,12 +242,10 @@ const styles = StyleSheet.create({
   },
   content: {
     backgroundColor: "#FCFCFC",
-    borderRadius: 12,
+    alignItems: "center",
+    borderRadius: 8,
     padding: 20,
-    width: Platform.select({
-      web: Math.min(400, width - 40),
-      default: width - 80,
-    }),
+    width: width > 768 ? width - 1000 : width - 40,
   },
   title: {
     fontSize: 18,
@@ -247,20 +254,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
+    width: "100%",
     height: 40,
     borderColor: "#CCCCCC",
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 15,
     paddingHorizontal: 10,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#F5F8FF",
+    color: "#1E3A5F",
+    opacity: 0.8,
   },
   ratingContainer: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    width: "60%",
+    width: "100%",
   },
   ratingText: {
     color: "#1E3A5F",
@@ -269,8 +279,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: 10,
-    marginTop: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "50%",
+    marginTop: 30,
   },
 });
