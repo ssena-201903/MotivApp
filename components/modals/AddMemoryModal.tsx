@@ -15,6 +15,7 @@ import { db } from "@/firebase.config";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 import { useLanguage } from "@/app/LanguageContext";
+import { CustomText } from "@/CustomText";
 
 const { width } = Dimensions.get('window');
 
@@ -69,13 +70,13 @@ export default function AddMemoryModal({
             <View style={styles.modalContent}>
               <View style={styles.topMemoryCard}>
                 <Ionicons name="sparkles" color="#264653" size={20} />
-                <Text style={styles.headerMemoryCard}>
+                <CustomText style={styles.headerMemoryCard}>
                   {t("addMemoryModal.title")}
-                </Text>
+                </CustomText>
               </View>
-              <Text style={styles.textMemoryCard}>
+              <CustomText style={styles.textMemoryCard}>
                 {t("addMemoryModal.subTitle")}
-              </Text>
+              </CustomText>
               <TextInput
                 style={styles.textInput}
                 placeholder={t("addMemoryModal.memoryPlaceholder")}
@@ -89,7 +90,7 @@ export default function AddMemoryModal({
                   onPress={handleSaveMemory}
                   variant="fill"
                   width="30%"
-                  height={50}
+                  height={45}
                 />
               </TouchableOpacity>
             </View>

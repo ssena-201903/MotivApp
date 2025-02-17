@@ -9,11 +9,12 @@ DONE android apk yap
 DONE custom habiti eklerken tüm harfleri büyük eklesin
 DONE Habit ekleme kontrolü yap
 DONE habit verilerini bir sonraki güne ayarlama ve  bazı ayarları sıfırlama
-forgot password sayfasının responsive olmasını duzelt
+DONE forgot password sayfasının responsive olmasını duzelt,
+DONE Goal ekranını responsive düzenle
+CardGoalTodo düzenle
 
 montserrat yazı ailesini yükle, görünmüyor
 Modal genişliği düzelt
-Goal ekranını responsive düzenle
 calendar ekranı responsive düzenle
 tüm ekranların responsive kontrol et
 Anasayfada todo eklerken refresh kaldır

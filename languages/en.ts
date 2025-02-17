@@ -152,4 +152,8 @@ export default {
         profile: "Profile",
         notifications: "Notifications",
       },
+      cardGoalTodo: {
+        addNote: "Add Note",
+        createdAt: "Created At"
+      },
   } as const;

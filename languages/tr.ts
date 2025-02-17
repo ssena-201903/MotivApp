@@ -152,4 +152,8 @@ export default {
         profile: "Profil",
         notifications: "Bildirimler",
       },
+      cardGoalTodo: {
+        addNote: "Not Ekle",
+        createdAt: "Oluşturulma zamanı"
+      },
   } as const;

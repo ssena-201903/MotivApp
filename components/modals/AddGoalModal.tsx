@@ -141,7 +141,7 @@ export default function AddGoalModal({
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.content}>
-          <Text style={styles.title}>{getModalTitle()}</Text>
+          <CustomText style={styles.title}>{getModalTitle()}</CustomText>
           <TextInput
             style={styles.input}
             placeholder={
