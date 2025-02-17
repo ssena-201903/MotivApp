@@ -227,10 +227,10 @@ export default function CardWaterHabit({ userId }: Props) {
           // Update data in Firestore
           await updateDoc(habitDocRef, {
             filledCup: newFilledGlass,
-            ...(isCompleted && { 
-              isDone: true, 
+            ...(isCompleted && {
+              isDone: true,
               streakDays: newStreakDays,
-              lastChangeAt: new Date().toISOString().split("T")[0], 
+              lastChangeAt: new Date().toISOString().split("T")[0],
             }),
           });
 
@@ -293,6 +293,9 @@ export default function CardWaterHabit({ userId }: Props) {
             <View style={styles.textContainer}>
               <CustomText
                 style={styles.subTextDone}
+                type="light"
+                color="#1E3A5F"
+                fontSize={14}
               >{`${filledGlass}/${totalWater}`}</CustomText>
               <View style={styles.streakContainer}>
                 {waterStreak > 20 ? (
@@ -316,7 +319,14 @@ export default function CardWaterHabit({ userId }: Props) {
                     variant={isWaterDone ? "fill" : "outlined"}
                   />
                 )}
-                <CustomText style={styles.streakText}>{waterStreak}</CustomText>
+                <CustomText
+                  style={styles.streakText}
+                  color="#1E3A5F"
+                  fontSize={16}
+                  type="regular"
+                >
+                  {waterStreak}
+                </CustomText>
               </View>
             </View>
             <Pressable onPress={handleWaterPress} style={styles.addButton}>
@@ -328,7 +338,12 @@ export default function CardWaterHabit({ userId }: Props) {
             </Pressable>
           </View>
           <View style={styles.bottom}>
-            <CustomText style={styles.subTextType}>
+            <CustomText
+              style={styles.subTextType}
+              color="#1E3A5F"
+              fontSize={10}
+              type="regular"
+            >
               {getCupName()} | {cupSize} ml
             </CustomText>
           </View>
@@ -424,17 +439,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   subTextDone: {
-    color: "#1E3A5F",
     opacity: 0.8,
-    fontSize: Platform.OS === "web" ? 14 : width * 0.035,
-    fontWeight: "200",
     marginRight: 20,
   },
   subTextType: {
-    color: "#1E3A5F",
     opacity: 0.6,
-    fontSize: 10,
-    fontWeight: "400",
   },
   streakContainer: {
     flexDirection: "row",
@@ -442,9 +451,6 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   streakText: {
-    fontSize: width > 760 ? 16 : 14,
-    color: "#1E3A5F",
-    fontWeight: "semibold",
     marginLeft: 2,
   },
   addButton: {

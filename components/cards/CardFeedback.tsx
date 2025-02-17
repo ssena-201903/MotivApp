@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { View, StyleSheet, Text, Dimensions, Modal } from "react-native";
 import Lottie from "lottie-react-native";
+import { CustomText } from "@/CustomText";
 
 type Props = {
   isVisible: boolean;
@@ -57,7 +58,14 @@ export default function CardFeedback({
               style={styles.animation}
             />
           </View>
-          <Text style={styles.messageText}>{text}</Text>
+          <CustomText 
+            style={styles.messageText}
+            color="#1E3A5F"
+            fontSize={16}
+            type="medium"
+          >
+            {text}
+          </CustomText>
         </View>
       </View>
     </Modal>
@@ -100,10 +108,6 @@ const styles = StyleSheet.create({
   },
   messageText: {
     marginTop: 20,
-    fontSize: 20,
-    fontWeight: "bold",
-    fontFamily: "Montserrat",
     textAlign: "center",
-    color: "#264653", // can change later
   },
 });

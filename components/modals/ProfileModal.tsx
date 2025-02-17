@@ -65,7 +65,12 @@ export default function ProfileModal({
                 style={styles.logo}
                 resizeMode="contain"
               />
-              <CustomText style={styles.topSectionSubHeader}>
+              <CustomText 
+                style={styles.topSectionSubHeader}
+                fontSize={12}
+                color="#1E3A5F"
+                type="regular"
+              >
                 {currentUser}
               </CustomText>
             </View>
@@ -76,19 +81,19 @@ export default function ProfileModal({
           <View style={styles.menus}>
             <Pressable style={styles.menuItem} onPress={handleProfileRoute}>
               <PersonIcon size={20} color="#1E3A5F"/>
-              <CustomText style={styles.menuItemText}>{t("profileModal.profile")}</CustomText>
+              <CustomText style={styles.menuItemText} type="medium">{t("profileModal.profile")}</CustomText>
             </Pressable>
             <View style={styles.menuItem}>
               <GoalsIcon size={20} color="#1E3A5F" variant="fill"/>
-              <CustomText style={styles.menuItemText}>{t("profileModal.goals")}</CustomText>
+              <CustomText style={styles.menuItemText} type="medium">{t("profileModal.goals")}</CustomText>
             </View>
             <Pressable style={styles.menuItem} onPress={handleHabitsRoute}>
               <LeafIcon size={20} color="#1E3A5F" variant="fill"/>
-              <CustomText style={styles.menuItemText}>{t("profileModal.habits")}</CustomText>
+              <CustomText style={styles.menuItemText} type="medium">{t("profileModal.habits")}</CustomText>
             </Pressable>
             <View style={styles.menuItem}>
               <SettingsIcon size={20} color="#1E3A5F" variant="fill"/>
-              <CustomText style={styles.menuItemText}>{t("profileModal.settings")}</CustomText>
+              <CustomText style={styles.menuItemText} type="medium">{t("profileModal.settings")}</CustomText>
             </View>
           </View>
         </Pressable>
@@ -129,15 +134,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
   },
-  topSectionHeader: {
-    fontSize: 20,
-    fontWeight: 700,
-    color: "#1E3A5F",
-  },
   topSectionSubHeader: {
-    fontSize: 12,
-    fontWeight: 500,
-    color: "#1E3A5F",
     opacity: 0.8,
     marginTop: -4,
     marginLeft: 6,

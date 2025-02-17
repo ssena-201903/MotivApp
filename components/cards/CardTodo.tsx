@@ -1,6 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Dimensions, Pressable, Text } from "react-native";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { View, StyleSheet, Dimensions, Pressable } from "react-native";
 import BoxIcon from "../icons/BoxIcon";
 import { CustomText } from "@/CustomText";
 import TodoIcon from "../icons/TodoIcon";
@@ -39,6 +38,9 @@ export default function CardTodo({
         <View style={styles.leftTextContainer}>
           <CustomText
             style={[styles.leftText, isCompleted && styles.strikethrough]}
+            color="#1E3A5F"
+            fontSize={16}
+            type="medium"
           >
             {text}
           </CustomText>
@@ -47,21 +49,10 @@ export default function CardTodo({
       <View style={styles.rightContainer}>
         {!isCompleted && (
           <Pressable onPress={() => onDelete(id)} style={styles.deleteButton}>
-            {/* <Ionicons name="trash-outline" size={20} color="#1E3A5F" /> */}
             <TrashIcon size={20} color="#1E3A5F" />
           </Pressable>
         )}
         <Pressable onPress={() => onToggle(id)}>
-          {/* <Ionicons
-          name={isCompleted ? "checkbox" : "add"}
-          size={isCompleted ? 22 : 28}
-          color="#1E3A5F"
-        /> */}
-          {/* <FontAwesome
-            name={isCompleted ? "check" : "square-o"}
-            size={isCompleted ? 22 : 24}
-            color="#1E3A5F"
-          /> */}
           <BoxIcon
             size={20}
             color="#1E3A5F"
@@ -85,13 +76,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 4,
-    // elevation: 3,
-    // borderWidth: 0.5,
-    // borderColor: "#D1D4D9",
     flex: 1,
   },
   doneTodo: {
@@ -105,13 +89,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 4,
-    // elevation: 3,
-    // borderWidth: 0.5,
-    // borderColor: "#D1D4D9",
     flex: 1,
   },
   completedContainer: {

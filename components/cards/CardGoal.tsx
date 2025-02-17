@@ -45,7 +45,14 @@ export default function CardGoal({
       {categoryId === "Book" && (
         <BookIcon size={22} color="#1E3A5F" variant="fill" />
       )}
-      <CustomText style={styles.inlineText}>{inlineText}</CustomText>
+      <CustomText 
+        style={styles.inlineText}
+        color="#1E3A5F"
+        type="regular"
+        fontSize={12}
+      >
+        {inlineText}
+      </CustomText>
     </Pressable>
   );
 }
@@ -55,23 +62,13 @@ const styles = StyleSheet.create({
     flexDirection: width > 768 ? "column" : "row",
     width: "31%",
     height: width > 768 ? 80 : 65,
-    // backgroundColor: "#F4F4F4",
     backgroundColor: "#f8f8f8",
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    // shadowColor: "#1E3A5F",
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 4,
-    // elevation: 3,
-    // borderWidth: 1,
-    // borderColor: "#D1D4D9",
   },
   inlineText: {
-    color: "#1E3A5F",
-    fontSize: 12,
-    fontWeight: "400",
+    opacity: 0.8,
     marginLeft: width > 768 ? 0 : 8,
     marginTop: width > 768 ? 8 : 0,
   },

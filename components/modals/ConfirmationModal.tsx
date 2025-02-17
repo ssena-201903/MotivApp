@@ -36,22 +36,31 @@ export default function ConfirmationModal({
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
-          <CustomText style={styles.title}>{title}</CustomText>
-          <CustomText style={styles.message}>{message}</CustomText>
+          <CustomText color="#1E3A5F" fontSize={18} type="bold">
+            {title}
+          </CustomText>
+          <CustomText
+            style={styles.message}
+            color="#1E3A5F"
+            fontSize={16}
+            type="regular"
+          >
+            {message}
+          </CustomText>
           <View style={styles.buttonContainer}>
             <CustomButton
               label={t("confirmationHabit.cancelButtonText")}
               onPress={onCancel}
               variant="cancel"
               width="50%"
-              height={50}
+              height={45}
             />
             <CustomButton
               label={t("confirmationHabit.confirmButtonText")}
               onPress={onConfirm}
               variant="fill"
               width="50%"
-              height={50}
+              height={45}
               marginLeft={10}
             />
           </View>
@@ -72,24 +81,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f8f8",
     padding: 20,
     borderRadius: 8,
-    width: Platform.OS === "web" ? "60%" : width - 40,
+    width: Platform.OS === "web" ? "40%" : width - 40,
     alignItems: "center",
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#1E3A5F",
-  },
   message: {
-    fontSize: 16,
-    color: "#1E3A5F",
-    marginVertical: 10,
+    marginTop: 20,
+    marginBottom: 10,
     textAlign: "center",
   },
   buttonContainer: {
+    width: "50%",
     flexDirection: "row",
     justifyContent: "space-between",
-    width: Platform.OS === "web" ? "50%" : "80%",
     marginTop: 20,
   },
 });

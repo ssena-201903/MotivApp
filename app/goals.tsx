@@ -183,6 +183,7 @@ export default function Goals() {
                     ? styles.activeButtonText
                     : styles.buttonText
                 }
+                type="regular"
               >
                 {category.label}
               </CustomText>
@@ -216,7 +217,12 @@ export default function Goals() {
             ))}
             {goals.length === 0 && (
               <View style={styles.emptyStateContainer}>
-                <CustomText style={styles.noGoalsText}>
+                <CustomText 
+                  style={styles.noGoalsText}
+                  fontSize={16}
+                  color="#1E3A5F"
+                  type="medium"
+                >
                   {t("goals.noGoalsYet")}
                 </CustomText>
               </View>
@@ -332,9 +338,6 @@ const styles = StyleSheet.create({
     right: 20,
   },
   noGoalsText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#1E3A5F",
     opacity: 0.7,
     marginTop: 40,
   },

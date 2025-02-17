@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "../CustomButton";
@@ -18,7 +18,7 @@ import { useLanguage } from "@/app/LanguageContext";
 import { CustomText } from "@/CustomText";
 import SparklesIcon from "../icons/SparklesIcon";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 interface AddMemoryModalProps {
   visible: boolean;
@@ -70,9 +70,13 @@ export default function AddMemoryModal({
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
               <View style={styles.topMemoryCard}>
-                {/* <Ionicons name="sparkles" color="#264653" size={20} /> */}
-                <SparklesIcon size={20} color="#1E3A5F" variant="fill"/>
-                <CustomText style={styles.headerMemoryCard}>
+                <SparklesIcon size={20} color="#1E3A5F" variant="fill" />
+                <CustomText
+                  style={styles.headerMemoryCard}
+                  type="semibold"
+                  fontSize={18}
+                  color="#1E3A5F"
+                >
                   {t("addMemoryModal.title")}
                 </CustomText>
               </View>
@@ -120,22 +124,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: "auto",
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 4 },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 4,
-    // elevation: 5,
   },
   topMemoryCard: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   headerMemoryCard: {
-    color: "#264653",
-    fontSize: 18,
-    fontWeight: "600",
     marginLeft: 10,
   },
   textMemoryCard: {

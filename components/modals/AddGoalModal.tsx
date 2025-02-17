@@ -141,7 +141,7 @@ export default function AddGoalModal({
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.content}>
-          <CustomText style={styles.title}>{getModalTitle()}</CustomText>
+          <CustomText style={styles.title} type="semibold" color="#1E3A5F" fontSize={18}>{getModalTitle()}</CustomText>
           <TextInput
             style={styles.input}
             placeholder={
@@ -245,13 +245,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 8,
     padding: 20,
-    width: width > 768 ? width - 1000 : width - 40,
+    width: width > 768 ? "30%" : width - 40,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1E3A5F",
-    marginBottom: 20,
+    marginBottom: 30,
   },
   input: {
     width: "100%",

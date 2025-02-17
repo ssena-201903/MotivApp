@@ -3,17 +3,17 @@ import { Text, TextProps, View } from "react-native";
 import * as Font from "expo-font";
 
 interface CustomTextProps extends TextProps {
-  type?: 'regular' | 'medium' | 'semibold' | 'bold';
+  type?: "regular" | "medium" | "semibold" | "bold" | "light";
   fontSize?: number;
   color?: string;
 }
 
-export const CustomText: React.FC<CustomTextProps> = ({ 
-  type = 'regular', 
-  fontSize = 14, 
-  color = '#000000',
+export const CustomText: React.FC<CustomTextProps> = ({
+  type = "regular",
+  fontSize = 14,
+  color = "#000000",
   style,
-  ...props 
+  ...props
 }) => {
   const [fontLoaded, setFontLoaded] = useState(false);
 
@@ -21,14 +21,15 @@ export const CustomText: React.FC<CustomTextProps> = ({
     async function loadFont() {
       try {
         await Font.loadAsync({
-          'Montserrat-Regular': require('./assets/fonts/Montserrat-Regular.ttf'),
-          'Montserrat-Medium': require('./assets/fonts/Montserrat-Medium.ttf'),
-          'Montserrat-SemiBold': require('./assets/fonts/Montserrat-SemiBold.ttf'),
-          'Montserrat-Bold': require('./assets/fonts/Montserrat-Bold.ttf'),
+          "Montserrat-Regular": require("./assets/fonts/Montserrat-Regular.ttf"),
+          "Montserrat-Medium": require("./assets/fonts/Montserrat-Medium.ttf"),
+          "Montserrat-SemiBold": require("./assets/fonts/Montserrat-SemiBold.ttf"),
+          "Montserrat-Bold": require("./assets/fonts/Montserrat-Bold.ttf"),
+          "Montserrat-Light": require("./assets/fonts/Montserrat-Light.ttf"),
         });
         setFontLoaded(true);
       } catch (error) {
-        console.error('Font yükleme hatası:', error);
+        console.error("Font yükleme hatası:", error);
       }
     }
     loadFont();
@@ -40,28 +41,30 @@ export const CustomText: React.FC<CustomTextProps> = ({
 
   const getFontFamily = () => {
     switch (type) {
-      case 'medium':
-        return 'Montserrat-Medium';
-      case 'semibold':
-        return 'Montserrat-SemiBold';
-      case 'bold':
-        return 'Montserrat-Bold';
+      case "medium":
+        return "Montserrat-Medium";
+      case "semibold":
+        return "Montserrat-SemiBold";
+      case "bold":
+        return "Montserrat-Bold";
+      case "light":
+        return "Montserrat-Light";
       default:
-        return 'Montserrat-Regular';
+        return "Montserrat-Regular";
     }
   };
 
   return (
-    <Text 
-      {...props} 
+    <Text
+      {...props}
       style={[
         {
           fontFamily: getFontFamily(),
           fontSize: fontSize,
           color: color,
         },
-        style
-      ]} 
+        style,
+      ]}
     />
   );
 };

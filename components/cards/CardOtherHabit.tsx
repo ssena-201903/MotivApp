@@ -92,7 +92,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
     isDone: boolean,
     newStreak: number,
     newDoneNumber: number,
-    newLastChangeAt: string = new Date().toISOString().split("T")[0],
+    newLastChangeAt: string = new Date().toISOString().split("T")[0]
   ) => {
     try {
       const habitDocRef = doc(db, `users/${userId}/habits/${habitId}`);
@@ -222,7 +222,11 @@ export default function CardOtherHabit({ variant, userId }: Props) {
       <View style={styles.leftView}>
         <View style={styles.leftIconContainer}>{getIcon(habit.isDone)}</View>
         <View style={styles.leftTextContainer}>
-          <CustomText style={styles.leftText}>
+          <CustomText
+            type={habit.isDone ? "medium" : "regular"}
+            color="#1E3A5F"
+            fontSize={14}
+          >
             {variant === "Custom" ? habit.customText : getHabitVariant()}
           </CustomText>
         </View>
@@ -232,6 +236,9 @@ export default function CardOtherHabit({ variant, userId }: Props) {
           <View style={styles.textContainer}>
             <CustomText
               style={styles.subTextDone}
+              type="light"
+              color="#1E3A5F"
+              fontSize={14}
             >{`${habit.goalNumber} ${t("home.cardHabitGoalDays")}`}</CustomText>
             <View style={styles.streakContainer}>
               {habit.streakDays > 20 ? (
@@ -255,7 +262,12 @@ export default function CardOtherHabit({ variant, userId }: Props) {
                   variant={habit.isDone ? "fill" : "outlined"}
                 />
               )}
-              <CustomText style={styles.streakText}>
+              <CustomText
+                style={styles.streakText}
+                color="#1E3A5F"
+                fontSize={16}
+                type={habit.isDone ? "medium" : "regular"}
+              >
                 {habit.streakDays}
               </CustomText>
             </View>
@@ -269,7 +281,12 @@ export default function CardOtherHabit({ variant, userId }: Props) {
           </Pressable>
         </View>
         <View style={styles.bottom}>
-          <CustomText style={styles.subTextType}>
+          <CustomText
+            style={styles.subTextType}
+            color="#1E3A5F"
+            fontSize={10}
+            type="regular"
+          >
             {getSubTextType(habit)}
           </CustomText>
         </View>
@@ -360,11 +377,6 @@ const styles = StyleSheet.create({
     flex: 1,
     overflow: "hidden",
   },
-  leftText: {
-    color: "#1E3A5F",
-    fontWeight: "400",
-    fontSize: 14,
-  },
   rightContainer: {
     display: "flex",
     flexDirection: "column",
@@ -391,26 +403,17 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   subTextDone: {
-    color: "#1E3A5F",
     opacity: 0.8,
-    fontSize: width > 760 ? 14 : 12,
-    fontWeight: "200",
     marginRight: 20,
   },
   subTextType: {
-    color: "#1E3A5F",
     opacity: 0.6,
-    fontSize: width > 760 ? 10 : 10,
-    fontWeight: "400",
   },
   streakContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   streakText: {
-    fontSize: width > 760 ? 16 : 14,
-    color: "#1E3A5F",
-    fontWeight: "semibold",
     marginLeft: 2,
   },
 });
