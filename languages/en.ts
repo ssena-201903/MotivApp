@@ -168,5 +168,12 @@ export default {
         description: "You can add more habits later from the habits page",
         laterButtonText: "Maybe later",
         continueButtonText: "Continue",
+      },
+      emailVerification: {
+        title: "Reset Password",
+        subTitle: "Please enter your email address to receive a reset link",
+        emailLabel: "Email",
+        emailPlaceholder: "Email Address (e.g. user@example.com)",
+        submitButtonText: "Send Reset Link",
       }
   } as const;

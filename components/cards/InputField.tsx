@@ -120,7 +120,7 @@ export default function InputField({
           style={[
             styles.input,
             {
-              borderWidth: 0, // TextInput içinde border olmasın
+              borderWidth: 0,
             },
             Platform.select({
               ios: { fontWeight: "400" },
@@ -192,8 +192,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   focusedInput: {
-    borderColor: "#1E3A5F", // Focus olduğunda border rengini koyulaştır
-    borderWidth: 1, // Biraz daha belirgin hale getirmek için
+    borderColor: "#1E3A5F",
+    borderWidth: 1,
   },
   inputContainer: {
     position: "relative",
@@ -209,7 +209,8 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     paddingVertical: 14,
-    paddingHorizontal: 40,
+    paddingLeft: 45,
+    paddingRight: 40,
     color: "#1E3A5F",
     fontWeight: "500",
     borderRadius: 8,

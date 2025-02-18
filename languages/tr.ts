@@ -1,3 +1,5 @@
+import EmailVerification from "@/app/emailVerification";
+
 export default {
       login: {
         selectLanguage: "Dil Seç",
@@ -168,5 +170,12 @@ export default {
         description: "Alışkanlıklar sayfasından daha fazla alışkanlık ekleyebilirsin",
         laterButtonText: "Belki sonra",
         continueButtonText: "Devam et",
+      },
+      emailVerification: {
+        title: "Şifre Sıfırla",
+        subTitle: "E posta adresinize sıfırlama e-postası gönderilecektir",
+        emailLabel: "E-posta",
+        emailPlaceholder: "E-posta adresinizi girin",
+        submitButtonText: "Sıfırlama Linki Gönder",
       }
   } as const;

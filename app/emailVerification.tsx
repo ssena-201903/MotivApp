@@ -10,14 +10,18 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
-import { push } from "expo-router/build/global-state/routing";
 import InputField from "@/components/cards/InputField";
+
+import { useLanguage } from "@/app/LanguageContext";
 
 export default function EmailVerification() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
+
+  // language context
+  const { t } = useLanguage();
 
   const handleEmailSubmit = async () => {
     try {
@@ -51,9 +55,9 @@ export default function EmailVerification() {
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
-          <Text style={styles.title}>Reset Password</Text>
+          <Text style={styles.title}>{t("emailVerification.title")}</Text>
           <Text style={styles.subtitle}>
-            Please enter your email address to receive a reset link
+            {t("emailVerification.subTitle")}
           </Text>
         </View>
 
@@ -62,15 +66,16 @@ export default function EmailVerification() {
 
         <View style={styles.formContainer}>
           <InputField
-            label="Email Address"
-            placeholder="Email Address (e.g. user@example.com)"
+            label={t("emailVerification.emailLabel")}
+            placeholder={t("emailVerification.emailPlaceholder")}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            variant="email"
           />
           <View style={styles.formButton}>
             <CustomButton
-              label="Send Reset Link"
+              label={t("emailVerification.submitButtonText")}
               onPress={handleEmailSubmit}
               variant="fill"
               width="60%"
