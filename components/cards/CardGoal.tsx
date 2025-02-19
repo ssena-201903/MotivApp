@@ -49,7 +49,7 @@ export default function CardGoal({
         style={styles.inlineText}
         color="#1E3A5F"
         type="regular"
-        fontSize={12}
+        fontSize={width > 768 ? 12 : 8}
       >
         {inlineText}
       </CustomText>
@@ -69,9 +69,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inlineText: {
-    opacity: 0.8,
     // marginLeft: width > 768 ? 0 : 8,
     // marginTop: width > 768 ? 8 : 0,
-    marginTop: 6,
+    marginTop: 8,
+    opacity: 0.8,
   },
 });
