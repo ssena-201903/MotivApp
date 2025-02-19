@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f8f8",
     padding: 20,
     borderRadius: 8,
-    width: Platform.OS === "web" ? "40%" : width - 40,
+    width: width > 768 ? "50%" : width - 40,
     alignItems: "center",
   },
   message: {

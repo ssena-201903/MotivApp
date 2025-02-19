@@ -49,6 +49,11 @@ export default function ProfileModal({
     onClose();
   };
 
+  const handleGoalsRoute = () => {
+    router.push("/goals");
+    onClose();
+  };
+
   return (
     <Modal
       visible={isModalVisible}
@@ -83,10 +88,10 @@ export default function ProfileModal({
               <PersonIcon size={20} color="#1E3A5F"/>
               <CustomText style={styles.menuItemText} type="medium">{t("profileModal.profile")}</CustomText>
             </Pressable>
-            <View style={styles.menuItem}>
+            <Pressable style={styles.menuItem} onPress={handleGoalsRoute}>
               <GoalsIcon size={20} color="#1E3A5F" variant="fill"/>
               <CustomText style={styles.menuItemText} type="medium">{t("profileModal.goals")}</CustomText>
-            </View>
+            </Pressable>
             <Pressable style={styles.menuItem} onPress={handleHabitsRoute}>
               <LeafIcon size={20} color="#1E3A5F" variant="fill"/>
               <CustomText style={styles.menuItemText} type="medium">{t("profileModal.habits")}</CustomText>

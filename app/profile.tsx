@@ -22,10 +22,12 @@ import CustomButton from "@/components/CustomButton";
 import AlertModal from "@/components/modals/AlertModal";
 import { Platform } from "react-native";
 import { CustomText } from "@/CustomText";
+import { useLanguage } from "@/app/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
 export default function Profile() {
+  const { t } = useLanguage();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [userData, setUserData] = useState({
     formattedName: "",
@@ -38,6 +40,7 @@ export default function Profile() {
     visible: false,
     field: "",
     value: "",
+    newPassword: "",
   });
   const [currentPassword, setCurrentPassword] = useState("");
   const [deleteModal, setDeleteModal] = useState({
@@ -124,14 +127,16 @@ export default function Profile() {
       visible: true,
       field,
       value: field === "Password" ? "" : currentValue,
+      newPassword: "",
     });
+    setCurrentPassword("");
   };
 
   const handleSaveEdit = async () => {
     try {
       const user = auth.currentUser;
       if (!user) return;
-  
+
       switch (editModal.field) {
         case "Name":
           const userDocRef1 = doc(db, "users", user.uid);
@@ -148,6 +153,26 @@ export default function Profile() {
           setUserData((prev) => ({ ...prev, nickname: editModal.value }));
           break;
         case "Password":
+          if (!currentPassword || !editModal.value) {
+            showAlert("Error", "Please fill in all password fields", [
+              {
+                text: "OK",
+                onPress: closeAlert,
+              },
+            ]);
+            return;
+          }
+
+          if (editModal.value.length < 6) {
+            showAlert("Error", "Password must be at least 6 characters long", [
+              {
+                text: "OK",
+                onPress: closeAlert,
+              },
+            ]);
+            return;
+          }
+
           const isReauthenticatedPassword = await reauthenticateUser(currentPassword);
           if (!isReauthenticatedPassword) {
             showAlert("Error", "Current password is incorrect", [
@@ -158,13 +183,13 @@ export default function Profile() {
             ]);
             return;
           }
-  
+
           await updatePassword(user, editModal.value);
           setUserData((prev) => ({ ...prev, password: "••••••" }));
           break;
       }
-  
-      setEditModal({ visible: false, field: "", value: "" });
+
+      setEditModal({ visible: false, field: "", value: "", newPassword: "" });
       setCurrentPassword("");
       showAlert("Success", `${editModal.field} updated successfully`, [
         {
@@ -172,9 +197,9 @@ export default function Profile() {
           onPress: closeAlert,
         },
       ]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating field:", error);
-      showAlert("Error", "Failed to update. Please try again.", [
+      showAlert("Error", error.message || "Failed to update. Please try again.", [
         {
           text: "OK",
           onPress: closeAlert,
@@ -185,16 +210,16 @@ export default function Profile() {
 
   const handleDeleteAccount = () => {
     showAlert(
-      "Delete Account",
-      "Are you sure you want to delete your account? This action cannot be undone.",
+      t("profilePage.accountDeletionTitle"),
+      t("profilePage.accountDeletionSubtext"),
       [
         {
-          text: "Cancel",
+          text: t("profilePage.cancelButtonText"),
           variant: "cancel",
           onPress: closeAlert,
         },
         {
-          text: "Continue",
+          text: t("profilePage.continueButtonText"),
           variant: "fill",
           onPress: () => {
             closeAlert();
@@ -249,27 +274,29 @@ export default function Profile() {
 
   const ProfileField = ({
     label,
+    type,
     value,
     isPassword = false,
   }: {
     label: string;
     value: string;
+    type: string;
     isPassword?: boolean;
   }) => (
     <View style={styles.fieldContainer}>
       <CustomText style={styles.fieldLabel}>{label}</CustomText>
-      {label === "Nickname" && (
+      {type === "Nickname" && (
         <CustomText style={styles.fieldDescription}>
-          Your nickname will be visible to your friends
+          {t("profilePage.descriptionNickname")}
         </CustomText>
       )}
       <View style={styles.fieldValueContainer}>
         <CustomText style={styles.fieldValue}>
           {isPassword ? (isPasswordVisible ? value : "••••••") : value}
         </CustomText>
-        {label !== "Email" && (
+        {type !== "Email" && (
           <TouchableOpacity
-            onPress={() => handleEditField(label, value)}
+            onPress={() => handleEditField(type, value)}
             style={styles.editButton}
           >
             <Ionicons name="pencil" size={18} color={"#1E3A5F"} />
@@ -290,15 +317,32 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <ProfileField label="Name" value={userData.formattedName} />
-        <ProfileField label="Nickname" value={userData.nickname} />
-        <ProfileField label="Email" value={userData.email} />
-        <ProfileField label="Password" value={userData.password} isPassword />
+        <ProfileField 
+          type="Name" 
+          label={t("profilePage.labelName")} 
+          value={userData.formattedName} 
+        />
+        <ProfileField 
+          type="Nickname" 
+          label={t("profilePage.labelNickname")} 
+          value={userData.nickname} 
+        />
+        <ProfileField 
+          type="Email" 
+          label={t("profilePage.labelEmail")} 
+          value={userData.email} 
+        />
+        <ProfileField 
+          type="Password" 
+          label={t("profilePage.labelPassword")} 
+          value={userData.password} 
+          isPassword 
+        />
       </View>
 
       <TouchableOpacity style={styles.deleteButton}>
         <CustomButton
-          label="Delete Account"
+          label={t("profilePage.deleteButtonText")}
           variant="fill"
           width="100%"
           height={50}
@@ -310,47 +354,59 @@ export default function Profile() {
       <Modal visible={editModal.visible} transparent animationType="fade">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <CustomText style={styles.modalTitle}>Edit {editModal.field}</CustomText>
+            <CustomText style={styles.modalTitle}>
+              Edit {editModal.field}
+            </CustomText>
 
-            {editModal.field === "Password" && (
+            {editModal.field === "Password" ? (
+              <>
+                <TextInput
+                  style={[styles.fieldValueContainer, styles.modalInput]}
+                  value={currentPassword}
+                  onChangeText={setCurrentPassword}
+                  secureTextEntry
+                  placeholder={t("profilePage.currentPasswordPlaceholder")}
+                />
+                <TextInput
+                  style={[styles.fieldValueContainer, styles.modalInput]}
+                  value={editModal.value}
+                  onChangeText={(text) =>
+                    setEditModal((prev) => ({ ...prev, value: text }))
+                  }
+                  secureTextEntry
+                  placeholder={t("profilePage.newPasswordPlaceholder")}
+                />
+              </>
+            ) : (
               <TextInput
-                style={styles.fieldValueContainer}
-                value={currentPassword}
-                onChangeText={setCurrentPassword}
-                secureTextEntry
-                placeholder="Enter current password"
+                style={[styles.fieldValueContainer, styles.modalInput]}
+                value={editModal.value}
+                onChangeText={(text) =>
+                  setEditModal((prev) => ({ ...prev, value: text }))
+                }
+                placeholder={`Enter new ${editModal.field.toLowerCase()}`}
               />
             )}
-
-            <TextInput
-              style={styles.fieldValueContainer}
-              value={editModal.value}
-              onChangeText={(text) =>
-                setEditModal((prev) => ({ ...prev, value: text }))
-              }
-              secureTextEntry={editModal.field === "Password"}
-              placeholder={`Enter new ${editModal.field.toLowerCase()}`}
-            />
 
             <View style={styles.modalButtons}>
               <TouchableOpacity>
                 <CustomButton
-                  label="Cancel"
+                  label={t("profilePage.cancelButtonText")}
                   onPress={() => {
-                    setEditModal({ visible: false, field: "", value: "" });
+                    setEditModal({ visible: false, field: "", value: "", newPassword: "" });
                     setCurrentPassword("");
                   }}
                   variant="cancel"
-                  width={100}
+                  width={120}
                   height={45}
                 />
               </TouchableOpacity>
               <TouchableOpacity>
                 <CustomButton
-                  label="Save"
+                  label={t("profilePage.saveButtonText")}
                   onPress={handleSaveEdit}
                   variant="fill"
-                  width={100}
+                  width={120}
                   height={45}
                   marginLeft={10}
                 />
@@ -364,9 +420,9 @@ export default function Profile() {
       <Modal visible={deleteModal.visible} transparent animationType="fade">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Confirm Account Deletion</Text>
+            <Text style={styles.modalTitle}>{t("profilePage.accountDeletionTitle")}</Text>
             <Text style={styles.modalDescription}>
-              Please enter your password to confirm account deletion
+              {t("profilePage.confirmEmailText")}
             </Text>
 
             <TextInput
@@ -376,28 +432,29 @@ export default function Profile() {
                 setDeleteModal((prev) => ({ ...prev, password: text }))
               }
               secureTextEntry
-              placeholder="Enter your password"
+              placeholder={t("profilePage.currentPasswordPlaceholder")}
             />
 
             <View style={styles.modalButtons}>
               <TouchableOpacity>
                 <CustomButton
-                  label="Cancel"
+                  label={t("profilePage.cancelButtonText")}
                   onPress={() =>
                     setDeleteModal({ visible: false, password: "" })
                   }
                   variant="cancel"
-                  width={100}
+                  width={120}
                   height={45}
                 />
               </TouchableOpacity>
               <TouchableOpacity>
                 <CustomButton
-                  label="Delete"
+                  label={t("profilePage.deleteButtonText")}
                   onPress={handleConfirmDelete}
                   variant="fill"
-                  width={100}
+                  width={120}
                   height={45}
+                  marginLeft={10}
                 />
               </TouchableOpacity>
             </View>
@@ -418,7 +475,7 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
+    flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#FCFCFC",
@@ -427,7 +484,8 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 20,
-    width: width > 760 ? width - 700 : width - 40,
+    width: width > 768 ? width - 700 : width - 40,
+    maxWidth: 500,
   },
   fieldContainer: {
     marginBottom: 20,
@@ -447,21 +505,22 @@ const styles = StyleSheet.create({
   fieldValueContainer: {
     position: "relative",
     height: 50,
+    width: "100%",
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 12,
+    borderRadius: 8,
     backgroundColor: "#F5F8FF",
     marginBottom: 16,
     borderWidth: 1,
     borderColor: "#E5EEFF",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 4,
+    // elevation: 2,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -482,6 +541,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     position: "absolute",
     width: width > 760 ? width - 1200 : width - 40,
+    maxWidth: 500,
     bottom: 32,
     left: "auto",
     right: "auto",
@@ -494,8 +554,10 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: "#FCFCFC",
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 8,
     width: Platform.select({
       web: Math.min(400, width - 40),
       default: width - 80,
@@ -513,11 +575,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#1E3A5F",
     fontWeight: "medium",
-    borderRadius: 12,
+    width: "100%",
+    height: 50,
+    borderRadius: 8,
   },
   modalButtons: {
+    width: "100%",
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "center",
+    marginTop: 20,
   },
   modalDescription: {
     fontSize: 14,

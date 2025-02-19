@@ -177,5 +177,26 @@ export default {
         emailLabel: "E-posta",
         emailPlaceholder: "E-posta adresinizi girin",
         submitButtonText: "Sıfırlama Linki Gönder",
-      }
+      },
+      profilePage: {
+        labelEmail: "E-posta",
+        labelPassword: "Parola",
+        labelName: "Ad-Soyad",
+        labelNickname: "Kullanıcı Adı",
+        descriptionNickname: "Kullanıcı adınız arkadaşlarınıza görünecektir",
+        currentPasswordPlaceholder: "Mevcut parolanızı girin",
+        newPasswordPlaceholder: "Yeni parolanızı girin",
+        accountDeletionTitle: "Hesabı Sil",
+        accountDeletionSubtext: "Hesabı silmek istiyor musunuz? Bu hareket geri alınamaz",
+        confirmEmailText: "Hesabınızı silmek için mevcut parolanızı girin",
+        cancelButtonText: "İptal",
+        saveButtonText: "Kaydet",
+        continueButtonText: "Devam et",
+        deleteButtonText: "Hesabımı Sil",
+      },
+      sectionHeader: {
+        goals: "Hedefler",
+        habits: "Alışkanlıklar",
+        todos: "Yapılacaklar",
+      },
   } as const;

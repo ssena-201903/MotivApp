@@ -8,7 +8,7 @@ import {
 export default function Habits() {
   return (
     <ScrollView style={styles.scrollView}>
-        <HabitTree/>
+        
     </ScrollView>
   );
 }

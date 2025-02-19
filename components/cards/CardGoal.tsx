@@ -59,7 +59,8 @@ export default function CardGoal({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: width > 768 ? "column" : "row",
+    // flexDirection: width > 768 ? "column" : "row",
+    flexDirection: "column",
     width: "31%",
     height: width > 768 ? 80 : 65,
     backgroundColor: "#f8f8f8",
@@ -69,7 +70,8 @@ const styles = StyleSheet.create({
   },
   inlineText: {
     opacity: 0.8,
-    marginLeft: width > 768 ? 0 : 8,
-    marginTop: width > 768 ? 8 : 0,
+    // marginLeft: width > 768 ? 0 : 8,
+    // marginTop: width > 768 ? 8 : 0,
+    marginTop: 6,
   },
 });

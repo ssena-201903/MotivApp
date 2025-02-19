@@ -5,20 +5,26 @@ import { Animated } from "react-native";
 import { router } from "expo-router";
 import ArrowIcon from "../icons/ArrowIcon";
 
+import { useLanguage } from "@/app/LanguageContext";
+
 type Props = {
   variant: "home" | "other";
   text: string;
   percentDone: number;
+  id: string;
 };
 
 const { width } = Dimensions.get("screen");
 
-export default function SectionHeader({ variant, text, percentDone }: Props) {
+export default function SectionHeader({ variant, text, percentDone, id }: Props) {
   const progressWidth = useRef(new Animated.Value(0)).current;
+
+  // language context
+  const { t } = useLanguage();
 
   useEffect(() => {
     Animated.timing(progressWidth, {
-      toValue: percentDone, // Animasyonu yüzdelik olarak ayarlıyoruz
+      toValue: percentDone, // setting animation to percentDone
       duration: 500,
       useNativeDriver: false,
     }).start();
@@ -26,11 +32,11 @@ export default function SectionHeader({ variant, text, percentDone }: Props) {
 
   const handlePress = () => {
     if (variant === "home") {
-      if (text === "Goals") {
+      if (id === "goals") {
         router.push("/goals");
-      } else if (text === "Habits") {
+      } else if (id === "habits") {
         router.push("/habits");
-      } else if (text === "To-Do") {
+      } else if (id === "todos") {
         router.push("/calendar");
       }
     }
@@ -48,7 +54,6 @@ export default function SectionHeader({ variant, text, percentDone }: Props) {
           {text}
         </CustomText>
         {variant === "home" && (
-          // <Ionicons name="chevron-forward-outline" size={16} color="#f8f8f8" />
           <ArrowIcon size={10} color="#f8f8f8" variant="right" />
         )}
       </TouchableOpacity>

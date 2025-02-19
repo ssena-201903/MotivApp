@@ -175,5 +175,26 @@ export default {
         emailLabel: "Email",
         emailPlaceholder: "Email Address (e.g. user@example.com)",
         submitButtonText: "Send Reset Link",
-      }
+      },
+      profilePage: {
+        labelEmail: "Email",
+        labelPassword: "Password",
+        labelName: "Full Name",
+        labelNickname: "Nickname",
+        descriptionNickname: "Your nickname will be visible to your friends",
+        currentPasswordPlaceholder: "Enter your current password",
+        newPasswordPlaceholder: "Enter your new password",
+        accountDeletionTitle: "Delete Account",
+        accountDeletionSubtext: "Are you sure you want to delete your account? This action cannot be undone",
+        confirmEmailText: "To delete your account, please enter your current password",
+        cancelButtonText: "Cancel",
+        saveButtonText: "Save",
+        continueButtonText: "Continue",
+        deleteButtonText: "Delete Account",
+      },
+      sectionHeader: {
+        goals: "Goals",
+        habits: "Habits",
+        todos: "To-Do",
+      },
   } as const;

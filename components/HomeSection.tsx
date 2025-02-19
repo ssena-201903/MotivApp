@@ -188,6 +188,7 @@ export default function HomeSection({ variant }: Props) {
             text={t("home.sectionHeaderGoals")}
             percentDone={calculateGoalsPercentage(goals)}
             variant="home"
+            id="goals"
           />
           <View style={styles.gridViewRow}>
             <CardGoal
@@ -230,6 +231,7 @@ export default function HomeSection({ variant }: Props) {
             text={t("home.sectionHeaderHabits")}
             percentDone={60}
             variant="home"
+            id="habits"
           />
           <View style={styles.gridView}>
             {userId && isWaterCard && <CardWaterHabit userId={userId} />}
@@ -258,6 +260,7 @@ export default function HomeSection({ variant }: Props) {
             text={t("home.sectionHeaderTodo")}
             percentDone={todosPercentage}
             variant="home"
+            id="todos"
           />
           <View style={styles.gridView}>
             {currentTodos.map((todo) => (
