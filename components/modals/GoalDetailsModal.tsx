@@ -44,33 +44,16 @@ export default function GoalDetailsModal({
     >
       <Pressable style={styles.overlay} onPress={onClose}>
         <View style={styles.modalContent}>
-          {/* <CustomText
+          <CustomText
             style={styles.title}
-            type="semibold"
-            fontSize={18}
             color="#1E3A5F"
+            fontSize={12}
+            type="semibold"
           >
-            {t("goalDetails.title")}
-          </CustomText> */}
+            {goal.name}
+          </CustomText>
 
-          {/* Goal Name */}
-          <View style={styles.detailItem}>
-            <CustomText
-              style={styles.detailLabel}
-              color="#1E3A5F"
-              fontSize={14}
-              type="regular"
-            >
-              {t("goalDetails.name")}
-            </CustomText>
-            <CustomText
-              type="medium"
-              color="#333"
-              fontSize={16}
-            >{goal.name || "Unknown"}</CustomText>
-          </View>
-
-          {/* Director (Eğer kategori Movie ise) */}
+          {/* Director (if category is Movie) */}
           {goal.category === "Movie" && (
             <View style={styles.detailItem}>
               <CustomText
@@ -81,15 +64,13 @@ export default function GoalDetailsModal({
               >
                 {t("goalDetails.director")}
               </CustomText>
-              <CustomText
-                type="medium"
-                color="#333"
-                fontSize={16}
-              >{goal.director || "Unknown"}</CustomText>
+              <CustomText type="medium" color="#333" fontSize={16}>
+                {goal.director || "Unknown"}
+              </CustomText>
             </View>
           )}
 
-          {/* Author (Eğer kategori Book ise) */}
+          {/* Author (if category is Book) */}
           {goal.category === "Book" && (
             <View style={styles.detailItem}>
               <CustomText
@@ -100,17 +81,15 @@ export default function GoalDetailsModal({
               >
                 {t("goalDetails.author")}
               </CustomText>
-              <CustomText
-                type="medium"
-                color="#333"
-                fontSize={16}
-              >{goal.author || "Unknown"}</CustomText>
+              <CustomText type="medium" color="#333" fontSize={16}>
+                {goal.author || "Unknown"}
+              </CustomText>
             </View>
           )}
 
           {/* Created At */}
           <View style={styles.detailItem}>
-            <CustomText 
+            <CustomText
               style={styles.detailLabel}
               color="#1E3A5F"
               fontSize={14}
@@ -118,16 +97,14 @@ export default function GoalDetailsModal({
             >
               {t("goalDetails.createdAt")}
             </CustomText>
-            <CustomText
-              type="medium"
-              color="#333"
-              fontSize={16}
-            >{formatDate(goal.createdAt)}</CustomText>
+            <CustomText type="medium" color="#333" fontSize={16}>
+              {formatDate(goal.createdAt)}
+            </CustomText>
           </View>
 
           {/* Finished At */}
           <View style={styles.detailItem}>
-            <CustomText 
+            <CustomText
               style={styles.detailLabel}
               color="#1E3A5F"
               fontSize={14}
@@ -135,19 +112,13 @@ export default function GoalDetailsModal({
             >
               {t("goalDetails.finishedAt")}
             </CustomText>
-            <CustomText
-              type="medium"
-              color="#333"
-              fontSize={16}
-            >
-              {goal.finishedAt
-                ? formatDate(goal.finishedAt)
-                : "-"}
+            <CustomText type="medium" color="#333" fontSize={16}>
+              {goal.finishedAt ? formatDate(goal.finishedAt) : "-"}
             </CustomText>
           </View>
 
-          {/* Quotes Listesi */}
-          <CustomText 
+          {/* Notes List */}
+          <CustomText
             style={styles.sectionTitle}
             color="#1E3A5F"
             fontSize={16}
@@ -160,11 +131,15 @@ export default function GoalDetailsModal({
               data={goal.notes}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
-                <CustomText style={styles.quoteItem} type="medium" color="#333">- {item}</CustomText>
+                <CustomText style={styles.quoteItem} type="medium" color="#333">
+                  - {item}
+                </CustomText>
               )}
             />
           ) : (
-            <CustomText style={styles.quoteItem} type="medium" color="#333">{t("goalDetails.noNotesAdded")}</CustomText>
+            <CustomText style={styles.quoteItem} type="medium" color="#333">
+              {t("goalDetails.noNotesAdded")}
+            </CustomText>
           )}
         </View>
       </Pressable>

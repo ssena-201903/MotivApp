@@ -210,4 +210,10 @@ export default {
         notFinishedYet: "Henüz Bitmedi",
         noNotesAdded: "Henüz not eklemediniz",
       },
+      addGoalNote: {
+        title: "Not Ekle",
+        notePlaceholder: "Notu buraya yazın...",
+        cancelButtonText: "İptal",
+        addButtonText: "Ekle",
+      },
   } as const;

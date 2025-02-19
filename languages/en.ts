@@ -208,4 +208,10 @@ export default {
         notFinishedYet: "Not finished yet",
         noNotesAdded: "No notes added yet",
       },
+      addGoalNote: {
+        title: "Add Note",
+        notePlaceholder: "Enter a note here...",
+        cancelButtonText: "Cancel",
+        addButtonText: "Add",
+      },
   } as const;

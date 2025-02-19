@@ -12,6 +12,8 @@ import InfoIcon from "@/components/icons/InfoIcon";
 import BookIcon from "@/components/icons/BookIcon";
 
 import { useLanguage } from "@/app/LanguageContext";
+import AddNoteModal from "../modals/AddGoalNoteModal";
+import AddGoalNoteModal from "../modals/AddGoalNoteModal";
 
 const { width } = Dimensions.get("window");
 
@@ -32,6 +34,7 @@ export default function CardGoalTodo({
   );
   const [rating, setRating] = useState(goal.rating || 0);
   const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
+  const [isAddNoteModalVisible, setIsAddNoteModalVisible] = useState(false);
 
   // language context
   const { t, language, setLanguage } = useLanguage();
@@ -109,7 +112,14 @@ export default function CardGoalTodo({
     setIsDetailsModalVisible(true);
   };
 
-  const handleAddNote = () => {};
+  const handleAddNote = () => {
+    setIsAddNoteModalVisible(true);
+  };
+
+  const handleNoteAdded = (newNote: string) => {
+    goal.notes = [...goal.notes, newNote];
+    onUpdate();
+  };
 
   return (
     <View style={isDone ? styles.completed : styles.container}>
@@ -182,6 +192,13 @@ export default function CardGoalTodo({
         visible={isDetailsModalVisible}
         onClose={() => setIsDetailsModalVisible(false)}
         goal={goal}
+      />
+
+      <AddGoalNoteModal
+        visible={isAddNoteModalVisible}
+        onClose={() => setIsAddNoteModalVisible(false)}
+        goal={goal}
+        onNoteAdded={handleNoteAdded}
       />
     </View>
   );
