@@ -172,11 +172,17 @@ export default function CardGoalTodo({
           <View style={styles.starContainer}>
             <StarRating rating={rating} onRatingChange={handleRatingChange} />
           </View>
-          <View style={styles.infoIcon}>
+          <Pressable style={styles.infoIcon} onPress={() => setIsDetailsModalVisible(true)}>
             <InfoIcon size={20} color="#1E3A5F" variant="outlined" />
-          </View>
+          </Pressable>
         </View>
       </View>
+
+      <GoalDetailsModal
+        visible={isDetailsModalVisible}
+        onClose={() => setIsDetailsModalVisible(false)}
+        goal={goal}
+      />
     </View>
   );
 }
@@ -211,6 +217,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   nameOther: {
+    flex: 1,
     overflow: "hidden",
   },
   picker: {
@@ -266,7 +273,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    maxWidth: "60%",
+    maxWidth: "70%",
   },
   mobileTopRight: {
     display: "flex",

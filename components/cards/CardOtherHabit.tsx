@@ -53,8 +53,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
   });
 
   // language context
-  const { t, language, setLanguage } = useLanguage();
-  const [selectedLanguage, setSelectedLanguage] = useState(language);
+  const { t } = useLanguage();
 
   const fetchHabitData = async () => {
     try {

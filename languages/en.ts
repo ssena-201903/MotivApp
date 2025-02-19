@@ -197,4 +197,15 @@ export default {
         habits: "Habits",
         todos: "To-Do",
       },
+      goalDetails: {
+        title: "Goal Details",
+        name: "Name",
+        author: "Author",
+        director: "Director",
+        notes: "All Notes",
+        createdAt: "Created At",
+        finishedAt: "Finished At",
+        notFinishedYet: "Not finished yet",
+        noNotesAdded: "No notes added yet",
+      },
   } as const;

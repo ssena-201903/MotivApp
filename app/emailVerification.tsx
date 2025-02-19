@@ -46,10 +46,7 @@ export default function EmailVerification() {
     }
   };
 
-  const backgroundImage =
-    Platform.OS === "web"
-      ? require("@/assets/images/habitCardBg.png")
-      : require("@/assets/images/mobileBg.png");
+  const backgroundImage = require("@/assets/images/habitCardBg.png")
 
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>

@@ -56,54 +56,69 @@ export default function AddGoalModal({
         return;
       }
 
-      // base data structure
+      // Helper function to capitalize words
+      const capitalizeWords = (text: string) => {
+        return text
+          .split(" ")
+          .map(
+            (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+          )
+          .join(" ");
+      };
+
+      // Format name, author, director with capitalized words
+      const formattedName = capitalizeWords(goalData.name);
+      const formattedAuthor =
+        goalData.author && goalData.author.trim() !== ""
+          ? capitalizeWords(goalData.author)
+          : null;
+      const formattedDirector =
+        goalData.director && goalData.director.trim() !== ""
+          ? capitalizeWords(goalData.director)
+          : null;
+
+      // Base data structure
       const baseData = {
-        name: goalData.name,
+        name: formattedName,
         rating: goalData.rating,
         isDone: false,
         createdAt: new Date(),
         category: categoryId,
+        notes: goalData.note ? [goalData.note] : [],
       };
 
-      // category specific data
+      // Category specific data
       const categorySpecificData = (() => {
         switch (categoryId) {
           case "Movie":
             return {
-              director: goalData.director,
-              quotes: goalData.quote ? [goalData.quote] : [],
+              ...(formattedDirector !== null
+                ? { director: formattedDirector }
+                : {}),
             };
           case "Book":
             return {
-              author: goalData.author,
-              quotes: goalData.quote ? [goalData.quote] : [],
-            };
-          case "Activity":
-          case "Buy":
-          case "Food":
-          case "Place":
-            return {
-              notes: goalData.note ? [goalData.note] : [],
+              ...(formattedAuthor !== null ? { author: formattedAuthor } : {}),
             };
           default:
             return {};
         }
       })();
 
-      // combine base data with category specific data
+      // Combine base data with category-specific data
       const dataToSave = {
         ...baseData,
         ...categorySpecificData,
       };
 
-      // adding document to the goals collection
+      // Add document to Firestore
       const goalsCollectionRef = collection(db, "users", user.uid, "goals");
       const docRef = await addDoc(goalsCollectionRef, dataToSave);
 
       if (docRef.id) {
         onAdd({ id: docRef.id, ...dataToSave });
         onClose();
-        // reset form
+        // Reset form
         setGoalData({
           name: "",
           author: "",
@@ -141,7 +156,14 @@ export default function AddGoalModal({
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.content}>
-          <CustomText style={styles.title} type="semibold" color="#1E3A5F" fontSize={18}>{getModalTitle()}</CustomText>
+          <CustomText
+            style={styles.title}
+            type="semibold"
+            color="#1E3A5F"
+            fontSize={18}
+          >
+            {getModalTitle()}
+          </CustomText>
           <TextInput
             style={styles.input}
             placeholder={
@@ -154,24 +176,6 @@ export default function AddGoalModal({
             value={goalData.name}
             onChangeText={(text) => setGoalData({ ...goalData, name: text })}
           />
-          {categoryId === "Book" && (
-            <TextInput
-              style={styles.input}
-              placeholder={t("addGoalsModal.authorPlaceholder")}
-              value={goalData.director}
-              onChangeText={(text) =>
-                setGoalData({ ...goalData, director: text })
-              }
-            />
-          )}
-          {categoryId === "Book" && (
-            <TextInput
-              style={styles.input}
-              placeholder={t("addGoalsModal.quotePlaceholder")}
-              value={goalData.quote}
-              onChangeText={(text) => setGoalData({ ...goalData, quote: text })}
-            />
-          )}
           {categoryId === "Movie" && (
             <TextInput
               style={styles.input}
@@ -182,25 +186,24 @@ export default function AddGoalModal({
               }
             />
           )}
-          {categoryId === "Movie" && (
+          {categoryId === "Book" && (
             <TextInput
               style={styles.input}
-              placeholder={t("addGoalsModal.quotePlaceholder")}
-              value={goalData.quote}
-              onChangeText={(text) => setGoalData({ ...goalData, quote: text })}
+              placeholder={t("addGoalsModal.authorPlaceholder")}
+              value={goalData.author}
+              onChangeText={(text) =>
+                setGoalData({ ...goalData, author: text })
+              }
             />
           )}
-          {(categoryId === "Activity" ||
-            categoryId === "Buy" ||
-            categoryId === "Food" ||
-            categoryId === "Place") && (
-            <TextInput
-              style={styles.input}
-              placeholder={t("addGoalsModal.notePlaceholder")}
-              value={goalData.note}
-              onChangeText={(text) => setGoalData({ ...goalData, note: text })}
-            />
-          )}
+
+          <TextInput
+            style={styles.input}
+            placeholder={t("addGoalsModal.notePlaceholder")}
+            value={goalData.note}
+            onChangeText={(text) => setGoalData({ ...goalData, note: text })}
+          />
+
           <View style={styles.ratingContainer}>
             <CustomText style={styles.ratingText}>
               {t("addGoalsModal.rateText")}

@@ -117,10 +117,7 @@ export default function Goals() {
     return Math.round((completedGoals / totalGoals) * 100);
   };
 
-  const backgroundImage =
-    Platform.OS === "web"
-      ? require("@/assets/images/habitCardBg.png")
-      : require("@/assets/images/mobileBg.png");
+  const backgroundImage = require("@/assets/images/habitCardBg.png")
 
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>

@@ -7,6 +7,7 @@ import {
   Modal,
   TextInput,
   Dimensions,
+  ImageBackground,
 } from "react-native";
 import { router } from "expo-router";
 import { auth, db } from "@/firebase.config";
@@ -173,7 +174,9 @@ export default function Profile() {
             return;
           }
 
-          const isReauthenticatedPassword = await reauthenticateUser(currentPassword);
+          const isReauthenticatedPassword = await reauthenticateUser(
+            currentPassword
+          );
           if (!isReauthenticatedPassword) {
             showAlert("Error", "Current password is incorrect", [
               {
@@ -199,12 +202,16 @@ export default function Profile() {
       ]);
     } catch (error: any) {
       console.error("Error updating field:", error);
-      showAlert("Error", error.message || "Failed to update. Please try again.", [
-        {
-          text: "OK",
-          onPress: closeAlert,
-        },
-      ]);
+      showAlert(
+        "Error",
+        error.message || "Failed to update. Please try again.",
+        [
+          {
+            text: "OK",
+            onPress: closeAlert,
+          },
+        ]
+      );
     }
   };
 
@@ -314,171 +321,187 @@ export default function Profile() {
     );
   }
 
+  const backgroundImage = require("@/assets/images/habitCardBg.png");
+
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <ProfileField 
-          type="Name" 
-          label={t("profilePage.labelName")} 
-          value={userData.formattedName} 
-        />
-        <ProfileField 
-          type="Nickname" 
-          label={t("profilePage.labelNickname")} 
-          value={userData.nickname} 
-        />
-        <ProfileField 
-          type="Email" 
-          label={t("profilePage.labelEmail")} 
-          value={userData.email} 
-        />
-        <ProfileField 
-          type="Password" 
-          label={t("profilePage.labelPassword")} 
-          value={userData.password} 
-          isPassword 
-        />
-      </View>
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <ProfileField
+            type="Name"
+            label={t("profilePage.labelName")}
+            value={userData.formattedName}
+          />
+          <ProfileField
+            type="Nickname"
+            label={t("profilePage.labelNickname")}
+            value={userData.nickname}
+          />
+          <ProfileField
+            type="Email"
+            label={t("profilePage.labelEmail")}
+            value={userData.email}
+          />
+          <ProfileField
+            type="Password"
+            label={t("profilePage.labelPassword")}
+            value={userData.password}
+            isPassword
+          />
+        </View>
 
-      <TouchableOpacity style={styles.deleteButton}>
-        <CustomButton
-          label={t("profilePage.deleteButtonText")}
-          variant="fill"
-          width="100%"
-          height={50}
-          onPress={handleDeleteAccount}
-        />
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.deleteButton}>
+          <CustomButton
+            label={t("profilePage.deleteButtonText")}
+            variant="fill"
+            width="100%"
+            height={50}
+            onPress={handleDeleteAccount}
+          />
+        </TouchableOpacity>
 
-      {/* Edit Modal */}
-      <Modal visible={editModal.visible} transparent animationType="fade">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <CustomText style={styles.modalTitle}>
-              Edit {editModal.field}
-            </CustomText>
+        {/* Edit Modal */}
+        <Modal visible={editModal.visible} transparent animationType="fade">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <CustomText style={styles.modalTitle}>
+                Edit {editModal.field}
+              </CustomText>
 
-            {editModal.field === "Password" ? (
-              <>
-                <TextInput
-                  style={[styles.fieldValueContainer, styles.modalInput]}
-                  value={currentPassword}
-                  onChangeText={setCurrentPassword}
-                  secureTextEntry
-                  placeholder={t("profilePage.currentPasswordPlaceholder")}
-                />
+              {editModal.field === "Password" ? (
+                <>
+                  <TextInput
+                    style={[styles.fieldValueContainer, styles.modalInput]}
+                    value={currentPassword}
+                    onChangeText={setCurrentPassword}
+                    secureTextEntry
+                    placeholder={t("profilePage.currentPasswordPlaceholder")}
+                  />
+                  <TextInput
+                    style={[styles.fieldValueContainer, styles.modalInput]}
+                    value={editModal.value}
+                    onChangeText={(text) =>
+                      setEditModal((prev) => ({ ...prev, value: text }))
+                    }
+                    secureTextEntry
+                    placeholder={t("profilePage.newPasswordPlaceholder")}
+                  />
+                </>
+              ) : (
                 <TextInput
                   style={[styles.fieldValueContainer, styles.modalInput]}
                   value={editModal.value}
                   onChangeText={(text) =>
                     setEditModal((prev) => ({ ...prev, value: text }))
                   }
-                  secureTextEntry
-                  placeholder={t("profilePage.newPasswordPlaceholder")}
+                  placeholder={`Enter new ${editModal.field.toLowerCase()}`}
                 />
-              </>
-            ) : (
+              )}
+
+              <View style={styles.modalButtons}>
+                <TouchableOpacity>
+                  <CustomButton
+                    label={t("profilePage.cancelButtonText")}
+                    onPress={() => {
+                      setEditModal({
+                        visible: false,
+                        field: "",
+                        value: "",
+                        newPassword: "",
+                      });
+                      setCurrentPassword("");
+                    }}
+                    variant="cancel"
+                    width={120}
+                    height={45}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <CustomButton
+                    label={t("profilePage.saveButtonText")}
+                    onPress={handleSaveEdit}
+                    variant="fill"
+                    width={120}
+                    height={45}
+                    marginLeft={10}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Delete Confirmation Modal */}
+        <Modal visible={deleteModal.visible} transparent animationType="fade">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>
+                {t("profilePage.accountDeletionTitle")}
+              </Text>
+              <Text style={styles.modalDescription}>
+                {t("profilePage.confirmEmailText")}
+              </Text>
+
               <TextInput
-                style={[styles.fieldValueContainer, styles.modalInput]}
-                value={editModal.value}
+                style={styles.fieldValueContainer}
+                value={deleteModal.password}
                 onChangeText={(text) =>
-                  setEditModal((prev) => ({ ...prev, value: text }))
+                  setDeleteModal((prev) => ({ ...prev, password: text }))
                 }
-                placeholder={`Enter new ${editModal.field.toLowerCase()}`}
+                secureTextEntry
+                placeholder={t("profilePage.currentPasswordPlaceholder")}
               />
-            )}
 
-            <View style={styles.modalButtons}>
-              <TouchableOpacity>
-                <CustomButton
-                  label={t("profilePage.cancelButtonText")}
-                  onPress={() => {
-                    setEditModal({ visible: false, field: "", value: "", newPassword: "" });
-                    setCurrentPassword("");
-                  }}
-                  variant="cancel"
-                  width={120}
-                  height={45}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <CustomButton
-                  label={t("profilePage.saveButtonText")}
-                  onPress={handleSaveEdit}
-                  variant="fill"
-                  width={120}
-                  height={45}
-                  marginLeft={10}
-                />
-              </TouchableOpacity>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity>
+                  <CustomButton
+                    label={t("profilePage.cancelButtonText")}
+                    onPress={() =>
+                      setDeleteModal({ visible: false, password: "" })
+                    }
+                    variant="cancel"
+                    width={120}
+                    height={45}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <CustomButton
+                    label={t("profilePage.deleteButtonText")}
+                    onPress={handleConfirmDelete}
+                    variant="fill"
+                    width={120}
+                    height={45}
+                    marginLeft={10}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
 
-      {/* Delete Confirmation Modal */}
-      <Modal visible={deleteModal.visible} transparent animationType="fade">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{t("profilePage.accountDeletionTitle")}</Text>
-            <Text style={styles.modalDescription}>
-              {t("profilePage.confirmEmailText")}
-            </Text>
-
-            <TextInput
-              style={styles.fieldValueContainer}
-              value={deleteModal.password}
-              onChangeText={(text) =>
-                setDeleteModal((prev) => ({ ...prev, password: text }))
-              }
-              secureTextEntry
-              placeholder={t("profilePage.currentPasswordPlaceholder")}
-            />
-
-            <View style={styles.modalButtons}>
-              <TouchableOpacity>
-                <CustomButton
-                  label={t("profilePage.cancelButtonText")}
-                  onPress={() =>
-                    setDeleteModal({ visible: false, password: "" })
-                  }
-                  variant="cancel"
-                  width={120}
-                  height={45}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <CustomButton
-                  label={t("profilePage.deleteButtonText")}
-                  onPress={handleConfirmDelete}
-                  variant="fill"
-                  width={120}
-                  height={45}
-                  marginLeft={10}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Alert Modal */}
-      <AlertModal
-        visible={alert.visible}
-        title={alert.title}
-        message={alert.message}
-        buttons={alert.buttons}
-      />
-    </View>
+        {/* Alert Modal */}
+        <AlertModal
+          visible={alert.visible}
+          title={alert.title}
+          message={alert.message}
+          buttons={alert.buttons}
+        />
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
   container: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "#FCFCFC",
+    // backgroundColor: "#FCFCFC",
     width: "100%",
     height: "100%",
   },

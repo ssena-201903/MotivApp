@@ -199,4 +199,15 @@ export default {
         habits: "Alışkanlıklar",
         todos: "Yapılacaklar",
       },
+      goalDetails: {
+        title: "Hedef Detayları",
+        name: "Ad",
+        author: "Yazar",
+        director: "Yönetmen",
+        notes: "Bütün Notlar",
+        createdAt: "Oluşturulma zamanı",
+        finishedAt: "Tamamlanma zamanı",
+        notFinishedYet: "Henüz Bitmedi",
+        noNotesAdded: "Henüz not eklemediniz",
+      },
   } as const;
