@@ -199,12 +199,12 @@ export default function CardWaterHabit({ userId }: Props) {
     if (filledGlass < totalWater) {
       const newFilledGlass = filledGlass + 1;
       setFilledGlass(newFilledGlass);
-      setLastChangeAt(new Date().toISOString().split("T")[0]);
 
       playSound();
 
       let isCompleted = false;
       let newStreakDays = waterStreak;
+      let newLastChange = new Date().toISOString().split("T")[0];
 
       if (newFilledGlass === totalWater) {
         isCompleted = true;
@@ -212,7 +212,6 @@ export default function CardWaterHabit({ userId }: Props) {
         setWaterStreak(newStreakDays);
         setIsFeedbackVisible(true);
         setIsWaterDone(true);
-        setLastChangeAt(new Date().toISOString().split("T")[0]);
       }
 
       try {
@@ -228,10 +227,10 @@ export default function CardWaterHabit({ userId }: Props) {
           // Update data in Firestore
           await updateDoc(habitDocRef, {
             filledCup: newFilledGlass,
+            lastChangeAt: newLastChange,
             ...(isCompleted && {
               isDone: true,
               streakDays: newStreakDays,
-              lastChangeAt: new Date().toISOString().split("T")[0],
             }),
           });
 

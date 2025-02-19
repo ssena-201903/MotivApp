@@ -279,6 +279,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   buttonText: {
+    alignItems: "center",
     color: "#1E3A5F",
     opacity: 0.6,
     fontSize: 10,
