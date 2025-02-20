@@ -316,7 +316,7 @@ export default function Profile() {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text>Loading...</Text>
+        <CustomText>Loading...</CustomText>
       </View>
     );
   }
@@ -364,7 +364,7 @@ export default function Profile() {
         <Modal visible={editModal.visible} transparent animationType="fade">
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <CustomText style={styles.modalTitle}>
+              <CustomText type="semibold" fontSize={18} color="#1E3A5F" style={{marginBottom: 20}}>
                 Edit {editModal.field}
               </CustomText>
 
@@ -435,12 +435,21 @@ export default function Profile() {
         <Modal visible={deleteModal.visible} transparent animationType="fade">
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>
+              <CustomText 
+                type="semibold"
+                fontSize={18}
+                color="#1E3A5F"
+              >
                 {t("profilePage.accountDeletionTitle")}
-              </Text>
-              <Text style={styles.modalDescription}>
+              </CustomText>
+              <CustomText 
+                style={styles.modalDescription}
+                color="#1E3A5F"
+                fontSize={14}
+                type="regular"
+              >
                 {t("profilePage.confirmEmailText")}
-              </Text>
+              </CustomText>
 
               <TextInput
                 style={styles.fieldValueContainer}
@@ -576,21 +585,20 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    backgroundColor: "#FCFCFC",
-    justifyContent: "center",
-    alignItems: "center",
+    // backgroundColor: "#FCFCFC",
+    // justifyContent: "center",
+    // alignItems: "center",
+    // padding: 20,
+    // borderRadius: 8,
+    // width: Platform.select({
+    //   web: Math.min(400, width - 40),
+    //   default: width - 80,
+    // }),
+    backgroundColor: "#f8f8f8",
     padding: 20,
     borderRadius: 8,
-    width: Platform.select({
-      web: Math.min(400, width - 40),
-      default: width - 80,
-    }),
-  },
-  modalTitle: {
-    color: "#1E3A5F",
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 20,
+    width: width > 768 ? "50%" : width - 40,
+    alignItems: "center",
   },
   modalInput: {
     flex: 1,
@@ -609,8 +617,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   modalDescription: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 16,
+    marginTop: 20,
+    marginBottom: 20,
+    textAlign: "center",
   },
 });

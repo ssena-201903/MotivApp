@@ -1,12 +1,11 @@
 import {
   Modal,
   View,
-  Text,
   StyleSheet,
-  Platform,
   Dimensions,
 } from "react-native";
 import CustomButton from "@/components/CustomButton";
+import { CustomText } from "@/CustomText";
 
 const { width } = Dimensions.get("window");
 
@@ -31,8 +30,17 @@ export default function AlertModal({
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.message}>{message}</Text>
+          <CustomText type="semibold" fontSize={18} color="#1E3A5F">
+            {title}
+          </CustomText>
+          <CustomText 
+            style={styles.message}
+            color="#1E3A5F"
+            fontSize={16}
+            type="regular"
+          >
+            {message}
+          </CustomText>
 
           <View style={styles.buttonContainer}>
             {buttons.map((button, index) => (
@@ -59,32 +67,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    
   },
   content: {
-    height: "auto",
-    backgroundColor: "#FCFCFC",
-    borderRadius: 12,
+    // alignItems: "center",
+    // height: "auto",
+    // backgroundColor: "#FCFCFC",
+    // borderRadius: 12,
+    // padding: 20,
+    // width: Platform.select({
+    //   web: Math.min(400, width - 40),
+    //   default: width - 80,
+    // }),
+    backgroundColor: "#f8f8f8",
     padding: 20,
-    width: Platform.select({
-      web: Math.min(400, width - 40),
-      default: width - 80,
-    }),
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1E3A5F",
-    marginBottom: 20,
+    borderRadius: 8,
+    width: width > 768 ? "50%" : width - 40,
+    alignItems: "center",
   },
   message: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 20,
+    marginTop: 20,
+    marginBottom: 10,
+    textAlign: "center",
   },
   buttonContainer: {
+    width: "50%",
     flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: 8,
+    justifyContent: "space-between",
+    marginTop: 20,
   },
 });

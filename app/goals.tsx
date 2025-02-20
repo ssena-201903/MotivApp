@@ -174,7 +174,7 @@ export default function Goals() {
                   variant={activeCategory === category.id ? "fill" : "outlined"}
                 />
               )}
-              <CustomText
+              {/* <CustomText
                 style={
                   activeCategory === category.id
                     ? styles.activeButtonText
@@ -183,7 +183,7 @@ export default function Goals() {
                 type="regular"
               >
                 {category.label}
-              </CustomText>
+              </CustomText> */}
             </TouchableOpacity>
           ))}
         </View>
@@ -260,18 +260,19 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "space-between",
-    width: width > 768 ? width - 900 : "100%",
+    width: width > 768 ? width - 900 : width - 40,
     paddingVertical: 5,
+    marginHorizontal: 20,
     gap: 3,
     height: 60, // fixed height without flexGrow
     marginBottom: 20, // fixed marginBottom without flexGrow
   },
   button: {
-    width: width > 768 ? "13%" : "15%",
-    height: width > 768 ? 60 : 70,
+    width: width > 768 ? 90 : 70,
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: width > 768 ? 20 : 4,
+    marginRight: 0,
     backgroundColor: "#f8f8f8",
     borderRadius: 8,
   },

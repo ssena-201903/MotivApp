@@ -216,4 +216,10 @@ export default {
         cancelButtonText: "İptal",
         addButtonText: "Ekle",
       },
+      addTodoModal: {
+        title: "Yeni Görev Ekle",
+        todoPlaceholder: "Görevi buraya yazın...",
+        cancelButtonText: "İptal",
+        addButtonText: "Ekle",
+      },
   } as const;

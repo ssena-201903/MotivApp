@@ -214,4 +214,10 @@ export default {
         cancelButtonText: "Cancel",
         addButtonText: "Add",
       },
+      addTodoModal: {
+        title: "Add To-Do",
+        todoPlaceholder: "Enter a to-do here...",
+        cancelButtonText: "Cancel",
+        addButtonText: "Add",
+      },
   } as const;
