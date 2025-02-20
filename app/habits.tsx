@@ -8,6 +8,7 @@ import {
   View,
   Dimensions,
   Modal,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 import { db, auth } from "@/firebase.config";
@@ -19,6 +20,7 @@ import AddOtherHabitModal from "@/components/modals/AddOtherHabitModal";
 
 import { useLanguage } from "@/app/LanguageContext";
 import { CustomText } from "@/CustomText";
+import PlusIcon from "@/components/icons/PlusIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -87,6 +89,7 @@ export default function Habits() {
           style={styles.addButton}
           onPress={() => setIsModalOpen(true)}
         >
+          <PlusIcon size={16} color="#fff"/>
           <CustomText type="regular" color="#fff" fontSize={14}>Yeni Alışkanlık</CustomText>
         </Pressable>
 
@@ -96,7 +99,10 @@ export default function Habits() {
           variant="other"
           id="habits"
         />
-        <ScrollView contentContainerStyle={styles.scrollView}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.contentBody}>
             {userId && isWaterCard && <CardWaterHabit userId={userId} />}
             {userId && isBookCard && (
@@ -115,33 +121,42 @@ export default function Habits() {
         </ScrollView>
       </View>
       
-      {/* Tür Seçim Modali */}
+      {/* type modal */}
       <Modal visible={isModalOpen} animationType="fade" transparent>
+        <TouchableWithoutFeedback onPress={() => setIsModalOpen(false)}>
         <View
           style={[
             styles.modalContainer,
-            { backgroundColor: isWaterModalOpen || isOtherModalOpen ? "transparent" : "rgba(136, 136, 155, 0.5)" },
+            { backgroundColor: isWaterModalOpen || isOtherModalOpen ? "transparent" : "rgba(119, 128, 137, 0.32)" },
           ]}
         >
-          <Text style={styles.modalTitle}>Tür Seç</Text>
+          <CustomText 
+            type="semibold" 
+            fontSize={20} 
+            color="#1E3A5F"
+            style={styles.modalTitle}
+          >
+            Tür Seç
+          </CustomText>
           <View style={styles.typeContainer}>
             <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Water")}>
-              <Text style={styles.typeButtonText}>Su</Text>
+              <CustomText type="medium" fontSize={16} color="#1E3A5F">Su</CustomText>
             </Pressable>
             <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Book")}>
-              <Text style={styles.typeButtonText}>Kitap</Text>
+              <CustomText type="medium" fontSize={16} color="#1E3A5F">Kitap</CustomText>
             </Pressable>
             <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Sport")}>
-              <Text style={styles.typeButtonText}>Spor</Text>
+              <CustomText type="medium" fontSize={16} color="#1E3A5F">Spor</CustomText>
             </Pressable>
             <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Vocabulary")}>
-              <Text style={styles.typeButtonText}>Kelime</Text>
+              <CustomText type="medium" fontSize={16} color="#1E3A5F">Kelime</CustomText>
             </Pressable>
             <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Custom")}>
-              <Text style={styles.typeButtonText}>Özel</Text>
+              <CustomText type="medium" fontSize={16} color="#1E3A5F">Özel</CustomText>
             </Pressable>
           </View>
         </View>
+        </TouchableWithoutFeedback>
       </Modal>
 
       {/* Add Habit Modals */}
@@ -169,13 +184,14 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
+    position: "relative",
   },
   container: {
     flex: 1,
     width: width > 768 ? width - 860 : width - 40,
     justifyContent: "flex-start",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 60,
   },
   scrollView: {
     flexGrow: 1,
@@ -194,13 +210,16 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   addButton: {
+    flexDirection: "row",
+    alignItems: "center",
     position: "absolute",
-    top: 20,
+    top: -40,
     right: 20,
     backgroundColor: "#1E3A5F",
     padding: 10,
     borderRadius: 10,
     zIndex: 10,
+    gap: 12,
   },
   modalContainer: {
     flex: 1,
@@ -208,21 +227,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   typeContainer: {
     flexDirection: "column",
     gap: 10,
   },
   typeButton: {
-    backgroundColor: "white",
-    padding: 10,
-    borderRadius: 10,
+    backgroundColor: "#f8f8f8",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
     alignItems: "center",
-  },
-  typeButtonText: {
-    fontSize: 16,
-  },
+  }
 });
