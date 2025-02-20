@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     // elevation: 3,
     // borderWidth: 1,
     // borderColor: "#D1D4D9",
-    flex: 1,
+    // flex: 1,
   },
   doneHabit: {
     backgroundColor: "#E5EEFF",
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     // elevation: 3,
     // borderWidth: 1,
     // borderColor: "#D1D4D9",
-    flex: 1,
+    // flex: 1,
   },
   leftView: {
     width: "50%",

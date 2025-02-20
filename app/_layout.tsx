@@ -5,7 +5,7 @@ import { auth } from "@/firebase.config";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import ArrowIcon from "@/components/icons/ArrowIcon";
-import { LanguageProvider } from "./LanguageContext"; // 🌍 Dil sağlayıcıyı ekledik
+import { LanguageProvider } from "./LanguageContext"; // 🌍 language provider
 
 type AuthContextType = {
   user: User | null;
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <LanguageProvider> {/* 🌍 Tüm uygulamayı saran dil sağlayıcı */}
+      <LanguageProvider>
         <Stack>
           {/* (tabs) */}
           <Stack.Screen 

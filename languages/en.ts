@@ -154,7 +154,10 @@ export default {
       },
       cardGoalTodo: {
         addNote: "Add Note",
-        createdAt: "Created At"
+        createdAt: "Created At",
+        readingStatus: "Reaiding Status",
+        notStartedStatus: "Not started",
+        completedStatus: "Read",
       },
       welcomePage: {
         title: "Welcome,",

@@ -1,28 +1,228 @@
-import HabitTree from "@/components/HabitTree";
+import React, { useEffect, useState } from "react";
 import {
-  View,
   StyleSheet,
   ScrollView,
+  ImageBackground,
+  Pressable,
+  Text,
+  View,
+  Dimensions,
+  Modal,
 } from "react-native";
+import { collection, getDocs } from "firebase/firestore";
+import { db, auth } from "@/firebase.config";
+import CardOtherHabit from "@/components/cards/CardOtherHabit";
+import CardWaterHabit from "@/components/cards/CardWaterHabit";
+import SectionHeader from "@/components/headers/SectionHeader";
+import AddWaterHabitModal from "@/components/modals/AddWaterHabitModal";
+import AddOtherHabitModal from "@/components/modals/AddOtherHabitModal";
+
+import { useLanguage } from "@/app/LanguageContext";
+import { CustomText } from "@/CustomText";
+
+const { width } = Dimensions.get("window");
 
 export default function Habits() {
+  const userId = auth.currentUser?.uid ?? "";
+  const [isWaterCard, setIsWaterCard] = useState<boolean>(false);
+  const [isBookCard, setIsBookCard] = useState<boolean>(false);
+  const [isSportCard, setIsSportCard] = useState<boolean>(false);
+  const [isVocabularyCard, setIsVocabularyCard] = useState<boolean>(false);
+  const [isCustomCard, setIsCustomCard] = useState<boolean>(false);
+
+  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+  const [isWaterModalOpen, setIsWaterModalOpen] = useState<boolean>(false);
+  const [isOtherModalOpen, setIsOtherModalOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  // language context
+  const { t, language, setLanguage } = useLanguage();
+
+  const fetchHabitDatas = async () => {
+    try {
+      const habitsRef = collection(db, `users/${userId}/habits`);
+      const querySnapshot = await getDocs(habitsRef);
+
+      querySnapshot.docs.forEach((doc) => {
+        const habitDoc = doc.data();
+        if (habitDoc.variant === "Water") {
+          setIsWaterCard(true);
+        } else if (habitDoc.variant === "Book") {
+          setIsBookCard(true);
+        } else if (habitDoc.variant === "Sport") {
+          setIsSportCard(true);
+        } else if (habitDoc.variant === "Custom") {
+          setIsCustomCard(true);
+        } else if (habitDoc.variant === "Vocabulary") {
+          setIsVocabularyCard(true);
+        }
+      });
+    } catch (error) {
+      console.log("error fetching habits", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchHabitDatas();
+  }, [userId]);
+
+  const openAddHabitModal = (variant: string) => {
+    setSelectedVariant(variant);
+    setIsModalOpen(false);
+    if (variant === "Water") {
+      setIsWaterModalOpen(true);
+    } else {
+      setIsOtherModalOpen(true);
+    }
+  };
+
   return (
-    <ScrollView style={styles.scrollView}>
-        
-    </ScrollView>
+    <ImageBackground
+      source={require("@/assets/images/habitCardBg.png")}
+      style={styles.imageBackground}
+    >
+      <View style={styles.container}>
+        {/* add new habit button */}
+        <Pressable
+          style={styles.addButton}
+          onPress={() => setIsModalOpen(true)}
+        >
+          <CustomText type="regular" color="#fff" fontSize={14}>Yeni Alışkanlık</CustomText>
+        </Pressable>
+
+        <SectionHeader
+          text={t("home.sectionHeaderHabits")}
+          percentDone={60}
+          variant="other"
+          id="habits"
+        />
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          <View style={styles.contentBody}>
+            {userId && isWaterCard && <CardWaterHabit userId={userId} />}
+            {userId && isBookCard && (
+              <CardOtherHabit userId={userId} variant="Book" />
+            )}
+            {userId && isVocabularyCard && (
+              <CardOtherHabit userId={userId} variant="Vocabulary" />
+            )}
+            {userId && isSportCard && (
+              <CardOtherHabit userId={userId} variant="Sport" />
+            )}
+            {userId && isCustomCard && (
+              <CardOtherHabit userId={userId} variant="Custom" />
+            )}
+          </View>
+        </ScrollView>
+      </View>
+      
+      {/* Tür Seçim Modali */}
+      <Modal visible={isModalOpen} animationType="fade" transparent>
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: isWaterModalOpen || isOtherModalOpen ? "transparent" : "rgba(136, 136, 155, 0.5)" },
+          ]}
+        >
+          <Text style={styles.modalTitle}>Tür Seç</Text>
+          <View style={styles.typeContainer}>
+            <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Water")}>
+              <Text style={styles.typeButtonText}>Su</Text>
+            </Pressable>
+            <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Book")}>
+              <Text style={styles.typeButtonText}>Kitap</Text>
+            </Pressable>
+            <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Sport")}>
+              <Text style={styles.typeButtonText}>Spor</Text>
+            </Pressable>
+            <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Vocabulary")}>
+              <Text style={styles.typeButtonText}>Kelime</Text>
+            </Pressable>
+            <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Custom")}>
+              <Text style={styles.typeButtonText}>Özel</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Add Habit Modals */}
+      {isWaterModalOpen && (
+        <AddWaterHabitModal
+          visible={isWaterModalOpen}
+          onClose={() => setIsWaterModalOpen(false)}
+        />
+      )}
+      {isOtherModalOpen && (
+        <AddOtherHabitModal
+          visible={isOtherModalOpen}
+          onClose={() => setIsOtherModalOpen(false)}
+          variant={selectedVariant || "Custom"}
+        />
+      )}
+      
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flexGrow: 1,
-    backgroundColor: "white",
+  imageBackground: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
   },
   container: {
     flex: 1,
+    width: width > 768 ? width - 860 : width - 40,
     justifyContent: "flex-start",
     alignItems: "center",
+    marginTop: 20,
+  },
+  scrollView: {
+    flexGrow: 1,
+    alignItems: "center",
+    paddingVertical: 20,
+  },
+  contentBody: {
+    width: width > 768 ? width - 860 : "100%",
+    marginHorizontal: 20,
+    flex: 1,
+    gap: 8,
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+    padding: 5,
+    flexGrow: 1,
+  },
+  addButton: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    backgroundColor: "#1E3A5F",
+    padding: 10,
+    borderRadius: 10,
+    zIndex: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  typeContainer: {
     flexDirection: "column",
-    backgroundColor: "#FCFCFC",
+    gap: 10,
+  },
+  typeButton: {
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  typeButtonText: {
+    fontSize: 16,
   },
 });

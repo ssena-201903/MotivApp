@@ -164,9 +164,9 @@ export default function CardGoalTodo({
             style={styles.picker}
             dropdownIconColor="#1E3A5F"
           >
-            <Picker.Item label="Not Started" value="not started" />
-            <Picker.Item label="Reading" value="reading" />
-            <Picker.Item label="Read" value="read" />
+            <Picker.Item label={t("cardGoalTodo.notStartedStatus")} value="not started" />
+            <Picker.Item label={t("cardGoalTodo.readingStatus")} value="reading" />
+            <Picker.Item label={t("cardGoalTodo.completedStatus")} value="read" />
           </Picker>
         ) : (
           <CustomText 

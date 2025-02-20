@@ -156,7 +156,10 @@ export default {
       },
       cardGoalTodo: {
         addNote: "Not Ekle",
-        createdAt: "Oluşturulma zamanı"
+        createdAt: "Oluşturulma zamanı",
+        readingStatus: "Okunuyor",
+        notStartedStatus: "Okunmadı",
+        completedStatus: "Okundu",
       },
       welcomePage: {
         title: "Hoşgeldin,",
