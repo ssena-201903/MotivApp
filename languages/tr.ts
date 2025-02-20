@@ -222,4 +222,7 @@ export default {
         cancelButtonText: "İptal",
         addButtonText: "Ekle",
       },
+      calendar: {
+        title: "Görevleri"
+      },
   } as const;

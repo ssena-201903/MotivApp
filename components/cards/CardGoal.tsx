@@ -48,7 +48,7 @@ export default function CardGoal({
       <CustomText 
         style={styles.inlineText}
         color="#1E3A5F"
-        type="regular"
+        type="medium"
         fontSize={12}
       >
         {inlineText}

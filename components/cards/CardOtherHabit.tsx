@@ -222,7 +222,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
         <View style={styles.leftIconContainer}>{getIcon(habit.isDone)}</View>
         <View style={styles.leftTextContainer}>
           <CustomText
-            type={habit.isDone ? "medium" : "regular"}
+            type="medium"
             color="#1E3A5F"
             fontSize={14}
           >

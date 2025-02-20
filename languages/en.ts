@@ -220,4 +220,7 @@ export default {
         cancelButtonText: "Cancel",
         addButtonText: "Add",
       },
+      calendar: {
+        title: "Todos"
+      },
   } as const;

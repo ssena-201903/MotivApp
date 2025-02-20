@@ -1,29 +1,29 @@
 import { CustomText } from "@/CustomText";
 import { useState, useEffect } from "react";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  ImageBackground,
 } from "react-native";
-import { Calendar, DateData } from "react-native-calendars";
+import { Calendar, DateData, LocaleConfig } from "react-native-calendars";
 import AddTodoModal from "@/components/modals/AddTodoModal";
 import CardTodo from "@/components/cards/CardTodo";
 import { db, auth } from "@/firebase.config";
 import {
   collection,
-  query,
   getDocs,
   updateDoc,
   deleteDoc,
   doc,
-  where,
   Timestamp,
 } from "firebase/firestore";
 import PlusIcon from "@/components/icons/PlusIcon";
+
+import { useLanguage } from "@/app/LanguageContext";
+import { setupCalendarLocale } from "@/languages/calendarLocale";
 
 const { width } = Dimensions.get("screen");
 
@@ -40,8 +40,13 @@ export default function CalendarPage() {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [todos, setTodos] = useState<{ [key: string]: Todo[] }>({});
   const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [currentDate, setCurrentDate] = useState(new Date());
+
+  // language context
+  const { t, language, setLanguage } = useLanguage();
+
+  useEffect(() => {
+    setupCalendarLocale(language);
+  }, [language]);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -138,7 +143,7 @@ export default function CalendarPage() {
     return (
       <View style={styles.dayTodoList}>
         {dayTodos.slice(0, 2).map((todo, index) => (
-          <Text
+          <CustomText
             key={todo.id}
             style={[
               styles.dayTodoText,
@@ -147,104 +152,116 @@ export default function CalendarPage() {
             numberOfLines={1}
           >
             • {todo.text}
-          </Text>
+          </CustomText>
         ))}
         {dayTodos.length > 2 && (
-          <Text style={styles.moreTodosText}>+{dayTodos.length - 2} more</Text>
+          <CustomText style={styles.moreTodosText}>+{dayTodos.length - 2} more</CustomText>
         )}
       </View>
     );
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Calendar
-        onDayPress={handleDayPress}
-        markedDates={{
-          [selectedDay || ""]: { selected: true, selectedColor: "#FFA38F" },
-          [today]: { selected: true, selectedColor: "#E5EEFF" },
-        }}
-        theme={{
-          todayTextColor: "#1E3A5F",
-          selectedDayBackgroundColor: "#FFA38F",
-          selectedDayTextColor: "#1E3A5F",
-          arrowColor: "#FFA38F",
-        }}
-        dayComponent={({ date }) => {
-          if (!date) return null;
+    <ImageBackground
+      source={require("@/assets/images/habitCardBg.png")}
+      style={styles.backgroundImage}
+    >
+      <ScrollView>
+        <Calendar
+          onDayPress={handleDayPress}
+          markedDates={{
+            [selectedDay || ""]: { selected: true, selectedColor: "#FFA38F" },
+            [today]: { selected: true, selectedColor: "#E5EEFF" },
+          }}
+          theme={{
+            todayTextColor: "#1E3A5F",
+            selectedDayBackgroundColor: "#FFA38F",
+            selectedDayTextColor: "#1E3A5F",
+            arrowColor: "#FFA38F",
+          }}
+          firstDay={(LocaleConfig.locales[language] as any)?.firstDay ?? 0}
+          dayComponent={({ date }) => {
+            if (!date) return null;
 
-          const isSelected = date.dateString === selectedDay;
-          const isToday = date.dateString === today;
+            const isSelected = date.dateString === selectedDay;
+            const isToday = date.dateString === today;
 
-          return (
-            <TouchableOpacity
-              style={[
-                styles.dayContainer,
-                isSelected && styles.selectedDayContainer,
-                isToday && styles.todayContainer,
-              ]}
-              onPress={() => handleDayPress(date)}
-            >
-              <CustomText
+            return (
+              <TouchableOpacity
                 style={[
-                  styles.dayText,
-                  isSelected && styles.selectedDayText,
-                  isToday && styles.todayText,
+                  styles.dayContainer,
+                  isSelected && styles.selectedDayContainer,
+                  isToday && styles.todayContainer,
                 ]}
+                onPress={() => handleDayPress(date)}
               >
-                {date.day}
-              </CustomText>
-              {renderDayTodos(date.dateString)}
-            </TouchableOpacity>
-          );
-        }}
-      />
-
-      {selectedDay && todos[selectedDay]?.length > 0 && (
-        <View style={styles.selectedDayTodos}>
-          <CustomText style={styles.selectedDayTitle}>
-            {selectedDay} Todos
-          </CustomText>
-          <View style={styles.todoList}>
-            {todos[selectedDay]?.map((todo) => (
-              <CardTodo
-                key={todo.id}
-                id={todo.id}
-                text={todo.text}
-                isCompleted={todo.isDone}
-                type="todo"
-                onToggle={() => toggleTodo(todo.id)}
-                onDelete={() => deleteTodo(todo.id)}
-              />
-            ))}
-          </View>
-        </View>
-      )}
-
-      {/* Add Button */}
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => setModalVisible(true)}
-      >
-        <PlusIcon size={20} color="white"/>
-      </TouchableOpacity>
-
-      {userId && (
-        <AddTodoModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          userId={userId}
-          selectedDate={selectedDay || today}
+                <CustomText
+                  style={[
+                    styles.dayText,
+                    isSelected && styles.selectedDayText,
+                    isToday && styles.todayText,
+                  ]}
+                >
+                  {date.day}
+                </CustomText>
+                {renderDayTodos(date.dateString)}
+              </TouchableOpacity>
+            );
+          }}
         />
-      )}
-    </ScrollView>
+
+        {selectedDay && todos[selectedDay]?.length > 0 && (
+          <View style={styles.selectedDayTodos}>
+            <CustomText 
+              style={styles.selectedDayTitle}
+              type="bold"
+              fontSize={18}
+              color="#1E3A5F"
+            >
+              {selectedDay}  {t("calendar.title")}
+            </CustomText>
+            <View style={styles.todoList}>
+              {todos[selectedDay]?.map((todo) => (
+                <CardTodo
+                  key={todo.id}
+                  id={todo.id}
+                  text={todo.text}
+                  isCompleted={todo.isDone}
+                  type="todo"
+                  onToggle={() => toggleTodo(todo.id)}
+                  onDelete={() => deleteTodo(todo.id)}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Add Button */}
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setModalVisible(true)}
+        >
+          <PlusIcon size={18} color="white" />
+        </TouchableOpacity>
+
+        {userId && (
+          <AddTodoModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            userId={userId}
+            selectedDate={selectedDay || today}
+          />
+        )}
+      </ScrollView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  backgroundImage: {
     flex: 1,
-    backgroundColor: "#white",
+    width: "100%",
+    height: "100%",
   },
   dayContainer: {
     alignItems: "center",
@@ -292,10 +309,10 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: "absolute",
-    right: width > 768 ? 590 : 220,
-    top: 570,
-    width: width > 768 ? 40 : 40,
-    height: width > 768 ? 40 : 40,
+    right: 30,
+    top: 480,
+    width: 50,
+    height: 50,
     borderRadius: 50,
     backgroundColor: "#1E3A5F",
     justifyContent: "center",
@@ -315,18 +332,14 @@ const styles = StyleSheet.create({
     height: "auto",
   },
   selectedDayTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#1E3A5F",
-    marginBottom: width > 760 ? 50 : 40,
+    marginBottom: width > 768 ? 50 : 40,
   },
   todoList: {
     display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: "column",
     justifyContent: "flex-start",
     width: width > 760 ? width - 600 : width - 40,
-    gap: width > 760 ? 10 : 8,
+    gap: 8,
   },
   completedDayTodoText: {
     textDecorationLine: "line-through",
