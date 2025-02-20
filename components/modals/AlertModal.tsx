@@ -1,9 +1,4 @@
-import {
-  Modal,
-  View,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { Modal, View, StyleSheet, Dimensions } from "react-native";
 import CustomButton from "@/components/CustomButton";
 import { CustomText } from "@/CustomText";
 
@@ -33,7 +28,7 @@ export default function AlertModal({
           <CustomText type="semibold" fontSize={18} color="#1E3A5F">
             {title}
           </CustomText>
-          <CustomText 
+          <CustomText
             style={styles.message}
             color="#1E3A5F"
             fontSize={16}
@@ -44,15 +39,14 @@ export default function AlertModal({
 
           <View style={styles.buttonContainer}>
             {buttons.map((button, index) => (
-              <View key={index}>
-                <CustomButton
-                  label={button.text}
-                  onPress={button.onPress}
-                  variant={button.variant || "fill"}
-                  width={100}
-                  height={45}
-                />
-              </View>
+              <CustomButton
+                key={index}
+                label={button.text}
+                onPress={button.onPress}
+                variant={button.variant || "fill"}
+                height={45}
+                style={styles.button} // Yeni stil eklendi
+              />
             ))}
           </View>
         </View>
@@ -89,10 +83,21 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
+  // buttonContainer: {
+  //   flex: 1,
+  //   width: "50%",
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   marginTop: 20,
+  // },
   buttonContainer: {
-    width: "50%",
+    width: "30%",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    gap: 10,
     marginTop: 20,
+  },
+  button: {
+    flex: 1,
   },
 });

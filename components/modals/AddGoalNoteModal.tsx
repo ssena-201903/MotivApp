@@ -50,7 +50,7 @@ export default function AddGoalNoteModal({
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.content}>
-          <CustomText style={styles.title} type="semibold" fontSize={18}>
+          <CustomText style={styles.title} type="semibold" fontSize={18} color="#1E3A5F">
             {t("addGoalNote.title")}
           </CustomText>
           <TextInput
@@ -59,15 +59,7 @@ export default function AddGoalNoteModal({
             value={note}
             onChangeText={setNote}
           />
-          {/* <InputField
-            placeholder="Enter your note here..."
-            value={note}
-            onChangeText={setNote}
-            onSave={(field, currentValue) => setNote(currentValue)}
-            containerStyle={styles.input}
-            isPasswordField={false}
-            variant="default"
-          /> */}
+        
           <View style={styles.buttonContainer}>
             <CustomButton
               label={t("addGoalNote.cancelButtonText")}
@@ -111,7 +103,8 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     height: 40,
-    borderColor: "#1E3A5F",
+    borderColor: "#E5EEFF",
+    color: "#1E3A5F",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,

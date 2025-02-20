@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
   },
   modalInput: {
     borderWidth: 1,
+    color: "#1E3A5F",
     borderColor: "#E5EEFF",
     borderRadius: 8,
     padding: 10,

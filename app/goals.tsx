@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   ScrollView,
   ImageBackground,
-  Platform,
 } from "react-native";
 
 import CardGoalTodo from "@/components/cards/CardGoalTodo";
@@ -28,6 +27,8 @@ import PlusIcon from "@/components/icons/PlusIcon";
 import { useLanguage } from "@/app/LanguageContext";
 
 const { width } = Dimensions.get("window");
+const containerWidth = width > 768 ? width - 900 : width - 40;
+const buttonWidth = containerWidth / 6 - 4; // divide by number of buttons
 
 export default function Goals() {
   const { categoryId = "Movie" } = useLocalSearchParams();
@@ -259,20 +260,20 @@ const styles = StyleSheet.create({
     display: "flex",
     flexWrap: "wrap",
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: width > 768 ? width - 900 : width - 40,
+    justifyContent: "flex-start",
+    width: containerWidth,
     paddingVertical: 5,
     marginHorizontal: 20,
-    gap: 3,
+    gap: 4,
     height: 60, // fixed height without flexGrow
     marginBottom: 20, // fixed marginBottom without flexGrow
   },
   button: {
-    width: width > 768 ? 90 : 70,
+    width: buttonWidth,
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 0,
+    marginBottom: 5,
     backgroundColor: "#f8f8f8",
     borderRadius: 8,
   },

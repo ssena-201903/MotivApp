@@ -24,6 +24,7 @@ import AlertModal from "@/components/modals/AlertModal";
 import { Platform } from "react-native";
 import { CustomText } from "@/CustomText";
 import { useLanguage } from "@/app/LanguageContext";
+import PencilIcon from "@/components/icons/PencilIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -306,7 +307,7 @@ export default function Profile() {
             onPress={() => handleEditField(type, value)}
             style={styles.editButton}
           >
-            <Ionicons name="pencil" size={18} color={"#1E3A5F"} />
+            <PencilIcon size={18} color="#1E3A5F" />
           </TouchableOpacity>
         )}
       </View>
@@ -585,15 +586,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    // backgroundColor: "#FCFCFC",
-    // justifyContent: "center",
-    // alignItems: "center",
-    // padding: 20,
-    // borderRadius: 8,
-    // width: Platform.select({
-    //   web: Math.min(400, width - 40),
-    //   default: width - 80,
-    // }),
     backgroundColor: "#f8f8f8",
     padding: 20,
     borderRadius: 8,
