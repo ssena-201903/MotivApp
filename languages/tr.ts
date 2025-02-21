@@ -228,4 +228,15 @@ export default {
       calendar: {
         title: "Görevleri"
       },
+      habits: {
+        title: "Alışkanlıklar",
+        water: "Su",
+        book: "Kitap",
+        vocabulary: "Kelime Ezberi",
+        sport: "Spor",
+        custom: "Özel Alışkanlık",
+        noHabitsAdded: "Henuz alışkanlık eklemeydin",
+        newButtonText: "Yeni Alışkanlık",
+        chooseType: "Alışkanlık Türünü Seç",
+      }
   } as const;

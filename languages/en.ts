@@ -226,4 +226,15 @@ export default {
       calendar: {
         title: "Todos"
       },
+      habits: {
+        title: "Habits",
+        water: "Water",
+        book: "Book",
+        vocabulary: "Vocabulary",
+        sport: "Sport",
+        custom: "Custom",
+        noHabitsAdded: "No habits added yet",
+        newButtonText: "New Habit",
+        chooseType: "Choose Type",
+      }
   } as const;

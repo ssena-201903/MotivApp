@@ -21,6 +21,7 @@ import AddOtherHabitModal from "@/components/modals/AddOtherHabitModal";
 import { useLanguage } from "@/app/LanguageContext";
 import { CustomText } from "@/CustomText";
 import PlusIcon from "@/components/icons/PlusIcon";
+import BoxIcon from "@/components/icons/BoxIcon";
 
 const { width } = Dimensions.get("window");
 
@@ -89,17 +90,19 @@ export default function Habits() {
           style={styles.addButton}
           onPress={() => setIsModalOpen(true)}
         >
-          <PlusIcon size={16} color="#fff"/>
-          <CustomText type="regular" color="#fff" fontSize={14}>Yeni Alışkanlık</CustomText>
+          <PlusIcon size={16} color="#fff" />
+          <CustomText type="regular" color="#fff" fontSize={14}>
+            {t("habits.newButtonText")}
+          </CustomText>
         </Pressable>
 
         <SectionHeader
-          text={t("home.sectionHeaderHabits")}
+          text={t("habits.title")}
           percentDone={60}
           variant="other"
           id="habits"
         />
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
@@ -120,42 +123,96 @@ export default function Habits() {
           </View>
         </ScrollView>
       </View>
-      
+
       {/* type modal */}
       <Modal visible={isModalOpen} animationType="fade" transparent>
         <TouchableWithoutFeedback onPress={() => setIsModalOpen(false)}>
-        <View
-          style={[
-            styles.modalContainer,
-            { backgroundColor: isWaterModalOpen || isOtherModalOpen ? "transparent" : "rgba(119, 128, 137, 0.32)" },
-          ]}
-        >
-          <CustomText 
-            type="semibold" 
-            fontSize={20} 
-            color="#1E3A5F"
-            style={styles.modalTitle}
+          <View
+            style={[
+              styles.modalContainer,
+              {
+                backgroundColor:
+                  isWaterModalOpen || isOtherModalOpen
+                    ? "transparent"
+                    : "rgba(119, 128, 137, 0.32)",
+              },
+            ]}
           >
-            Tür Seç
-          </CustomText>
-          <View style={styles.typeContainer}>
-            <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Water")}>
-              <CustomText type="medium" fontSize={16} color="#1E3A5F">Su</CustomText>
-            </Pressable>
-            <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Book")}>
-              <CustomText type="medium" fontSize={16} color="#1E3A5F">Kitap</CustomText>
-            </Pressable>
-            <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Sport")}>
-              <CustomText type="medium" fontSize={16} color="#1E3A5F">Spor</CustomText>
-            </Pressable>
-            <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Vocabulary")}>
-              <CustomText type="medium" fontSize={16} color="#1E3A5F">Kelime</CustomText>
-            </Pressable>
-            <Pressable style={styles.typeButton} onPress={() => openAddHabitModal("Custom")}>
-              <CustomText type="medium" fontSize={16} color="#1E3A5F">Özel</CustomText>
-            </Pressable>
+            <CustomText
+              type="semibold"
+              fontSize={20}
+              color="#1E3A5F"
+              style={styles.modalTitle}
+            >
+              {t("habits.chooseType")}
+            </CustomText>
+            <View style={styles.typeContainer}>
+              <Pressable
+                style={[styles.typeButton, isWaterCard && styles.disabledType]}
+                onPress={() => openAddHabitModal("Water")}
+              >
+                <BoxIcon
+                  size={16}
+                  color="#1E3A5F"
+                  variant={isWaterCard ? "fill" : "outlined"}
+                />
+                <CustomText type="medium" fontSize={16} color="#1E3A5F">
+                  {t("habits.water")}
+                </CustomText>
+              </Pressable>
+              <Pressable
+                style={[styles.typeButton, isBookCard && styles.disabledType]}
+                onPress={() => openAddHabitModal("Book")}
+              >
+                <BoxIcon
+                  size={16}
+                  color="#1E3A5F"
+                  variant={isBookCard ? "fill" : "outlined"}
+                />
+                <CustomText type="medium" fontSize={16} color="#1E3A5F">
+                  {t("habits.book")}
+                </CustomText>
+              </Pressable>
+              <Pressable
+                style={[styles.typeButton, isSportCard && styles.disabledType]}
+                onPress={() => openAddHabitModal("Sport")}
+              >
+                <BoxIcon
+                  size={16}
+                  color="#1E3A5F"
+                  variant={isSportCard ? "fill" : "outlined"}
+                />
+                <CustomText type="medium" fontSize={16} color="#1E3A5F">
+                  {t("habits.sport")}
+                </CustomText>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.typeButton,
+                  isVocabularyCard && styles.disabledType,
+                ]}
+                onPress={() => openAddHabitModal("Vocabulary")}
+              >
+                <BoxIcon
+                  size={16}
+                  color="#1E3A5F"
+                  variant={isVocabularyCard ? "fill" : "outlined"}
+                />
+                <CustomText type="medium" fontSize={16} color="#1E3A5F">
+                  {t("habits.vocabulary")}
+                </CustomText>
+              </Pressable>
+              <Pressable
+                style={styles.typeButton}
+                onPress={() => openAddHabitModal("Custom")}
+              >
+                <BoxIcon size={16} color="#1E3A5F" variant="outlined"/>
+                <CustomText type="medium" fontSize={16} color="#1E3A5F">
+                  {t("habits.custom")}
+                </CustomText>
+              </Pressable>
+            </View>
           </View>
-        </View>
         </TouchableWithoutFeedback>
       </Modal>
 
@@ -173,7 +230,6 @@ export default function Habits() {
           variant={selectedVariant || "Custom"}
         />
       )}
-      
     </ImageBackground>
   );
 }
@@ -234,10 +290,15 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   typeButton: {
+    flexDirection: "row",
     backgroundColor: "#f8f8f8",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
-  }
+    gap: 12,
+  },
+  disabledType: {
+    backgroundColor: "#FFA38F",
+  },
 });
