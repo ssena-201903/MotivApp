@@ -146,6 +146,15 @@ export default function RootLayout() {
               headerLeft: () => <CustomBackButton />,
             }}
           />
+          <Stack.Screen
+            name="memories"
+            options={{
+              headerShown: true,
+              title: "Memories",
+              headerTintColor: "#1E3A5F",
+              headerLeft: () => <CustomBackButton />,
+            }}
+          />
         </Stack>
       </LanguageProvider>
     </AuthProvider>

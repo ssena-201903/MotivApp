@@ -10,6 +10,7 @@ import LeafIcon from "../icons/LeafIcon";
 import SettingsIcon from "../icons/SettingsIcon";
 
 import { useLanguage } from "@/app/LanguageContext";
+import SparklesIcon from "../icons/SparklesIcon";
 
 type ProfileModalProps = {
   isModalVisible: boolean;
@@ -54,6 +55,11 @@ export default function ProfileModal({
     onClose();
   };
 
+  const handleMemoriesRoute = () => {
+    router.push("/memories");
+    onClose();
+  }
+
   return (
     <Modal
       visible={isModalVisible}
@@ -96,10 +102,14 @@ export default function ProfileModal({
               <LeafIcon size={20} color="#1E3A5F" variant="fill"/>
               <CustomText style={styles.menuItemText} type="medium">{t("profileModal.habits")}</CustomText>
             </Pressable>
-            <View style={styles.menuItem}>
+            <Pressable style={styles.menuItem}>
               <SettingsIcon size={20} color="#1E3A5F" variant="fill"/>
               <CustomText style={styles.menuItemText} type="medium">{t("profileModal.settings")}</CustomText>
-            </View>
+            </Pressable>
+            <Pressable style={styles.menuItem} onPress={handleMemoriesRoute}>
+              <SparklesIcon size={20} color="#1E3A5F" variant="fill"/>
+              <CustomText style={styles.menuItemText} type="medium">{t("profileModal.memories")}</CustomText>
+            </Pressable>
           </View>
         </Pressable>
       </Pressable>

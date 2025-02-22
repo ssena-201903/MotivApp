@@ -113,6 +113,7 @@ export default {
         goals: "Goals",
         habits: "Habits",
         settings: "Settings",
+        memories: "Memories",
       },
       bottomNavbar: {
         home: "Home",
@@ -236,5 +237,9 @@ export default {
         noHabitsAdded: "No habits added yet",
         newButtonText: "New Habit",
         chooseType: "Choose Type",
-      }
+      },
+      memories: {
+        cancelButtonText: "Cancel",
+        saveButtonText: "Save",
+      },
   } as const;

@@ -115,6 +115,7 @@ export default {
         goals: "Hedefler",
         habits: "Alışkanlıklar",
         settings: "Ayarlar",
+        memories: "Hatıralar",
       },
       bottomNavbar: {
         home: "Anasayfa",
@@ -238,5 +239,9 @@ export default {
         noHabitsAdded: "Henuz alışkanlık eklemeydin",
         newButtonText: "Yeni Alışkanlık",
         chooseType: "Alışkanlık Türünü Seç",
-      }
+      },
+      memories: {
+        cancelButtonText: "İptal",
+        saveButtonText: "Kaydet",
+      },
   } as const;
