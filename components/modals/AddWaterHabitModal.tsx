@@ -2,111 +2,39 @@ import React, { useState, useCallback } from "react";
 import {
   View,
   StyleSheet,
-  Text,
   Modal,
   Dimensions,
-  SafeAreaView,
   Alert,
   TouchableOpacity,
   Platform,
 } from "react-native";
-import {
-  GestureHandlerRootView,
-  ScrollView,
-} from "react-native-gesture-handler";
+
+//components
 import InputField from "@/components/cards/InputField";
 import InputPicker from "@/components/cards/InputPicker";
+import { CustomText } from "@/CustomText";
 import CustomButton from "@/components/CustomButton";
+
+//icons
 import MugIcon from "@/components/icons/MugIcon";
 import EmptyGlassIcon from "../icons/EmptyGlassIcon";
 import BottleIcon from "../icons/BottleIcon";
-import { Ionicons } from "@expo/vector-icons";
 import CupIcon from "../icons/CupIcon";
-import { CustomText } from "@/CustomText";
+import CloseIcon from "../icons/CloseIcon";
 
 // firebase
 import { db, auth } from "@/firebase.config";
 import { doc, setDoc } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore";
-import { Timestamp } from "firebase/firestore";
-import CloseIcon from "../icons/CloseIcon";
+
+// language
+import { useLanguage } from "@/app/LanguageContext";
+// show message
+import { showMessage } from "react-native-flash-message";
 
 const { width } = Dimensions.get("window");
 
-const cupSizes = [
-  {
-    size: 200,
-    component: (
-      <EmptyGlassIcon
-        width={width > 760 ? 41 : 31}
-        height={width > 760 ? 40 : 30}
-      />
-    ),
-    name: "Glass",
-  },
-  {
-    size: 250,
-    component: (
-      <CupIcon
-        width={width > 760 ? 41 : 31}
-        height={width > 760 ? 40 : 30}
-        variant="empty"
-      />
-    ),
-    name: "Cup",
-  },
-  {
-    size: 300,
-    component: (
-      <MugIcon
-        width={width > 760 ? 41 : 31}
-        height={width > 760 ? 40 : 30}
-        variant="empty"
-      />
-    ),
-    name: "Mug",
-  },
-  {
-    size: 500,
-    component: (
-      <BottleIcon
-        width={width > 760 ? 51 : 41}
-        height={width > 760 ? 50 : 40}
-        variant="empty"
-        litres={500}
-        position="vertical"
-      />
-    ),
-    name: "Small Bottle",
-  },
-  {
-    size: 1000,
-    component: (
-      <BottleIcon
-        width={width > 760 ? 51 : 41}
-        height={width > 760 ? 50 : 40}
-        variant="empty"
-        litres={1000}
-        position="vertical"
-      />
-    ),
-    name: "Large Bottle",
-  },
-  {
-    size: 1500,
-    component: (
-      <BottleIcon
-        width={width > 760 ? 61 : 51}
-        height={width > 760 ? 60 : 50}
-        variant="empty"
-        litres={1500}
-        position="vertical"
-      />
-    ),
-    name: "Extra Large Bottle",
-  },
-];
-
+// types
 type Props = {
   visible: boolean;
   onClose: () => void;
@@ -132,6 +60,84 @@ export default function AddWaterHabitModal({
   onClose,
   onSave,
 }: Props) {
+  // language context
+  const { t } = useLanguage();
+
+  // cup sizes
+  const cupSizes = [
+    {
+      size: 200,
+      component: (
+        <EmptyGlassIcon
+          width={width > 768 ? 31 : 21}
+          height={width > 768 ? 30 : 30}
+        />
+      ),
+      name: t("waterCupName.typeGlass"),
+    },
+    {
+      size: 250,
+      component: (
+        <CupIcon
+          width={width > 768 ? 31 : 21}
+          height={width > 768 ? 30 : 30}
+          variant="empty"
+        />
+      ),
+      name: t("waterCupName.typeCup"),
+    },
+    {
+      size: 300,
+      component: (
+        <MugIcon
+          width={width > 768 ? 31 : 21}
+          height={width > 768 ? 30 : 30}
+          variant="empty"
+        />
+      ),
+      name: t("waterCupName.typeMug"),
+    },
+    {
+      size: 500,
+      component: (
+        <BottleIcon
+          width={width > 768 ? 51 : 41}
+          height={width > 768 ? 50 : 40}
+          variant="empty"
+          litres={500}
+          position="vertical"
+        />
+      ),
+      name: t("waterCupName.typeSmallBottle"),
+    },
+    {
+      size: 1000,
+      component: (
+        <BottleIcon
+          width={width > 768 ? 51 : 41}
+          height={width > 768 ? 50 : 40}
+          variant="empty"
+          litres={1000}
+          position="vertical"
+        />
+      ),
+      name: t("waterCupName.typeLargeBottle"),
+    },
+    {
+      size: 1500,
+      component: (
+        <BottleIcon
+          width={width > 768 ? 61 : 51}
+          height={width > 768 ? 60 : 50}
+          variant="empty"
+          litres={1500}
+          position="vertical"
+        />
+      ),
+      name: t("waterCupName.typeExtraLargeBottle"),
+    },
+  ];
+
   // current user
   const userId = auth.currentUser?.uid;
 
@@ -192,7 +198,13 @@ export default function AddWaterHabitModal({
   };
 
   const calculateWaterIntake = useCallback(() => {
-    if (!validateInputs()) return;
+    if (!validateInputs()) {
+      showMessage({
+        message: t("alerts.alertFillTheFields"),
+        type: "danger",
+      });
+      return;
+    }
 
     const {
       weight,
@@ -381,13 +393,18 @@ export default function AddWaterHabitModal({
         case 1:
           return (
             <View style={styles.inputContainer}>
-              <CustomText style={styles.modalSubTitle}>
-                {step} step of 5
+              <CustomText
+                style={styles.modalSubTitle}
+                type="regular"
+                color="#1E3A5F"
+                fontSize={16}
+              >
+                {step} / 5
               </CustomText>
               <View style={styles.formItem}>
                 <InputField
-                  label="Weight (kg)"
-                  placeholder="Enter your weight"
+                  label={t("waterHabitModal.weight")}
+                  placeholder={t("waterHabitModal.weightPlaceholder")}
                   keyboardType="numeric"
                   value={formData.weight}
                   onChangeText={(value) => handleInputChange("weight", value)}
@@ -395,8 +412,8 @@ export default function AddWaterHabitModal({
               </View>
               <View style={styles.formItem}>
                 <InputField
-                  label="Height (cm)"
-                  placeholder="Enter your height"
+                  label={t("waterHabitModal.height")}
+                  placeholder={t("waterHabitModal.heightPlaceholder")}
                   keyboardType="numeric"
                   value={formData.height}
                   onChangeText={(value) => handleInputChange("height", value)}
@@ -407,13 +424,18 @@ export default function AddWaterHabitModal({
         case 2:
           return (
             <View style={styles.inputContainer}>
-              <CustomText style={styles.modalSubTitle}>
-                {step} step of 5
+              <CustomText
+                style={styles.modalSubTitle}
+                type="regular"
+                color="#1E3A5F"
+                fontSize={16}
+              >
+                {step} / 5
               </CustomText>
               <View style={styles.formItem}>
                 <InputField
-                  label="Age"
-                  placeholder="Enter your age"
+                  label={t("waterHabitModal.age")}
+                  placeholder={t("waterHabitModal.agePlaceholder")}
                   keyboardType="numeric"
                   value={formData.age}
                   onChangeText={(value) => handleInputChange("age", value)}
@@ -421,12 +443,15 @@ export default function AddWaterHabitModal({
               </View>
               <View style={styles.formItem}>
                 <InputPicker
-                  label="Gender"
+                  label={t("waterHabitModal.gender")}
                   selectedValue={formData.gender}
                   onValueChange={(value) => handleInputChange("gender", value)}
                   items={[
-                    { label: "Male", value: "Male" },
-                    { label: "Female", value: "Female" },
+                    { label: t("waterHabitModal.genderMale"), value: "Male" },
+                    {
+                      label: t("waterHabitModal.genderFemale"),
+                      value: "Female",
+                    },
                   ]}
                 />
               </View>
@@ -435,35 +460,61 @@ export default function AddWaterHabitModal({
         case 3:
           return (
             <View style={styles.inputContainer}>
-              <CustomText style={styles.modalSubTitle}>
-                {step} step of 5
+              <CustomText
+                style={styles.modalSubTitle}
+                type="regular"
+                color="#1E3A5F"
+                fontSize={16}
+              >
+                {step} / 5
               </CustomText>
               <View style={styles.formItem}>
                 <InputPicker
-                  label="Activity Level"
+                  label={t("waterHabitModal.activityLevel")}
                   selectedValue={formData.activityLevel}
                   onValueChange={(value) =>
                     handleInputChange("activityLevel", value)
                   }
                   items={[
-                    { label: "Sedentary", value: "Sedentary" },
-                    { label: "Light", value: "Light" },
-                    { label: "Moderate", value: "Moderate" },
-                    { label: "High", value: "High" },
-                    { label: "Intense", value: "Intense" },
+                    {
+                      label: t("waterHabitModal.activitySedentary"),
+                      value: "Sedentary",
+                    },
+                    {
+                      label: t("waterHabitModal.activityLight"),
+                      value: "Light",
+                    },
+                    {
+                      label: t("waterHabitModal.activityModerate"),
+                      value: "Moderate",
+                    },
+                    {
+                      label: t("waterHabitModal.activityActive"),
+                      value: "High",
+                    },
+                    {
+                      label: t("waterHabitModal.activityIntense"),
+                      value: "Intense",
+                    },
                   ]}
                 />
               </View>
               <View style={styles.formItem}>
                 <InputPicker
-                  label="Climate"
+                  label={t("waterHabitModal.climate")}
                   selectedValue={formData.climate}
                   onValueChange={(value) => handleInputChange("climate", value)}
                   items={[
-                    { label: "Cold", value: "Cold" },
-                    { label: "Moderate", value: "Moderate" },
-                    { label: "Hot", value: "Hot" },
-                    { label: "Very Hot", value: "VeryHot" },
+                    { label: t("waterHabitModal.climateCold"), value: "Cold" },
+                    {
+                      label: t("waterHabitModal.climateWarm"),
+                      value: "Moderate",
+                    },
+                    { label: t("waterHabitModal.climateHot"), value: "Hot" },
+                    {
+                      label: t("waterHabitModal.climateVeryHot"),
+                      value: "VeryHot",
+                    },
                   ]}
                 />
               </View>
@@ -472,13 +523,18 @@ export default function AddWaterHabitModal({
         case 4:
           return (
             <View style={styles.inputContainer}>
-              <CustomText style={styles.modalSubTitle}>
-                {step} step of 5
+              <CustomText
+                style={styles.modalSubTitle}
+                type="regular"
+                color="#1E3A5F"
+                fontSize={16}
+              >
+                {step} / 5
               </CustomText>
               <View style={styles.formItem}>
                 <InputField
-                  label="Activity Time (min)"
-                  placeholder="Daily exercise minutes"
+                  label={t("waterHabitModal.activityTime")}
+                  placeholder={t("waterHabitModal.activityTimePlaceholder")}
                   keyboardType="numeric"
                   value={formData.activityTime}
                   onChangeText={(value) =>
@@ -488,21 +544,36 @@ export default function AddWaterHabitModal({
               </View>
               <View style={styles.formItem}>
                 <InputPicker
-                  label="Health Condition"
+                  label={t("waterHabitModal.healthCondition")}
                   selectedValue={formData.healthCondition}
                   onValueChange={(value) =>
                     handleInputChange("healthCondition", value)
                   }
                   items={[
-                    { label: "Normal", value: "Normal" },
-                    { label: "Pregnant", value: "Pregnant" },
-                    { label: "Breastfeeding", value: "Breastfeeding" },
-                    { label: "Athletic", value: "Athletic" },
                     {
-                      label: "High Blood Pressure",
+                      label: t("waterHabitModal.healthNormal"),
+                      value: "Normal",
+                    },
+                    {
+                      label: t("waterHabitModal.healthPregnant"),
+                      value: "Pregnant",
+                    },
+                    {
+                      label: t("waterHabitModal.healthBreast"),
+                      value: "Breastfeeding",
+                    },
+                    {
+                      label: t("waterHabitModal.healthAthletic"),
+                      value: "Athletic",
+                    },
+                    {
+                      label: t("waterHabitModal.healthHighBloodPressure"),
                       value: "HighBloodPressure",
                     },
-                    { label: "Kidney Issues", value: "KidneyIssues" },
+                    {
+                      label: t("waterHabitModal.healthKidneyIssues"),
+                      value: "KidneyIssues",
+                    },
                   ]}
                 />
               </View>
@@ -511,29 +582,46 @@ export default function AddWaterHabitModal({
         case 5:
           return (
             <View style={styles.inputContainer}>
-              <CustomText style={styles.modalSubTitle}>
-                {step} step of 5
+              <CustomText
+                style={styles.modalSubTitle}
+                type="regular"
+                color="#1E3A5F"
+                fontSize={16}
+              >
+                {step} / 5
               </CustomText>
               <View style={styles.formItem}>
                 <InputPicker
-                  label="Diet Type"
+                  label={t("waterHabitModal.dietType")}
                   selectedValue={formData.dietType}
                   onValueChange={(value) =>
                     handleInputChange("dietType", value)
                   }
                   items={[
-                    { label: "Regular", value: "Regular" },
-                    { label: "High Protein", value: "HighProtein" },
-                    { label: "High Salt", value: "HighSalt" },
-                    { label: "Vegetarian", value: "Vegetarian" },
-                    { label: "Keto", value: "Keto" },
+                    {
+                      label: t("waterHabitModal.dietRegular"),
+                      value: "Regular",
+                    },
+                    {
+                      label: t("waterHabitModal.dietHighProtein"),
+                      value: "HighProtein",
+                    },
+                    {
+                      label: t("waterHabitModal.dietHighSalt"),
+                      value: "HighSalt",
+                    },
+                    {
+                      label: t("waterHabitModal.dietVegetarian"),
+                      value: "Vegetarian",
+                    },
+                    { label: t("waterHabitModal.dietKeto"), value: "Keto" },
                   ]}
                 />
               </View>
               <View style={styles.formItem}>
                 <InputField
-                  label="Sleep Hours"
-                  placeholder="Hours of sleep"
+                  label={t("waterHabitModal.sleepHours")}
+                  placeholder={t("waterHabitModal.sleepHoursPlaceholder")}
                   keyboardType="numeric"
                   value={formData.sleepHours}
                   onChangeText={(value) =>
@@ -554,7 +642,7 @@ export default function AddWaterHabitModal({
         <View style={styles.buttonContainer}>
           {step > 1 && (
             <CustomButton
-              label="Back"
+              label={t("waterHabitModal.backButtonText")}
               onPress={() => setStep(step - 1)}
               width="40%"
               height={50}
@@ -563,7 +651,7 @@ export default function AddWaterHabitModal({
           )}
           {step < 5 ? (
             <CustomButton
-              label="Next"
+              label={t("waterHabitModal.nextButtonText")}
               onPress={() => setStep(step + 1)}
               width="40%"
               height={50}
@@ -572,7 +660,7 @@ export default function AddWaterHabitModal({
             />
           ) : (
             <CustomButton
-              label="Calculate"
+              label={t("waterHabitModal.calculateButtonText")}
               onPress={calculateWaterIntake}
               width="40%"
               height={50}
@@ -587,12 +675,24 @@ export default function AddWaterHabitModal({
 
   const renderCupSelection = () => (
     <>
-      <CustomText style={styles.modalSubTitle}>Select Cup Size</CustomText>
+      <CustomText
+        style={styles.modalSubTitle}
+        type="medium"
+        color="#1E3A5F"
+        fontSize={14}
+      >
+        {t("waterHabitModal.selectCupTitle")}
+      </CustomText>
       <View style={styles.resultContainer}>
-        <CustomText style={styles.resultText}>
-          Daily water intake:{" "}
+        <CustomText
+          style={styles.resultText}
+          type="semibold"
+          fontSize={16}
+          color="#1E3A5F"
+        >
+          {t("waterHabitModal.dailyWaterIntake")}:{" "}
           <CustomText style={styles.resultBold}>
-            {calculatedIntake.toFixed(1)} liters
+            {calculatedIntake.toFixed(1)} {t("waterHabitModal.liter")}
           </CustomText>
         </CustomText>
       </View>
@@ -619,20 +719,35 @@ export default function AddWaterHabitModal({
 
   const renderResult = () => (
     <>
-      <CustomText style={styles.modalSubTitle}>
-        Your Daily Water Goal
+      <CustomText
+        style={{ marginBottom: 40 }}
+        type="bold"
+        color="#1E3A5F"
+        fontSize={20}
+      >
+        {t("waterHabitModal.dailyWaterGoal")}
       </CustomText>
       <View style={styles.resultContainer}>
-        <CustomText style={styles.resultText}>
-          Daily water intake:{" "}
+        <CustomText
+          style={styles.resultText}
+          type="medium"
+          color="#1E3A5F"
+          fontSize={14}
+        >
+          {t("waterHabitModal.dailyWaterIntake")}:{" "}
           <CustomText style={styles.resultBold}>
-            {calculatedIntake.toFixed(1)} liters
+            {calculatedIntake.toFixed(1)} {t("waterHabitModal.liter")}
           </CustomText>
         </CustomText>
       </View>
       <View style={styles.resultContainer}>
-        <CustomText style={styles.resultText}>
-          Number of cups:{" "}
+        <CustomText
+          style={styles.resultText}
+          type="medium"
+          color="#1E3A5F"
+          fontSize={14}
+        >
+          {t("waterHabitModal.numberOfCups")}:{" "}
           <CustomText style={styles.resultBold}>
             {Math.ceil((calculatedIntake * 1000) / selectedCupSize)}
           </CustomText>
@@ -640,7 +755,7 @@ export default function AddWaterHabitModal({
       </View>
       <View style={styles.buttonContainer}>
         <CustomButton
-          label="Done"
+          label={t("waterHabitModal.doneButtonText")}
           onPress={handleSendDataToDb}
           width="40%"
           height={50}
@@ -662,7 +777,16 @@ export default function AddWaterHabitModal({
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <CloseIcon size={24} color="#1E3A5F" />
           </TouchableOpacity>
-          <CustomText style={styles.modalTitle}>Add Water Habit</CustomText>
+          {step <= 5 && (
+            <CustomText
+              style={styles.modalTitle}
+              type="bold"
+              fontSize={20}
+              color="#1E3A5F"
+            >
+              {t("waterHabitModal.title")}
+            </CustomText>
+          )}
           <View style={styles.modalContent}>
             {step <= 5 && renderInputForm()}
             {step === 6 && renderCupSelection()}
@@ -683,7 +807,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: "100%",
-    maxWidth: 400,
+    maxWidth: 370,
     maxHeight: "90%",
     backgroundColor: "#FCFCFC",
     paddingHorizontal: 30,
@@ -702,16 +826,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#1E3A5F",
-    marginBottom: 30,
     textAlign: "center",
+    marginBottom: 20,
   },
   modalSubTitle: {
-    fontSize: 16,
-    fontWeight: "normal",
-    color: "#1E3A5F",
     opacity: 0.8,
     marginBottom: 30,
     textAlign: "center",
@@ -732,6 +850,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     width: "100%",
+    marginTop: 20,
   },
   resultContainer: {
     width: "100%",
@@ -747,19 +866,19 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 4,
     marginTop: 10,
-    backgroundColor: "yellow",
+    // backgroundColor: "yellow",
   },
   cupButton: {
     width: "31%",
     height: 120,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#E5EEFF",
     borderRadius: 8,
     alignItems: "center",
-    justifyContent: "center", // İçeriği dikey olarak da ortalar
+    justifyContent: "center",
     padding: 10,
-  },  
+  },
   selectedCup: {
-    backgroundColor: "#1E3A5F",
+    backgroundColor: "#FFA38F",
   },
   cupNameContainer: {
     width: "100%",
@@ -772,6 +891,7 @@ const styles = StyleSheet.create({
     color: "#1E3A5F",
     fontWeight: "bold",
     marginTop: 10,
+    textAlign: "center",
   },
   cupSize: {
     fontSize: 12,
@@ -783,7 +903,7 @@ const styles = StyleSheet.create({
   resultText: {
     fontSize: width > 768 ? 16 : 14,
     color: "#1E3A5F",
-    opacity: 0.8,
+    // opacity: 0.8,
     textAlign: "center",
   },
   resultBold: {

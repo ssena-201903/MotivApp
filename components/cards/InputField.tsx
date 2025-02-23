@@ -58,6 +58,8 @@ export default function InputField({
     variant === "name" ||
     variant === "nickname";
 
+  const paddingNoIcon = variant === "default" ? 0 : 40;
+
   const [isFocused, setIsFocused] = useState(false);
 
   const toggleSecureEntry = () => {
@@ -121,6 +123,8 @@ export default function InputField({
             styles.input,
             {
               borderWidth: 0,
+              paddingLeft: variant === "default" ? 10 : paddingNoIcon,
+              paddingRight: variant === "default" ? 10 : paddingNoIcon,
             },
             Platform.select({
               ios: { fontWeight: "400" },
@@ -209,8 +213,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     paddingVertical: 14,
-    paddingLeft: 45,
-    paddingRight: 40,
     color: "#1E3A5F",
     fontWeight: "500",
     borderRadius: 8,

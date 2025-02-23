@@ -7,6 +7,8 @@ import { TouchableOpacity } from "react-native";
 import ArrowIcon from "@/components/icons/ArrowIcon";
 import { LanguageProvider } from "./LanguageContext"; // 🌍 language provider
 
+import FlashMessage from "react-native-flash-message";
+
 type AuthContextType = {
   user: User | null;
   isLoading: boolean;
@@ -156,6 +158,18 @@ export default function RootLayout() {
             }}
           />
         </Stack>
+
+        {/* <FlashMessage position="top" /> */}
+        <FlashMessage
+        position="top"
+        floating={true} // Mesajın diğer bileşenlerin üstünde görünmesini sağlar
+        style={{
+          zIndex: 9999,
+          elevation: 10, 
+          borderRadius: 8,
+          marginHorizontal: 20, 
+        }}
+      />
       </LanguageProvider>
     </AuthProvider>
   );

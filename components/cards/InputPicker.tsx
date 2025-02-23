@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { CustomText } from "@/CustomText";
 
 const { width } = Dimensions.get("window");
 
@@ -27,8 +28,8 @@ export default function InputPicker({
 }: Props) {
   return (
     <View style={[styles.wrapper, containerStyle]}>
-      {label && <Text style={styles.label}>{label}</Text>}
-      {description && <Text style={styles.description}>{description}</Text>}
+      {label && <CustomText style={styles.label}>{label}</CustomText>}
+      {description && <CustomText style={styles.description}>{description}</CustomText>}
       <Picker
         selectedValue={selectedValue}
         onValueChange={onValueChange}

@@ -21,6 +21,9 @@ DONE Add note modalı ekle
 DONE goal details modalı ekle
 DONE goal objesine finished at ekle
 DONE dil seçeneğine bak
+DONE memories bölümü olsun
+DONE habits sayfasını yap
+DONE habit ekleme ekle
 
 habits percent done ayarla
 habits eklerken anında güncelleme sayfayı yenilemeye gerek kalmadan
@@ -33,11 +36,8 @@ Modal genişliği düzelt
 tüm ekranların responsive kontrol et
 Anasayfada todo eklerken refresh kaldır
 tamamlanan elemanları listenin sonuna alsın
-habits sayfasını yap
-habit ekleme ekle
 renk temasına bak
 almanca ve italyanca dil seçeneği ekle
-memories bölümü olsun
 todo eklerken çeşit seç (birthday, todo)
 görev bitirdiğinde başarı sesi ekle
 
@@ -46,6 +46,7 @@ DONE streak eğer bir gün işaretlenmezse sıfırlansın
 tamamlanan alışkanlıklar arşive alınsın
 okumaya başladığın veya okuduğun kitaplar listesini görüntüle
 en çok izlenen imdb film listeleri (api)
+kitap apisi bak
 izlediğin filmler
 kitaba tıkladığımda sayaç çıksın kaç dakika ise ona göre kronometre olsun
 arkadaş ekleme kısmı

@@ -9,14 +9,24 @@ import {
   Keyboard,
   Platform,
 } from "react-native";
+
+// components
 import InputField from "@/components/cards/InputField";
 import CustomButton from "@/components/CustomButton";
 import { CustomText } from "@/CustomText";
+
+// firebase
 import { db, auth } from "@/firebase.config";
 import { doc, collection, addDoc } from "firebase/firestore";
 import CloseIcon from "@/components/icons/CloseIcon";
 
+// language
+import { useLanguage } from "@/app/LanguageContext";
+
+// Dimensions
 const { width } = Dimensions.get("window");
+
+import { showMessage } from "react-native-flash-message";
 
 type HabitVariant = "Sport" | "Book" | "Vocabulary" | "Custom";
 
@@ -47,6 +57,9 @@ export default function AddOtherHabitModal({
     dailyAmount: "",
   });
 
+  // language context
+  const { t } = useLanguage();
+
   const handleInputChange = useCallback(
     (field: keyof FormData, value: string) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
@@ -54,59 +67,29 @@ export default function AddOtherHabitModal({
     []
   );
 
-  // const validateInputs = (): boolean => {
-  //   const { goalDays, dailyDuration, customText, dailyAmount } = formData;
-
-  //   if (variant === "Custom") {
-  //     if (!customText.trim()) {
-  //       Alert.alert("Error", "Please fill in the custom habit name.");
-  //       return false;
-  //     }
-  //     if (!dailyAmount.trim()) {
-  //       Alert.alert("Error", "Please fill in the daily amount.");
-  //       return false;
-  //     }
-  //     if (!goalDays.trim()) {
-  //       Alert.alert("Error", "Please fill in all required fields.");
-  //       return false;
-  //     }
-
-  //     return true;
-  //   }
-
-  //   // if (variant === "Vocabulary") {
-  //   //   if (!dailyAmount.trim()) {
-  //   //     Alert.alert("Error", "Please fill in the daily amount.");
-  //   //     return false;
-  //   //   }
-  //   //   if (!goalDays.trim()) {
-  //   //     Alert.alert("Error", "Please fill in the goal days.");
-  //   //     return false;
-  //   //   }
-  //   // }
-
-  //   if (variant === "Vocabulary" || !goalDays.trim() || !dailyDuration.trim()) {
-  //     Alert.alert("Error", "Please fill in all required fields.");
-  //     return false;
-  //   }
-
-  //   return true;
-  // };
-
   const validateInputs = (): boolean => {
     const { goalDays, dailyDuration, customText, dailyAmount } = formData;
 
     if (variant === "Custom") {
       if (!customText.trim()) {
-        Alert.alert("Error", "Please fill in the custom habit name.");
+        showMessage({
+          message: t("alerts.alertFillHabitName"),
+          type: "danger",
+        });
         return false;
       }
       if (!dailyAmount.trim()) {
-        Alert.alert("Error", "Please fill in the daily amount.");
+        showMessage({
+          message: t("alerts.alertFillDailyAmount"),
+          type: "danger",
+        });
         return false;
       }
       if (!goalDays.trim()) {
-        Alert.alert("Error", "Please fill in the goal days.");
+        showMessage({
+          message: t("alerts.alertFillGoalDays"),
+          type: "danger",
+        });
         return false;
       }
       return true;
@@ -114,11 +97,17 @@ export default function AddOtherHabitModal({
 
     if (variant === "Vocabulary") {
       if (!dailyAmount.trim()) {
-        Alert.alert("Error", "Please fill in the daily word amount.");
+        showMessage({
+          message: t("alerts.alertFillDailyWordAmount"),
+          type: "danger",
+        });
         return false;
       }
       if (!goalDays.trim()) {
-        Alert.alert("Error", "Please fill in the goal days.");
+        showMessage({
+          message: t("alerts.alertFillGoalDays"),
+          type: "danger",
+        });
         return false;
       }
       return true;
@@ -126,7 +115,10 @@ export default function AddOtherHabitModal({
 
     // For other variants (Sport, Book)
     if (!goalDays.trim() || !dailyDuration.trim()) {
-      Alert.alert("Error", "Please fill in all required fields.");
+      showMessage({
+        message: t("alerts.alertFillTheFields"),
+        type: "danger",
+      });
       return false;
     }
 
@@ -141,6 +133,7 @@ export default function AddOtherHabitModal({
       .join(" ");
   };
 
+  // SEND DATA TO DB
   const handleSendDataToDb = async () => {
     if (isSaving) return;
 
@@ -190,6 +183,7 @@ export default function AddOtherHabitModal({
     }
   };
 
+  // RENDER INPUT FIELDS
   const renderInputFields = () => {
     switch (variant) {
       case "Custom":
@@ -197,16 +191,18 @@ export default function AddOtherHabitModal({
           <>
             <View style={styles.formItem}>
               <InputField
-                label="Habit Name"
-                placeholder="Enter custom habit name"
+                label={t("otherHabitModal.habitName")}
+                placeholder={t("otherHabitModal.habitNamePlaceholder")}
                 value={formData.customText}
                 onChangeText={(text) => handleInputChange("customText", text)}
               />
             </View>
             <View style={styles.formItem}>
               <InputField
-                label="Daily Duration (minutes) or Amount"
-                placeholder="Enter daily amount (if none, please enter 0)"
+                label={t("otherHabitModal.dailyDurationCustom")}
+                placeholder={t(
+                  "otherHabitModal.dailyDurationCustomPlaceholder"
+                )}
                 keyboardType="numeric"
                 value={formData.dailyAmount}
                 onChangeText={(text) => handleInputChange("dailyAmount", text)}
@@ -218,8 +214,8 @@ export default function AddOtherHabitModal({
         return (
           <View style={styles.formItem}>
             <InputField
-              label="Daily Word Amount"
-              placeholder="Enter daily word amount"
+              label={t("otherHabitModal.dailyWordAmount")}
+              placeholder={t("otherHabitModal.dailyWordAmountPlaceholder")}
               keyboardType="numeric"
               value={formData.dailyAmount}
               onChangeText={(text) => handleInputChange("dailyAmount", text)}
@@ -230,8 +226,8 @@ export default function AddOtherHabitModal({
         return (
           <View style={styles.formItem}>
             <InputField
-              label="Daily Duration"
-              placeholder="Enter daily duration in minutes"
+              label={t("otherHabitModal.dailyDurationGeneral")}
+              placeholder={t("otherHabitModal.dailyDurationGeneralPlaceholder")}
               keyboardType="numeric"
               value={formData.dailyDuration}
               onChangeText={(text) => handleInputChange("dailyDuration", text)}
@@ -261,15 +257,40 @@ export default function AddOtherHabitModal({
             <CloseIcon size={24} color="#1E3A5F" />
           </TouchableOpacity>
           <View style={styles.modalContent}>
-            <CustomText style={styles.modalTitle}>
-              Create {variant} Habit
+            <CustomText
+              style={styles.modalTitle}
+              type="bold"
+              fontSize={20}
+              color="#1E3A5F"
+            >
+              {/* {variant} {t("otherHabitModal.title")} */}
+              {variant === "Custom" && (
+                <CustomText type="bold" fontSize={20} color="#1E3A5F">
+                  {t("otherHabitModal.titleCustom")}
+                </CustomText>
+              )}
+              {variant === "Book" && (
+                <CustomText type="bold" fontSize={20} color="#1E3A5F">
+                  {t("otherHabitModal.titleBook")}
+                </CustomText>
+              )}
+              {variant === "Sport" && (
+                <CustomText type="bold" fontSize={20} color="#1E3A5F">
+                  {t("otherHabitModal.titleSport")}
+                </CustomText>
+              )}
+              {variant === "Vocabulary" && (
+                <CustomText type="bold" fontSize={20} color="#1E3A5F">
+                  {t("otherHabitModal.titleVocabulary")}
+                </CustomText>
+              )}
             </CustomText>
             <View style={styles.inputContainer}>
               {renderInputFields()}
               <View style={styles.formItem}>
                 <InputField
-                  label="Number of Days"
-                  placeholder="How many days is your goal?"
+                  label={t("otherHabitModal.goalDays")}
+                  placeholder={t("otherHabitModal.goalDaysPlaceholder")}
                   keyboardType="numeric"
                   value={formData.goalDays}
                   onChangeText={(text) => handleInputChange("goalDays", text)}
@@ -278,7 +299,11 @@ export default function AddOtherHabitModal({
             </View>
             <View style={styles.buttonContainer}>
               <CustomButton
-                label={isSaving ? "Saving..." : "Save"}
+                label={
+                  isSaving
+                    ? t("otherHabitModal.savingButtonText")
+                    : t("otherHabitModal.saveButtonText")
+                }
                 onPress={handleSendDataToDb}
                 width="50%"
                 height={50}
@@ -301,7 +326,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: "100%",
-    maxWidth: 400,
+    maxWidth: 370,
     maxHeight: "90%",
     backgroundColor: "#FCFCFC",
     paddingHorizontal: 30,
@@ -313,7 +338,7 @@ const styles = StyleSheet.create({
     // shadowColor: "#000",
     // shadowOffset: { width: 0, height: 4 },
     // shadowOpacity: 0.25,
-    // shadowRadius: 4, 
+    // shadowRadius: 4,
   },
   closeButton: {
     position: "absolute",
@@ -326,11 +351,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#1E3A5F",
-    marginBottom: 30,
     textAlign: "center",
+    marginBottom: 40,
   },
   inputContainer: {
     marginBottom: 40,
