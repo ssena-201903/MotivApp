@@ -5,7 +5,7 @@ import CardWaterHabit from "@/components/cards/CardWaterHabit";
 import CardTodo from "@/components/cards/CardTodo";
 import React, { useEffect, useState } from "react";
 import { db, auth } from "@/firebase.config";
-import { Timestamp } from "firebase/firestore";
+import { orderBy, Timestamp } from "firebase/firestore";
 import {
   collection,
   getDocs,
@@ -41,30 +41,54 @@ export default function HomeSection({ variant }: Props) {
   const [isVocabularyCard, setIsVocabularyCard] = useState<boolean>(false);
 
   // language context
-  const { t, language, setLanguage } = useLanguage();
-  const [selectedLanguage, setSelectedLanguage] = useState(language);
+  const { t } = useLanguage();
+
+  // Helper function to sort todos
+  const sortTodos = (todos: any[]) => {
+    return todos.sort((a, b) => {
+      if (a.isDone === b.isDone) return 0;
+      return a.isDone ? 1 : -1;
+    });
+  };
 
   const fetchHabitDatas = async () => {
     try {
       const habitsRef = collection(db, `users/${userId}/habits`);
-      const querySnapshot = await getDocs(habitsRef);
+
+      const q = query(habitsRef, orderBy("streakDays", "desc"));
+      const querySnapshot = await getDocs(q);
+
+      // Reset all habit states
+      setIsWaterCard(false);
+      setIsBookCard(false);
+      setIsSportCard(false);
+      setIsCustomCard(false);
+      setIsVocabularyCard(false);
 
       querySnapshot.docs.forEach((doc) => {
         const habitDoc = doc.data();
-        if (habitDoc.variant === "Water") {
-          setIsWaterCard(true);
-        } else if (habitDoc.variant === "Book") {
-          setIsBookCard(true);
-        } else if (habitDoc.variant === "Sport") {
-          setIsSportCard(true);
-        } else if (habitDoc.variant === "Custom") {
-          setIsCustomCard(true);
-        } else if (habitDoc.variant === "Vocabulary") {
-          setIsVocabularyCard(true);
+        switch (habitDoc.variant) {
+          case "Water":
+            setIsWaterCard(true);
+            break;
+          case "Book":
+            setIsBookCard(true);
+            break;
+          case "Sport":
+            setIsSportCard(true);
+            break;
+          case "Custom":
+            setIsCustomCard(true);
+            break;
+          case "Vocabulary":
+            setIsVocabularyCard(true);
+            break;
+          default:
+            break;
         }
       });
     } catch (error) {
-      console.log("error fetching habits", error);
+      console.log("Error fetching habits:", error);
     }
   };
 
@@ -96,8 +120,6 @@ export default function HomeSection({ variant }: Props) {
       startOfDay.setHours(0, 0, 0, 0);
       const endOfDay = new Date(today);
       endOfDay.setHours(23, 59, 59, 999);
-      const startOfDayTimestamp = Timestamp.fromDate(startOfDay);
-      const endOfDayTimestamp = Timestamp.fromDate(endOfDay);
 
       const q = query(
         todosRef,
@@ -109,8 +131,15 @@ export default function HomeSection({ variant }: Props) {
         id: doc.id,
         ...doc.data(),
       }));
-      setCurrentTodos(todosData);
-      setTodosPercentage(calculateTodosPercentage(todosData));
+
+      // Sort todos: false (incomplete) first, then true (complete)
+      const sortedTodos = todosData.sort((a: any, b: any) => {
+        if (a.isDone === b.isDone) return 0;
+        return a.isDone ? 1 : -1;
+      });
+
+      setCurrentTodos(sortedTodos);
+      setTodosPercentage(calculateTodosPercentage(sortedTodos));
     } catch (error) {
       console.log("error fetching todos", error);
     } finally {
@@ -140,11 +169,18 @@ export default function HomeSection({ variant }: Props) {
       await updateDoc(todoRef, {
         isDone: !currentStatus,
       });
+      
+      // Update the todo in the state and resort
       const updatedTodos = currentTodos.map((todo) =>
         todo.id === id ? { ...todo, isDone: !currentStatus } : todo
       );
-      setCurrentTodos(updatedTodos);
-      setTodosPercentage(calculateTodosPercentage(updatedTodos));
+      
+      // Sort the updated todos
+      const sortedTodos = sortTodos(updatedTodos);
+      
+      // Update state with sorted todos
+      setCurrentTodos(sortedTodos);
+      setTodosPercentage(calculateTodosPercentage(sortedTodos));
     } catch (error) {
       console.log("error toggling todo status", error);
     }
@@ -156,8 +192,9 @@ export default function HomeSection({ variant }: Props) {
       const todoRef = doc(db, "users", userId, "todos", id);
       await deleteDoc(todoRef);
       const updatedTodos = currentTodos.filter((todo) => todo.id !== id);
-      setCurrentTodos(updatedTodos);
-      setTodosPercentage(calculateTodosPercentage(updatedTodos));
+      const sortedTodos = sortTodos(updatedTodos);
+      setCurrentTodos(sortedTodos);
+      setTodosPercentage(calculateTodosPercentage(sortedTodos));
     } catch (error) {
       console.log("error deleting todo", error);
     }
@@ -207,7 +244,7 @@ export default function HomeSection({ variant }: Props) {
               onCategoryPress={handleCategoryPress}
             />
             <CardGoal
-              inlineText={t("home.cardGoalEat")}  
+              inlineText={t("home.cardGoalEat")}
               categoryId="Food"
               onCategoryPress={handleCategoryPress}
             />
