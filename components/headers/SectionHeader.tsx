@@ -35,7 +35,7 @@ export default function SectionHeader({ variant, text, percentDone, id }: Props)
       if (id === "goals") {
         router.push("/goals");
       } else if (id === "habits") {
-        router.push("/habits");
+        router.push(`/habits?percentDone=${percentDone}`);
       } else if (id === "todos") {
         router.push("/calendar");
       }

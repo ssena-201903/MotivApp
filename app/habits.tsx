@@ -9,6 +9,7 @@ import {
   Dimensions,
   Modal,
   TouchableWithoutFeedback,
+  RefreshControl, // added to refresh habits list
 } from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 import { db, auth } from "@/firebase.config";
@@ -27,6 +28,10 @@ const { width } = Dimensions.get("window");
 
 export default function Habits() {
   const userId = auth.currentUser?.uid ?? "";
+
+  const [activeHabits, setActiveHabits] = useState<any[]>([]);
+  const [habitsPercentage, setHabitsPercentage] = useState<number>(0);
+
   const [isWaterCard, setIsWaterCard] = useState<boolean>(false);
   const [isBookCard, setIsBookCard] = useState<boolean>(false);
   const [isSportCard, setIsSportCard] = useState<boolean>(false);
@@ -38,6 +43,16 @@ export default function Habits() {
   const [isOtherModalOpen, setIsOtherModalOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  // refresh page
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }
+
   // language context
   const { t, language, setLanguage } = useLanguage();
 
@@ -46,8 +61,23 @@ export default function Habits() {
       const habitsRef = collection(db, `users/${userId}/habits`);
       const querySnapshot = await getDocs(habitsRef);
 
+      // Reset all habit states
+      setIsWaterCard(false);
+      setIsBookCard(false);
+      setIsSportCard(false);
+      setIsCustomCard(false);
+      setIsVocabularyCard(false);
+
+      // active habits
+      const newActiveHabits: any[] = [];
+
       querySnapshot.docs.forEach((doc) => {
         const habitDoc = doc.data();
+
+        if (!habitDoc.isArchieved) {
+          newActiveHabits.push(habitDoc);
+        }
+
         if (habitDoc.variant === "Water") {
           setIsWaterCard(true);
         } else if (habitDoc.variant === "Book") {
@@ -60,6 +90,9 @@ export default function Habits() {
           setIsVocabularyCard(true);
         }
       });
+
+      setActiveHabits(newActiveHabits);
+      setHabitsPercentage(calculatePercentDone(newActiveHabits));
     } catch (error) {
       console.log("error fetching habits", error);
     }
@@ -77,6 +110,12 @@ export default function Habits() {
     } else {
       setIsOtherModalOpen(true);
     }
+  };
+
+  const calculatePercentDone = (habits: any[]) => {
+    const totalHabits = activeHabits.length;
+    const completedHabits = activeHabits.filter((habit) => habit.isCompleted).length;
+    return Math.floor((completedHabits / totalHabits) * 100);
   };
 
   return (
@@ -98,13 +137,16 @@ export default function Habits() {
 
         <SectionHeader
           text={t("habits.title")}
-          percentDone={60}
+          percentDone={habitsPercentage}
           variant="other"
           id="habits"
         />
         <ScrollView
           contentContainerStyle={styles.scrollView}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
           <View style={styles.contentBody}>
             {userId && isWaterCard && <CardWaterHabit userId={userId} />}

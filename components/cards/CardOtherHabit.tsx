@@ -91,7 +91,8 @@ export default function CardOtherHabit({ variant, userId }: Props) {
     isDone: boolean,
     newStreak: number,
     newDoneNumber: number,
-    newLastChangeAt: string = new Date().toISOString().split("T")[0]
+    newLastChangeAt: string = new Date().toISOString().split("T")[0],
+    isArchieved: boolean = false
   ) => {
     try {
       const habitDocRef = doc(db, `users/${userId}/habits/${habitId}`);
@@ -101,6 +102,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
         streakDays: newStreak,
         doneNumber: newDoneNumber,
         lastChangeAt: newLastChangeAt,
+        isArchieved,
       });
 
       setIsFeedbackVisible(isDone);
@@ -112,6 +114,7 @@ export default function CardOtherHabit({ variant, userId }: Props) {
 
   const handleDonePress = (habit: HabitData) => {
     const currentDate = new Date().toISOString().split("T")[0];
+    const isArchieved = false;
 
     if (habit.isDone) {
       setIsConfirmationModalData({
@@ -123,10 +126,14 @@ export default function CardOtherHabit({ variant, userId }: Props) {
             false,
             habit.streakDays - 1,
             habit.doneNumber - 1,
-            currentDate
+            currentDate,
+            false,
           ),
       });
     } else {
+      const newStreak = habit.streakDays + 1;
+      const isArchieved = newStreak >= habit.goalNumber;
+
       setIsConfirmationModalData({
         title: t("confirmationHabit.titlePossitive"),
         message: t("confirmationHabit.messagePossitive"),
@@ -136,7 +143,8 @@ export default function CardOtherHabit({ variant, userId }: Props) {
             true,
             habit.streakDays + 1,
             habit.doneNumber + 1,
-            currentDate
+            currentDate,
+            isArchieved
           ),
       });
     }

@@ -29,9 +29,11 @@ type Props = {
 
 export default function HomeSection({ variant }: Props) {
   const userId = auth.currentUser?.uid;
+  const [activeHabits, setActiveHabits] = useState<any[]>([]);
   const [currentTodos, setCurrentTodos] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [todosPercentage, setTodosPercentage] = useState<number>(0);
+  const [habitsPercentage, setHabitsPercentage] = useState<number>(0);
   const [goals, setGoals] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isWaterCard, setIsWaterCard] = useState<boolean>(false);
@@ -65,8 +67,16 @@ export default function HomeSection({ variant }: Props) {
       setIsCustomCard(false);
       setIsVocabularyCard(false);
 
+      // active habits
+      const newActiveHabits: any[] = [];
+
       querySnapshot.docs.forEach((doc) => {
         const habitDoc = doc.data();
+
+        if (!habitDoc.isArchieved) {
+          newActiveHabits.push(habitDoc);
+        }
+
         switch (habitDoc.variant) {
           case "Water":
             setIsWaterCard(true);
@@ -87,6 +97,9 @@ export default function HomeSection({ variant }: Props) {
             break;
         }
       });
+
+      setActiveHabits(newActiveHabits);
+      setHabitsPercentage(calculateHabitsPercentage(newActiveHabits));
     } catch (error) {
       console.log("Error fetching habits:", error);
     }
@@ -94,7 +107,7 @@ export default function HomeSection({ variant }: Props) {
 
   useEffect(() => {
     fetchHabitDatas();
-  }, [userId]);
+  }, [userId, activeHabits]);
 
   const calculateTodosPercentage = (todos: any[]) => {
     const totalTodos = todos.length;
@@ -108,6 +121,13 @@ export default function HomeSection({ variant }: Props) {
     if (totalGoals === 0) return 0;
     const completedGoals = goals.filter((goal) => goal.isDone).length;
     return Math.round((completedGoals / totalGoals) * 100);
+  };
+
+  const calculateHabitsPercentage = (habits: any[]) => {
+    const totalHabits = habits.length;
+    if (totalHabits === 0) return 0;
+    const completedHabits = habits.filter((habit) => habit.isDone).length;
+    return Math.round((completedHabits / totalHabits) * 100);
   };
 
   const fetchTodos = async () => {
@@ -169,15 +189,15 @@ export default function HomeSection({ variant }: Props) {
       await updateDoc(todoRef, {
         isDone: !currentStatus,
       });
-      
+
       // Update the todo in the state and resort
       const updatedTodos = currentTodos.map((todo) =>
         todo.id === id ? { ...todo, isDone: !currentStatus } : todo
       );
-      
+
       // Sort the updated todos
       const sortedTodos = sortTodos(updatedTodos);
-      
+
       // Update state with sorted todos
       setCurrentTodos(sortedTodos);
       setTodosPercentage(calculateTodosPercentage(sortedTodos));
@@ -266,25 +286,30 @@ export default function HomeSection({ variant }: Props) {
         <>
           <SectionHeader
             text={t("home.sectionHeaderHabits")}
-            percentDone={60}
+            percentDone={habitsPercentage}
             variant="home"
             id="habits"
           />
-          <View style={styles.gridView}>
-            {userId && isWaterCard && <CardWaterHabit userId={userId} />}
-            {userId && isBookCard && (
-              <CardOtherHabit userId={userId} variant="Book" />
-            )}
-            {userId && isVocabularyCard && (
-              <CardOtherHabit userId={userId} variant="Vocabulary" />
-            )}
-            {userId && isSportCard && (
-              <CardOtherHabit userId={userId} variant="Sport" />
-            )}
-            {userId && isCustomCard && (
-              <CardOtherHabit userId={userId} variant="Custom" />
-            )}
-          </View>
+          <ScrollView
+            contentContainerStyle={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.gridView}>
+              {userId && isWaterCard && <CardWaterHabit userId={userId} />}
+              {userId && isBookCard && (
+                <CardOtherHabit userId={userId} variant="Book" />
+              )}
+              {/* {userId && isVocabularyCard && (
+                <CardOtherHabit userId={userId} variant="Vocabulary" />
+              )} */}
+              {userId && isSportCard && (
+                <CardOtherHabit userId={userId} variant="Sport" />
+              )}
+              {userId && isCustomCard && (
+                <CardOtherHabit userId={userId} variant="Custom" />
+              )}
+            </View>
+          </ScrollView>
         </>
       );
     } else if (variant === "todos") {
@@ -330,14 +355,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 20,
   },
+  scrollView: {
+    flexGrow: 1,
+    alignItems: "center",
+    paddingVertical: 20,
+  },
   gridView: {
     display: "flex",
     flexWrap: "wrap",
-    justifyContent: "space-between",
-    width: "100%",
     padding: 5,
     gap: 8,
+    width: width > 768 ? width - 510 : "100%",
+    // marginHorizontal: 20,
+    flex: 1,
+    justifyContent: "flex-start",
     flexGrow: 1,
+    height: 300,
   },
   gridViewRow: {
     display: "flex",
