@@ -150,6 +150,7 @@ export default function Habits() {
               <Pressable
                 style={[styles.typeButton, isWaterCard && styles.disabledType]}
                 onPress={() => openAddHabitModal("Water")}
+                disabled={isWaterCard}
               >
                 <BoxIcon
                   size={16}
@@ -163,6 +164,7 @@ export default function Habits() {
               <Pressable
                 style={[styles.typeButton, isBookCard && styles.disabledType]}
                 onPress={() => openAddHabitModal("Book")}
+                disabled={isBookCard}
               >
                 <BoxIcon
                   size={16}
@@ -176,6 +178,7 @@ export default function Habits() {
               <Pressable
                 style={[styles.typeButton, isSportCard && styles.disabledType]}
                 onPress={() => openAddHabitModal("Sport")}
+                disabled={isSportCard}
               >
                 <BoxIcon
                   size={16}
@@ -192,6 +195,7 @@ export default function Habits() {
                   isVocabularyCard && styles.disabledType,
                 ]}
                 onPress={() => openAddHabitModal("Vocabulary")}
+                disabled={isVocabularyCard}
               >
                 <BoxIcon
                   size={16}
