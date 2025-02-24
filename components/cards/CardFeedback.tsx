@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { View, StyleSheet, Text, Dimensions, Modal } from "react-native";
+import { View, StyleSheet, Dimensions, Modal } from "react-native";
+import { Audio } from "expo-av";
 import Lottie from "lottie-react-native";
 import { CustomText } from "@/CustomText";
 
@@ -22,6 +23,7 @@ export default function CardFeedback({
 }: Props) {
   useEffect(() => {
     if (isVisible) {
+      playSound();
       const timeDuration = isStreak ? 2000 : 2000;
       const timer = setTimeout(() => {
         onComplete();
@@ -31,20 +33,23 @@ export default function CardFeedback({
     }
   }, [isVisible]);
 
-  if (!isVisible) return null;
+  const playSound = async () => {
+    const sound = new Audio.Sound();
+    try {
+      let soundSource;
+      if (type === "celebration") soundSource = require("@/assets/sounds/success-1-6297.mp3");
+      else if (type === "success") soundSource = require("@/assets/sounds/success-1-6297.mp3");
+      else if (type === "warning") soundSource = require("@/assets/sounds/success-1-6297.mp3");
+      else return;
 
-  const getAnimationSource = () => {
-    switch (type) {
-      case "celebration":
-        return require("@/assets/animations/firework_animate.json");
-      case "success":
-        return require("@/assets/animations/firework_animate.json");
-      case "warning":
-        return require("@/assets/animations/firework_animate.json");
-      default:
-        return require("@/assets/animations/firework_animate.json");
+      await sound.loadAsync(soundSource);
+      await sound.playAsync();
+    } catch (error) {
+      console.error("Ses çalınırken hata oluştu:", error);
     }
   };
+
+  if (!isVisible) return null;
 
   return (
     <Modal visible={isVisible} transparent animationType="fade">
@@ -52,7 +57,7 @@ export default function CardFeedback({
         <View style={styles.messageCard}>
           <View style={styles.animationContainer}>
             <Lottie
-              source={getAnimationSource()}
+              source={require("@/assets/animations/firework_animate.json")}
               autoPlay
               loop={false}
               style={styles.animation}

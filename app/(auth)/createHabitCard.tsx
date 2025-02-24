@@ -7,6 +7,7 @@ import {
   Dimensions,
   ImageBackground,
   Platform,
+  Pressable,
 } from "react-native";
 import CustomButton from "@/components/CustomButton";
 import AddWaterHabitModal from "@/components/modals/AddWaterHabitModal";
@@ -105,7 +106,7 @@ export default function CreateHabitCard() {
     return existingHabits.includes(habitType);
   };
 
-  const backgroundImage = require("@/assets/images/habitCardBg.png")
+  const backgroundImage = require("@/assets/images/habitCardBg.png");
 
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
@@ -126,7 +127,11 @@ export default function CreateHabitCard() {
             </CustomText>
 
             <View style={styles.habits}>
-              <View style={styles.habitRow}>
+              <Pressable
+                style={styles.habitRow}
+                disabled={isHabitExits("Water")}
+                onPress={handleWaterHabitModalPress}
+              >
                 <TouchableOpacity
                   style={
                     isHabitExits("Water")
@@ -134,6 +139,7 @@ export default function CreateHabitCard() {
                       : styles.plusButton
                   }
                   onPress={handleWaterHabitModalPress}
+                  disabled={isHabitExits("Water")}
                 >
                   {isHabitExits("Water") ? (
                     <CheckIcon size={22} color="#1E3A5F" />
@@ -144,9 +150,13 @@ export default function CreateHabitCard() {
                 <CustomText style={styles.habitText}>
                   {t("welcomePage.waterText")}
                 </CustomText>
-              </View>
+              </Pressable>
 
-              <View style={styles.habitRow}>
+              <Pressable
+                style={styles.habitRow}
+                disabled={isHabitExits("Book")}
+                onPress={handleBookModalPress}
+              >
                 <TouchableOpacity
                   style={
                     isHabitExits("Book")
@@ -154,6 +164,7 @@ export default function CreateHabitCard() {
                       : styles.plusButton
                   }
                   onPress={handleBookModalPress}
+                  disabled={isHabitExits("Book")}
                 >
                   {isHabitExits("Book") ? (
                     <CheckIcon size={22} color="#1E3A5F" />
@@ -164,9 +175,13 @@ export default function CreateHabitCard() {
                 <CustomText style={styles.habitText}>
                   {t("welcomePage.bookText")}
                 </CustomText>
-              </View>
+              </Pressable>
 
-              <View style={styles.habitRow}>
+              <Pressable
+                style={styles.habitRow}
+                disabled={isHabitExits("Sport")}
+                onPress={handleSportModalPress}
+              >
                 <TouchableOpacity
                   style={
                     isHabitExits("Sport")
@@ -174,6 +189,7 @@ export default function CreateHabitCard() {
                       : styles.plusButton
                   }
                   onPress={handleSportModalPress}
+                  disabled={isHabitExits("Sport")}
                 >
                   {isHabitExits("Sport") ? (
                     <CheckIcon size={22} color="#1E3A5F" />
@@ -184,9 +200,13 @@ export default function CreateHabitCard() {
                 <CustomText style={styles.habitText}>
                   {t("welcomePage.sportText")}
                 </CustomText>
-              </View>
+              </Pressable>
 
-              <View style={styles.habitRow}>
+              <Pressable
+                style={styles.habitRow}
+                disabled={isHabitExits("Vocabulary")}
+                onPress={handleVocabularyModalPress}
+              >
                 <TouchableOpacity
                   style={
                     isHabitExits("Vocabulary")
@@ -194,6 +214,7 @@ export default function CreateHabitCard() {
                       : styles.plusButton
                   }
                   onPress={handleVocabularyModalPress}
+                  disabled={isHabitExits("Vocabulary")}
                 >
                   {isHabitExits("Vocabulary") ? (
                     <CheckIcon size={22} color="#1E3A5F" />
@@ -204,9 +225,9 @@ export default function CreateHabitCard() {
                 <CustomText style={styles.habitText}>
                   {t("welcomePage.vocabularyText")}
                 </CustomText>
-              </View>
+              </Pressable>
 
-              <View style={styles.habitRow}>
+              <Pressable style={styles.habitRow} onPress={handleCustomModalPress}>
                 <TouchableOpacity
                   style={
                     isHabitExits("Custom")
@@ -224,7 +245,7 @@ export default function CreateHabitCard() {
                 <CustomText style={styles.habitText}>
                   {t("welcomePage.customText")}
                 </CustomText>
-              </View>
+              </Pressable>
             </View>
           </View>
           <CustomText style={styles.noteText}>
