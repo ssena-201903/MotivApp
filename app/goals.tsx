@@ -25,6 +25,7 @@ import FoodIcon from "@/components/icons/FoodIcon";
 import PlusIcon from "@/components/icons/PlusIcon";
 
 import { useLanguage } from "@/app/LanguageContext";
+import SearchMovie from "@/components/SearchMovie";
 
 const { width } = Dimensions.get("window");
 const containerWidth = width > 768 ? width - 900 : width - 40;
@@ -189,6 +190,11 @@ export default function Goals() {
           ))}
         </View>
         <View style={styles.contentBody}>
+          {/* search movie  */}
+          {activeCategory === "Movie" && (
+            <SearchMovie/>
+          )}
+          
           <View style={styles.headerContainer}>
             <SectionHeader
               text={getSectionHeaderText()}

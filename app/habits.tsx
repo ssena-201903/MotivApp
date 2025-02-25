@@ -65,7 +65,7 @@ export default function Habits() {
       setIsWaterCard(false);
       setIsBookCard(false);
       setIsSportCard(false);
-      setIsCustomCard(false);
+      // setIsCustomCard(false);
       setIsVocabularyCard(false);
 
       // active habits
@@ -84,8 +84,6 @@ export default function Habits() {
           setIsBookCard(true);
         } else if (habitDoc.variant === "Sport") {
           setIsSportCard(true);
-        } else if (habitDoc.variant === "Custom") {
-          setIsCustomCard(true);
         } else if (habitDoc.variant === "Vocabulary") {
           setIsVocabularyCard(true);
         }
@@ -101,6 +99,10 @@ export default function Habits() {
   useEffect(() => {
     fetchHabitDatas();
   }, [userId]);
+
+  const handleHabitAdd = async (data: any) => {
+    await fetchHabitDatas(); // update list after adding a new goal
+  };
 
   const openAddHabitModal = (variant: string) => {
     setSelectedVariant(variant);
@@ -159,9 +161,9 @@ export default function Habits() {
             {userId && isSportCard && (
               <CardOtherHabit userId={userId} variant="Sport" />
             )}
-            {userId && isCustomCard && (
+          
               <CardOtherHabit userId={userId} variant="Custom" />
-            )}
+            
           </View>
         </ScrollView>
       </View>
@@ -273,7 +275,8 @@ export default function Habits() {
         <AddOtherHabitModal
           visible={isOtherModalOpen}
           onClose={() => setIsOtherModalOpen(false)}
-          variant={selectedVariant || "Custom"}
+          variant={selectedVariant}
+          onAdd={handleHabitAdd}
         />
       )}
     </ImageBackground>

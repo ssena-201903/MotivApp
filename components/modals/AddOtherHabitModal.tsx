@@ -34,6 +34,7 @@ interface Props {
   variant: HabitVariant;
   visible: boolean;
   onClose: () => void;
+  onAdd: (data: any) => void;
 }
 
 interface FormData {
@@ -47,6 +48,7 @@ export default function AddOtherHabitModal({
   variant,
   visible,
   onClose,
+  onAdd,
 }: Props) {
   const userId = auth.currentUser?.uid;
   const [isSaving, setIsSaving] = useState(false);
@@ -172,9 +174,14 @@ export default function AddOtherHabitModal({
       const userDocRef = doc(db, "users", userId);
       const habitsDocRef = collection(userDocRef, "habits");
 
-      await addDoc(habitsDocRef, habitData);
-      Keyboard.dismiss();
-      onClose();
+      const docRef = await addDoc(habitsDocRef, habitData);
+      if (docRef.id) {
+        onAdd({ id: docRef.id, ...habitData });
+        onClose();
+      }
+
+      // Keyboard.dismiss();
+      // onClose();
     } catch (error) {
       console.error("Error saving data to db:", error);
       Alert.alert("Error", "Failed to save habit. Please try again.");
