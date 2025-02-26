@@ -15,7 +15,7 @@ import PencilIcon from "@/components/icons/PencilIcon";
 import { useLanguage } from "@/app/LanguageContext";
 import AddGoalNoteModal from "../modals/AddGoalNoteModal";
 import ConfirmationModal from "../modals/ConfirmationModal";
-import EditGoalModal from "@/components/modals/EditGoalModal"; // Yeni eklenen düzenleme modalı
+import EditGoalModal from "@/components/modals/EditGoalModal";
 
 const { width } = Dimensions.get("window");
 
@@ -40,7 +40,7 @@ export default function CardGoalTodo({
     useState<boolean>(false);
   const [isConfirmationVisible, setIsConfirmationVisible] =
     useState<boolean>(false);
-  const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false); // Yeni düzenleme modalı durumu
+  const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
 
   // language context
   const { t } = useLanguage();
@@ -137,7 +137,9 @@ export default function CardGoalTodo({
     }
   };
 
-  const handleAddNote = () => {
+  const handleAddNote = (event :any) => {
+    // Olayın üst bileşenlere yayılmasını önle
+    event.stopPropagation();
     setIsAddNoteModalVisible(true);
   };
 
@@ -146,10 +148,34 @@ export default function CardGoalTodo({
     onUpdate();
   };
 
+  // Kart tıklama işleyicisi
+  const handleCardPress = () => {
+    setIsDetailsModalVisible(true);
+  };
+
+  // İç butonlar için tıklama işleyicileri
+  const handleDeleteButtonPress = (event :any) => {
+    event.stopPropagation(); // Olayın kartın tıklama olayına yayılmasını engelle
+    setIsConfirmationVisible(true);
+  };
+
+  const handleEditButtonPress = (event :any) => {
+    event.stopPropagation();
+    setIsEditModalVisible(true);
+  };
+
+  const handleCheckboxPress = (event :any) => {
+    event.stopPropagation();
+    toggleCard();
+  };
+
+  // Picker için tıklama işleyicisi
+  const handlePickerPress = (event :any) => {
+    event.stopPropagation();
+  };
+
   return (
-    <View
-      style={[styles.container, isDone && styles.completedContainer]}
-    >
+    <Pressable style={[styles.container, isDone && styles.completedContainer]} onPress={handleCardPress}>
       {/* Movie poster */}
       {category === "Movie" && (
         <Image
@@ -168,7 +194,7 @@ export default function CardGoalTodo({
           <View style={styles.titleWrapper}>
             <CustomText
               style={styles.titleText}
-              color="#333"
+              color="#1E3A5F"
               fontSize={16}
               type="bold"
               numberOfLines={1}
@@ -180,21 +206,22 @@ export default function CardGoalTodo({
               <CustomText
                 style={styles.infoText}
                 color="#666"
-                fontSize={14}
+                fontSize={12}
                 type="regular"
               >
                 IMDB: {goal.imdbRate} / {goal.runtime}
               </CustomText>
             )}
-          </View>
-
-          <View style={styles.actionsContainer}>
-            {/* Book status picker or Movie info */}
-            <View style={styles.infoSection}>
-              {category === "Book" && (
+            {category === "Book" && (
+              <Pressable 
+                style={styles.infoSection} 
+                onPress={handlePickerPress}
+              >
                 <Picker
                   selectedValue={selectedStatus}
-                  onValueChange={handleReadingStatusChange}
+                  onValueChange={(value) => {
+                    handleReadingStatusChange(value);
+                  }}
                   style={styles.picker}
                   dropdownIconColor="#1E3A5F"
                 >
@@ -211,23 +238,26 @@ export default function CardGoalTodo({
                     value="read"
                   />
                 </Picker>
-              )}
-            </View>
+              </Pressable>
+            )}
+          </View>
+
+          <View style={styles.actionsContainer}>
             <Pressable style={styles.actionButton} onPress={handleAddNote}>
               <PlusIcon size={16} color="#1E3A5F" />
-              {/* {width >= 370 && (
+              {width >= 340 && (
                 <CustomText
                   style={styles.actionText}
                   color="#666"
-                  fontSize={12}
+                  fontSize={14}
                   type="medium"
                 >
                   {t("cardGoalTodo.addNote")}
                 </CustomText>
-              )} */}
+              )}
             </Pressable>
 
-            <Pressable style={styles.checkboxButton} onPress={toggleCard}>
+            <Pressable style={styles.checkboxButton} onPress={handleCheckboxPress}>
               {isDone ? (
                 <BoxIcon size={20} color="#1E3A5F" variant="fill" />
               ) : (
@@ -241,17 +271,11 @@ export default function CardGoalTodo({
         <View style={styles.bottomSection}>
           {/* Rating and action icons */}
           <View style={styles.ratingSection}>
-            <StarRating
-              rating={goal.rating}
-              onRatingChange={handleRatingChange}
-            />
-
-            {/* information icon */}
-            <Pressable
-              style={styles.iconButton}
-              onPress={() => setIsDetailsModalVisible(true)}
-            >
-              <InfoIcon size={20} color="#1E3A5F" variant="outlined" />
+            <Pressable onPress={(event) => event.stopPropagation()}>
+              <StarRating
+                rating={goal.rating}
+                onRatingChange={handleRatingChange}
+              />
             </Pressable>
           </View>
 
@@ -260,7 +284,7 @@ export default function CardGoalTodo({
             {category !== "Movie" && (
               <Pressable
                 style={styles.iconButton}
-                onPress={() => setIsEditModalVisible(true)}
+                onPress={handleEditButtonPress}
               >
                 <PencilIcon size={20} color="#1E3A5F" />
               </Pressable>
@@ -269,7 +293,7 @@ export default function CardGoalTodo({
             {/* Delete button */}
             <Pressable
               style={styles.iconButton}
-              onPress={() => setIsConfirmationVisible(true)}
+              onPress={handleDeleteButtonPress}
             >
               <TrashIcon size={20} color="#FF6347" />
             </Pressable>
@@ -302,14 +326,13 @@ export default function CardGoalTodo({
         onCancel={() => setIsConfirmationVisible(false)}
       />
 
-      {/* Yeni eklenen düzenleme modalı */}
       <EditGoalModal
         visible={isEditModalVisible}
         onClose={() => setIsEditModalVisible(false)}
         initialName={goal.name}
         onSave={handleEditSubmit}
       />
-    </View>
+    </Pressable>
   );
 }
 
@@ -361,16 +384,12 @@ const styles = StyleSheet.create({
     width: "50%",
   },
   actionButton: {
-    // backgroundColor: "#f1f1f1",
-    // paddingHorizontal: 8,
-    // paddingVertical: 6,
-    // borderRadius: 4,
     flexDirection: "row",
     alignItems: "center",
     marginRight: 12,
   },
   actionText: {
-    marginLeft: 4,
+    marginLeft: 8,
   },
   checkboxButton: {
     padding: 5,
@@ -384,6 +403,7 @@ const styles = StyleSheet.create({
   infoSection: {
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 10,
   },
   infoText: {
     opacity: 0.7,
@@ -411,6 +431,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   iconButton: {
-    margin: 5,
+    marginLeft: 10,
+    opacity: 0.7,
   },
 });

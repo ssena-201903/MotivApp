@@ -72,7 +72,7 @@ export default function GoalDetailsModal({
                   >
                     {t("goalDetails.director")}
                   </CustomText>
-                  <CustomText type="medium" color="#333" fontSize={16}>
+                  <CustomText type="medium" color="#333" fontSize={14}>
                     {goal.director || "Unknown"}
                   </CustomText>
                 </View>
@@ -86,7 +86,7 @@ export default function GoalDetailsModal({
                   >
                     {t("goalDetails.plot")}
                   </CustomText>
-                  <CustomText type="medium" color="#333" fontSize={16}>
+                  <CustomText type="medium" color="#333" fontSize={14}>
                     {goal.plot}
                   </CustomText>
                 </View>
@@ -100,7 +100,7 @@ export default function GoalDetailsModal({
                   >
                     {t("goalDetails.actors")}
                   </CustomText>
-                  <CustomText type="medium" color="#333" fontSize={16}>
+                  <CustomText type="medium" color="#333" fontSize={14}>
                     {goal.actors}
                   </CustomText>
                 </View>
@@ -114,7 +114,7 @@ export default function GoalDetailsModal({
                   >
                     {t("goalDetails.startYear")}
                   </CustomText>
-                  <CustomText type="medium" color="#333" fontSize={16}>
+                  <CustomText type="medium" color="#333" fontSize={14}>
                     {goal.start_year}
                   </CustomText>
                 </View>
@@ -129,7 +129,7 @@ export default function GoalDetailsModal({
                     >
                       {t("goalDetails.totalSeasons")}
                     </CustomText>
-                    <CustomText type="medium" color="#333" fontSize={16}>
+                    <CustomText type="medium" color="#333" fontSize={14}>
                       {goal.totalSeasons}
                     </CustomText>
                   </View>
@@ -148,7 +148,7 @@ export default function GoalDetailsModal({
                 >
                   {t("goalDetails.author")}
                 </CustomText>
-                <CustomText type="medium" color="#333" fontSize={16}>
+                <CustomText type="medium" color="#333" fontSize={14}>
                   {goal.author || "Unknown"}
                 </CustomText>
               </View>
@@ -164,7 +164,7 @@ export default function GoalDetailsModal({
               >
                 {t("goalDetails.createdAt")}
               </CustomText>
-              <CustomText type="medium" color="#333" fontSize={16}>
+              <CustomText type="medium" color="#333" fontSize={14}>
                 {formatDate(goal.createdAt)}
               </CustomText>
             </View>
@@ -179,7 +179,7 @@ export default function GoalDetailsModal({
               >
                 {t("goalDetails.finishedAt")}
               </CustomText>
-              <CustomText type="medium" color="#333" fontSize={16}>
+              <CustomText type="medium" color="#333" fontSize={14}>
                 {goal.finishedAt ? formatDate(goal.finishedAt) : "-"}
               </CustomText>
             </View>

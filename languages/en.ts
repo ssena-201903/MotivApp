@@ -174,7 +174,7 @@ export default {
         notifications: "Notifications",
       },
       cardGoalTodo: {
-        addNote: "Add Note",
+        addNote: "Note",
         createdAt: "Created At",
         readingStatus: "Reaiding Status",
         notStartedStatus: "Not started",

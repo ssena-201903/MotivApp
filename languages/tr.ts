@@ -176,7 +176,7 @@ export default {
         notifications: "Bildirimler",
       },
       cardGoalTodo: {
-        addNote: "Not Ekle",
+        addNote: "Not",
         createdAt: "Oluşturulma zamanı",
         readingStatus: "Okunuyor",
         notStartedStatus: "Okunmadı",
