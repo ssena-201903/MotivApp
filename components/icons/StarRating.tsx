@@ -11,7 +11,7 @@ export default function StarRating ({ rating, onRatingChange }: StarRatingProps)
     <View style={styles.starContainer}>
       {Array.from({ length: 5 }, (_, index) => (
         <TouchableOpacity style={styles.icon} key={index} onPress={() => onRatingChange(index + 1)}>
-          <StarIcon size={20} color={index < rating ? "#FFA38F" : "#1E3A5F"} variant={index < rating ? "fill" : "outlined"}/>
+          <StarIcon size={16} color={index < rating ? "#FFA38F" : "#1E3A5F"} variant={index < rating ? "fill" : "outlined"}/>
         </TouchableOpacity>
       ))}
     </View>

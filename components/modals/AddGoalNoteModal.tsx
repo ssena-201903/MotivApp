@@ -50,16 +50,25 @@ export default function AddGoalNoteModal({
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.content}>
-          <CustomText style={styles.title} type="semibold" fontSize={18} color="#1E3A5F">
+          <CustomText
+            style={styles.title}
+            type="semibold"
+            fontSize={18}
+            color="#1E3A5F"
+          >
             {t("addGoalNote.title")}
           </CustomText>
           <TextInput
             style={styles.input}
             placeholder={t("addGoalNote.notePlaceholder")}
+            placeholderTextColor="#A0AEC0"
             value={note}
             onChangeText={setNote}
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
           />
-        
+
           <View style={styles.buttonContainer}>
             <CustomButton
               label={t("addGoalNote.cancelButtonText")}
@@ -102,14 +111,16 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    height: 100,
+    minHeight: 100, // Minimum yükseklik
     borderColor: "#E5EEFF",
     color: "#1E3A5F",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
+    paddingTop: 10, // Placeholder ve ilk metin yukarıdan başlasın
     backgroundColor: "#F5F8FF",
     marginBottom: 15,
+    textAlignVertical: "top", // İçeriği yukarıdan başlatır
   },
   buttonContainer: {
     flexDirection: "row",

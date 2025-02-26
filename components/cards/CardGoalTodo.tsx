@@ -4,19 +4,18 @@ import { Picker } from "@react-native-picker/picker";
 import { CustomText } from "@/CustomText";
 import GoalDetailsModal from "@/components/modals/GoalDetailsModal";
 import StarRating from "@/components/icons/StarRating";
-import { doc, Timestamp, updateDoc, deleteDoc } from "firebase/firestore";
+import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase.config";
 import BoxIcon from "../icons/BoxIcon";
 import PlusIcon from "@/components/icons/PlusIcon";
 import InfoIcon from "@/components/icons/InfoIcon";
 import TrashIcon from "@/components/icons/TrashIcon";
 import PencilIcon from "@/components/icons/PencilIcon";
-import BookIcon from "@/components/icons/BookIcon";
 
 import { useLanguage } from "@/app/LanguageContext";
-import AddNoteModal from "../modals/AddGoalNoteModal";
 import AddGoalNoteModal from "../modals/AddGoalNoteModal";
 import ConfirmationModal from "../modals/ConfirmationModal";
+import EditGoalModal from "@/components/modals/EditGoalModal"; // Yeni eklenen düzenleme modalı
 
 const { width } = Dimensions.get("window");
 
@@ -35,17 +34,16 @@ export default function CardGoalTodo({
   const [selectedStatus, setSelectedStatus] = useState<string | undefined>(
     goal.readingStatus || "not started"
   );
-  const [rating, setRating] = useState(goal.rating || 0);
   const [isDetailsModalVisible, setIsDetailsModalVisible] =
     useState<boolean>(false);
   const [isAddNoteModalVisible, setIsAddNoteModalVisible] =
     useState<boolean>(false);
-
   const [isConfirmationVisible, setIsConfirmationVisible] =
     useState<boolean>(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false); // Yeni düzenleme modalı durumu
 
   // language context
-  const { t, language, setLanguage } = useLanguage();
+  const { t } = useLanguage();
 
   const handleDelete = async () => {
     try {
@@ -54,26 +52,24 @@ export default function CardGoalTodo({
 
       await deleteDoc(doc(db, "users", userId, "goals", goal.id));
       console.log("Öğe başarıyla silindi!");
-      onUpdate(); // UI'yi güncelle
+      onUpdate();
     } catch (error) {
       console.error("Silme hatası:", error);
     }
   };
 
-  const handleEdit = async () => {
+  const handleEditSubmit = async (updatedName: string) => {
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) return;
-
-      const updatedName = prompt("Yeni ismi girin:", goal.name);
-      if (!updatedName) return;
 
       await updateDoc(doc(db, "users", userId, "goals", goal.id), {
         name: updatedName,
       });
 
       console.log("Öğe başarıyla güncellendi!");
-      onUpdate(); // UI'yi güncelle
+      onUpdate();
+      setIsEditModalVisible(false);
     } catch (error) {
       console.error("Güncelleme hatası:", error);
     }
@@ -99,7 +95,7 @@ export default function CardGoalTodo({
       if (category === "Book")
         setSelectedStatus(updateReadingStatus || "not started");
 
-      onUpdate(); // update list after updating
+      onUpdate();
     } catch (error) {
       console.error("Error updating goal status: ", error);
     }
@@ -120,7 +116,7 @@ export default function CardGoalTodo({
       });
       setSelectedStatus(newStatus);
       setIsDone(updateIsDone);
-      onUpdate(); // update list after updating
+      onUpdate();
     } catch (error) {
       console.error("Error updating reading status: ", error);
     }
@@ -135,17 +131,10 @@ export default function CardGoalTodo({
       await updateDoc(goalRef, {
         rating: newRating,
       });
-      setRating(newRating);
-      onUpdate(); // update list after updating
+      onUpdate();
     } catch (error) {
       console.error("Error updating rating: ", error);
     }
-  };
-
-  const formatDate = (timestamp: Timestamp) => {
-    if (!timestamp || !timestamp.seconds) return "-";
-    const date = new Date(timestamp.seconds * 1000);
-    return date.toISOString().split("T")[0];
   };
 
   const handleAddNote = () => {
@@ -158,40 +147,87 @@ export default function CardGoalTodo({
   };
 
   return (
-    <View style={isDone ? styles.completed : styles.container}>
-      {/* for mobile screens (width <= 768) */}
-      {category === "Movie" && goal.posterUrl && (
+    <View
+      style={[styles.container, isDone && styles.completedContainer]}
+    >
+      {/* Movie poster */}
+      {category === "Movie" && (
         <Image
-          source={{ uri: goal.posterUrl }}
+          source={
+            goal.posterUrl
+              ? { uri: goal.posterUrl }
+              : require("@/assets/images/logo.png")
+          }
           style={styles.poster}
-          defaultSource={require("@/assets/images/logo.png")} // Varsayılan poster
         />
       )}
-      <View style={styles.containerWrap}>
-        <View style={styles.mobileTop}>
-          <View style={styles.mobileNameContainer}>
+
+      <View style={styles.contentContainer}>
+        {/* Top section: Title + Actions */}
+        <View style={styles.topSection}>
+          <View style={styles.titleWrapper}>
             <CustomText
-              style={styles.nameOther}
-              color="#1E3A5F"
+              style={styles.titleText}
+              color="#333"
               fontSize={16}
               type="bold"
+              numberOfLines={1}
+              ellipsizeMode="tail"
             >
               {goal.name}
             </CustomText>
-          </View>
-          <View style={styles.mobileTopRight}>
-            <Pressable style={styles.addNote} onPress={handleAddNote}>
-              <PlusIcon size={16} color="#1E3A5F" />
+            {category === "Movie" && (
               <CustomText
-                style={styles.addNoteText}
-                color="#1E3A5F"
-                fontSize={12}
-                type="medium"
+                style={styles.infoText}
+                color="#666"
+                fontSize={14}
+                type="regular"
               >
-                {t("cardGoalTodo.addNote")}
+                IMDB: {goal.imdbRate} / {goal.runtime}
               </CustomText>
+            )}
+          </View>
+
+          <View style={styles.actionsContainer}>
+            {/* Book status picker or Movie info */}
+            <View style={styles.infoSection}>
+              {category === "Book" && (
+                <Picker
+                  selectedValue={selectedStatus}
+                  onValueChange={handleReadingStatusChange}
+                  style={styles.picker}
+                  dropdownIconColor="#1E3A5F"
+                >
+                  <Picker.Item
+                    label={t("cardGoalTodo.notStartedStatus")}
+                    value="not started"
+                  />
+                  <Picker.Item
+                    label={t("cardGoalTodo.readingStatus")}
+                    value="reading"
+                  />
+                  <Picker.Item
+                    label={t("cardGoalTodo.completedStatus")}
+                    value="read"
+                  />
+                </Picker>
+              )}
+            </View>
+            <Pressable style={styles.actionButton} onPress={handleAddNote}>
+              <PlusIcon size={16} color="#1E3A5F" />
+              {/* {width >= 370 && (
+                <CustomText
+                  style={styles.actionText}
+                  color="#666"
+                  fontSize={12}
+                  type="medium"
+                >
+                  {t("cardGoalTodo.addNote")}
+                </CustomText>
+              )} */}
             </Pressable>
-            <Pressable style={styles.mobileCheckbox} onPress={toggleCard}>
+
+            <Pressable style={styles.checkboxButton} onPress={toggleCard}>
               {isDone ? (
                 <BoxIcon size={20} color="#1E3A5F" variant="fill" />
               ) : (
@@ -200,95 +236,48 @@ export default function CardGoalTodo({
             </Pressable>
           </View>
         </View>
-        <View
-          style={[
-            styles.mobileBottom,
-            category === "Movie" || category === "Book"
-              ? { justifyContent: "space-between" }
-              : { justifyContent: "flex-end" },
-          ]}
-        >
-          {category === "Book" && (
-            <Picker
-              selectedValue={selectedStatus}
-              onValueChange={handleReadingStatusChange}
-              style={styles.picker}
-              dropdownIconColor="#1E3A5F"
-            >
-              <Picker.Item
-                label={t("cardGoalTodo.notStartedStatus")}
-                value="not started"
-              />
-              <Picker.Item
-                label={t("cardGoalTodo.readingStatus")}
-                value="reading"
-              />
-              <Picker.Item
-                label={t("cardGoalTodo.completedStatus")}
-                value="read"
-              />
-            </Picker>
-            // ) : (
-            //   <CustomText
-            //     style={styles.createdAtText}
-            //     color="#1E3A5F"
-            //     fontSize={12}
-            //     type="medium"
-            //   >
-            //     {formatDate(goal.createdAt)}
-            //   </CustomText>
-          )}
-          {category === "Movie" && (
-            <CustomText
-              style={styles.createdAtText}
-              color="#1E3A5F"
-              fontSize={14}
-              type="regular"
-            >
-              IMDB: {goal.imdbRate} / {goal.runtime}
-            </CustomText>
-          )}
-          <View style={styles.mobileRating}>
-            {/* Star Rating */}
-            <View style={styles.starContainer}>
-              <StarRating rating={goal.rating} onRatingChange={() => {}} />
-            </View>
 
-            {/* Info Icon */}
+        {/* Bottom section: Status/Info + Rating/Icons */}
+        <View style={styles.bottomSection}>
+          {/* Rating and action icons */}
+          <View style={styles.ratingSection}>
+            <StarRating
+              rating={goal.rating}
+              onRatingChange={handleRatingChange}
+            />
+
+            {/* information icon */}
             <Pressable
-              style={styles.infoIcon}
+              style={styles.iconButton}
               onPress={() => setIsDetailsModalVisible(true)}
             >
               <InfoIcon size={20} color="#1E3A5F" variant="outlined" />
             </Pressable>
+          </View>
 
-            {/* Eğer kategori Movie veya Book değilse PencilIcon göster */}
-            {category !== "Movie" && category !== "Book" && (
-              <Pressable style={styles.infoIcon} onPress={handleEdit}>
-                <PencilIcon size={20} color="#1E3A5F"/>
+          <View style={styles.iconsContainer}>
+            {/* Edit button for non-Movie categories */}
+            {category !== "Movie" && (
+              <Pressable
+                style={styles.iconButton}
+                onPress={() => setIsEditModalVisible(true)}
+              >
+                <PencilIcon size={20} color="#1E3A5F" />
               </Pressable>
             )}
 
-            {/* Trash Icon (Her kategoride olacak) */}
-            <Pressable style={styles.infoIcon} onPress={() => setIsConfirmationVisible(true)}>
+            {/* Delete button */}
+            <Pressable
+              style={styles.iconButton}
+              onPress={() => setIsConfirmationVisible(true)}
+            >
               <TrashIcon size={20} color="#FF6347" />
             </Pressable>
-
-            {/* Silme işlemi için Confirmation Modal */}
-            <ConfirmationModal
-              visible={isConfirmationVisible}
-              title="Silme Onayı"
-              message="Bu öğeyi silmek istediğinizden emin misiniz?"
-              onConfirm={() => {
-                handleDelete();
-                setIsConfirmationVisible(false);
-              }}
-              onCancel={() => setIsConfirmationVisible(false)}
-            />
           </View>
         </View>
       </View>
 
+      {/* Modals */}
       <GoalDetailsModal
         visible={isDetailsModalVisible}
         onClose={() => setIsDetailsModalVisible(false)}
@@ -301,6 +290,25 @@ export default function CardGoalTodo({
         goal={goal}
         onNoteAdded={handleNoteAdded}
       />
+
+      <ConfirmationModal
+        visible={isConfirmationVisible}
+        title={t("confirmationModal.titleDeleteGoal")}
+        message={t("confirmationModal.messageDeleteGoal")}
+        onConfirm={() => {
+          handleDelete();
+          setIsConfirmationVisible(false);
+        }}
+        onCancel={() => setIsConfirmationVisible(false)}
+      />
+
+      {/* Yeni eklenen düzenleme modalı */}
+      <EditGoalModal
+        visible={isEditModalVisible}
+        onClose={() => setIsEditModalVisible(false)}
+        initialName={goal.name}
+        onSave={handleEditSubmit}
+      />
     </View>
   );
 }
@@ -309,109 +317,100 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     marginBottom: 8,
     width: width > 768 ? width - 900 : width - 40,
-    height: 120,
-    display: "flex",
+    minHeight: 100,
     backgroundColor: "#f8f8f8",
     borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    padding: 15,
   },
-  containerWrap: {
-    flex: 1,
-  },
-  completed: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 8,
-    width: width > 768 ? width - 900 : width - 40,
-    height: 100,
-    display: "flex",
+  completedContainer: {
     backgroundColor: "#E5EEFF",
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
   },
   poster: {
-    width: 50,
-    height: 80,
-    marginRight: 20,
+    width: 60,
+    height: 100,
+    marginRight: 15,
     borderRadius: 4,
   },
-  nameOther: {
+  contentContainer: {
     flex: 1,
-    overflow: "hidden",
-  },
-  picker: {
-    borderColor: "#1E3A5F",
-    width: 110,
-    height: 30,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    backgroundColor: "transparent",
-    color: "#1E3A5F",
-  },
-  createdAtText: {
-    opacity: 0.6,
-  },
-  addNote: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "auto",
-    marginLeft: width > 768 ? 25 : 0,
-    marginRight: width > 768 ? 0 : 10,
-  },
-  addNoteText: {
-    marginLeft: 8,
-    opacity: 0.9,
-  },
-  starContainer: {
+    justifyContent: "space-between",
     marginLeft: 10,
   },
-  infoIcon: {
-    marginLeft: 10,
-    opacity: 0.8,
-  },
-
-  mobileTop: {
-    display: "flex",
+  topSection: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
+    alignItems: "flex-start",
+    marginBottom: 10,
   },
-  mobileBottom: {
-    display: "flex",
+  titleWrapper: {
+    flex: 1,
+    paddingRight: 10,
+    gap: 2,
+    width: "50%",
+  },
+  titleText: {
+    flex: 1,
+  },
+  actionsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    width: "50%",
+  },
+  actionButton: {
+    // backgroundColor: "#f1f1f1",
+    // paddingHorizontal: 8,
+    // paddingVertical: 6,
+    // borderRadius: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  actionText: {
+    marginLeft: 4,
+  },
+  checkboxButton: {
+    padding: 5,
+  },
+  bottomSection: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    width: "100%",
-    marginTop: 20,
+    marginTop: 5,
   },
-  mobileNameContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    maxWidth: "70%",
-  },
-  mobileTopRight: {
-    display: "flex",
+  infoSection: {
     flexDirection: "row",
     alignItems: "center",
   },
-  mobileCheckbox: {
-    marginLeft: 20,
+  infoText: {
+    opacity: 0.7,
   },
-  mobileRating: {
+  picker: {
+    width: 100,
+    height: 30,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    marginRight: 12,
+    borderRadius: 4,
+    borderColor: "#999",
+    color: "#666",
+    backgroundColor: "transparent",
+  },
+  ratingSection: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  iconsContainer: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
+    gap: 5,
+  },
+  iconButton: {
+    margin: 5,
   },
 });

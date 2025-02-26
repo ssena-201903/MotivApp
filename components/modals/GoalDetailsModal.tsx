@@ -12,6 +12,7 @@ import InfoIcon from "../icons/InfoIcon"; // Bilgi ikonu bileşenin
 import { Timestamp } from "firebase/firestore";
 
 import { useLanguage } from "@/app/LanguageContext";
+import { ScrollView } from "react-native-gesture-handler";
 
 const { width } = Dimensions.get("window");
 
@@ -25,7 +26,7 @@ type GoalDetailsModalProps = {
 const formatDate = (timestamp: Timestamp | null) => {
   if (!timestamp) return "N/A";
   const date = new Date(timestamp.seconds * 1000);
-  return date.toLocaleString();
+  return date.toLocaleDateString("tr-TR");
 };
 
 export default function GoalDetailsModal({
@@ -53,94 +54,166 @@ export default function GoalDetailsModal({
             {goal.name}
           </CustomText>
 
-          {/* Director (if category is Movie) */}
-          {goal.category === "Movie" && (
-            <View style={styles.detailItem}>
-              <CustomText
-                style={styles.detailLabel}
-                color="#1E3A5F"
-                fontSize={14}
-                type="regular"
-              >
-                {t("goalDetails.director")}
-              </CustomText>
-              <CustomText type="medium" color="#333" fontSize={16}>
-                {goal.director || "Unknown"}
-              </CustomText>
-            </View>
-          )}
-
-          {/* Author (if category is Book) */}
-          {goal.category === "Book" && (
-            <View style={styles.detailItem}>
-              <CustomText
-                style={styles.detailLabel}
-                color="#1E3A5F"
-                fontSize={14}
-                type="regular"
-              >
-                {t("goalDetails.author")}
-              </CustomText>
-              <CustomText type="medium" color="#333" fontSize={16}>
-                {goal.author || "Unknown"}
-              </CustomText>
-            </View>
-          )}
-
-          {/* Created At */}
-          <View style={styles.detailItem}>
-            <CustomText
-              style={styles.detailLabel}
-              color="#1E3A5F"
-              fontSize={14}
-              type="regular"
-            >
-              {t("goalDetails.createdAt")}
-            </CustomText>
-            <CustomText type="medium" color="#333" fontSize={16}>
-              {formatDate(goal.createdAt)}
-            </CustomText>
-          </View>
-
-          {/* Finished At */}
-          <View style={styles.detailItem}>
-            <CustomText
-              style={styles.detailLabel}
-              color="#1E3A5F"
-              fontSize={14}
-              type="regular"
-            >
-              {t("goalDetails.finishedAt")}
-            </CustomText>
-            <CustomText type="medium" color="#333" fontSize={16}>
-              {goal.finishedAt ? formatDate(goal.finishedAt) : "-"}
-            </CustomText>
-          </View>
-
-          {/* Notes List */}
-          <CustomText
-            style={styles.sectionTitle}
-            color="#1E3A5F"
-            fontSize={16}
-            type="semibold"
+          {/* scrollable detail content except title */}
+          <ScrollView
+            contentContainerStyle={styles.scrollableContent}
+            showsVerticalScrollIndicator={false}
           >
-            {t("goalDetails.notes")}
-          </CustomText>
-          {goal.notes?.length > 0 ? (
-            <FlatList
-              data={goal.notes}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <CustomText style={styles.quoteItem} type="medium" color="#333">
-                  - {item}
+            {/* Director (if category is Movie) */}
+            {goal.category === "Movie" && (
+              <View>
+                {/* director name */}
+                <View style={styles.detailItem}>
+                  <CustomText
+                    style={styles.detailLabel}
+                    color="#1E3A5F"
+                    fontSize={14}
+                    type="regular"
+                  >
+                    {t("goalDetails.director")}
+                  </CustomText>
+                  <CustomText type="medium" color="#333" fontSize={16}>
+                    {goal.director || "Unknown"}
+                  </CustomText>
+                </View>
+                {/* plot */}
+                <View style={styles.detailItem}>
+                  <CustomText
+                    style={styles.detailLabel}
+                    color="#1E3A5F"
+                    fontSize={14}
+                    type="regular"
+                  >
+                    {t("goalDetails.plot")}
+                  </CustomText>
+                  <CustomText type="medium" color="#333" fontSize={16}>
+                    {goal.plot}
+                  </CustomText>
+                </View>
+                {/* actors */}
+                <View style={styles.detailItem}>
+                  <CustomText
+                    style={styles.detailLabel}
+                    color="#1E3A5F"
+                    fontSize={14}
+                    type="regular"
+                  >
+                    {t("goalDetails.actors")}
+                  </CustomText>
+                  <CustomText type="medium" color="#333" fontSize={16}>
+                    {goal.actors}
+                  </CustomText>
+                </View>
+                {/* start year */}
+                <View style={styles.detailItem}>
+                  <CustomText
+                    style={styles.detailLabel}
+                    color="#1E3A5F"
+                    fontSize={14}
+                    type="regular"
+                  >
+                    {t("goalDetails.startYear")}
+                  </CustomText>
+                  <CustomText type="medium" color="#333" fontSize={16}>
+                    {goal.start_year}
+                  </CustomText>
+                </View>
+                
+                {goal.type === "series" && (
+                  <View style={styles.detailItem}>
+                    <CustomText
+                      style={styles.detailLabel}
+                      color="#1E3A5F"
+                      fontSize={14}
+                      type="regular"
+                    >
+                      {t("goalDetails.totalSeasons")}
+                    </CustomText>
+                    <CustomText type="medium" color="#333" fontSize={16}>
+                      {goal.totalSeasons}
+                    </CustomText>
+                  </View>
+                )}
+              </View>
+            )}
+
+            {/* Author (if category is Book) */}
+            {goal.category === "Book" && (
+              <View style={styles.detailItem}>
+                <CustomText
+                  style={styles.detailLabel}
+                  color="#1E3A5F"
+                  fontSize={14}
+                  type="regular"
+                >
+                  {t("goalDetails.author")}
                 </CustomText>
-              )}
-            />
-          ) : (
-            <CustomText style={styles.quoteItem} type="medium" color="#333">
-              {t("goalDetails.noNotesAdded")}
+                <CustomText type="medium" color="#333" fontSize={16}>
+                  {goal.author || "Unknown"}
+                </CustomText>
+              </View>
+            )}
+
+            {/* Created At */}
+            <View style={styles.detailItem}>
+              <CustomText
+                style={styles.detailLabel}
+                color="#1E3A5F"
+                fontSize={14}
+                type="regular"
+              >
+                {t("goalDetails.createdAt")}
+              </CustomText>
+              <CustomText type="medium" color="#333" fontSize={16}>
+                {formatDate(goal.createdAt)}
+              </CustomText>
+            </View>
+
+            {/* Finished At */}
+            <View style={styles.detailItem}>
+              <CustomText
+                style={styles.detailLabel}
+                color="#1E3A5F"
+                fontSize={14}
+                type="regular"
+              >
+                {t("goalDetails.finishedAt")}
+              </CustomText>
+              <CustomText type="medium" color="#333" fontSize={16}>
+                {goal.finishedAt ? formatDate(goal.finishedAt) : "-"}
+              </CustomText>
+            </View>
+
+            {/* Notes List */}
+            <CustomText
+              style={styles.sectionTitle}
+              color="#1E3A5F"
+              fontSize={16}
+              type="semibold"
+            >
+              {t("goalDetails.notes")}
             </CustomText>
-          )}
+            {goal.notes?.length > 0 ? (
+              <FlatList
+                data={goal.notes}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <CustomText
+                    style={styles.quoteItem}
+                    type="medium"
+                    color="#333"
+                  >
+                    - {item}
+                  </CustomText>
+                )}
+                showsVerticalScrollIndicator={false}
+              />
+            ) : (
+              <CustomText style={styles.quoteItem} type="medium" color="#333">
+                {t("goalDetails.noNotesAdded")}
+              </CustomText>
+            )}
+          </ScrollView>
         </View>
       </Pressable>
     </Modal>
@@ -158,7 +231,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f8f8",
     borderRadius: 8,
     padding: 20,
+    maxHeight: 400,
     width: width > 768 ? "30%" : width - 40,
+  },
+  scrollableContent: {
+    flex: 1,
   },
   title: {
     fontSize: 20,
@@ -167,7 +244,7 @@ const styles = StyleSheet.create({
   },
   detailItem: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginBottom: 16,
   },
   detailLabel: {

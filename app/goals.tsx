@@ -144,7 +144,7 @@ export default function Goals() {
               {category.id === "Book" && (
                 <BookIcon
                   size={22}
-                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#999"}
                   variant={activeCategory === category.id ? "fill" : "outlined"}
                 />
               )}
@@ -172,7 +172,7 @@ export default function Goals() {
               {category.id === "Food" && (
                 <FoodIcon
                   size={22}
-                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#999"}
                   variant={activeCategory === category.id ? "fill" : "outlined"}
                 />
               )}
@@ -192,7 +192,7 @@ export default function Goals() {
         <View style={styles.contentBody}>
           {/* search movie  */}
           {activeCategory === "Movie" && (
-            <SearchMovie/>
+            <SearchMovie updateGoals={fetchGoals}/>
           )}
           
           <View style={styles.headerContainer}>
