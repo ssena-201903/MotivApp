@@ -40,7 +40,7 @@ export default {
         cardGoalWatch: "Movies",
         cardGoalRead: "Books",
         cardGoalGo: "Travel",
-        cardGoalTry: "Activities",
+        cardGoalTry: "To-Do",
         cardHabitBook: "Book Reading",
         cardHabitSport: "Sports",
         cardHabitVocabulary: "Vocabulary",

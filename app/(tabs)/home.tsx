@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flexGrow: 1,
-    // backgroundColor: "#FCFCFC",
+    backgroundColor: "#FCFCFC",
   },
   container: {
     flex: 1,

@@ -356,8 +356,8 @@ export default function SearchMovie({ updateGoals }: SearcMovieProps) {
               <CustomButton
                 label={t("searchMovie.addButtonText")}
                 onPress={() => addMediaToFirestore(item)}
-                width={100}
-                height={40}
+                width={80}
+                height={35}
               />
             </View>
           )}

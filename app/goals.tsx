@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, act } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { CustomText } from "@/CustomText";
 import AddGoalModal from "@/components/modals/AddGoalModal";
@@ -134,58 +134,55 @@ export default function Goals() {
               onPress={() => handleCategoryPress(category.id)}
               key={category.id}
             >
-              {category.id === "Movie" && (
+              {/* {category.id === "Movie" && (
                 <MovieIcon
                   size={18}
-                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
-                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#D3D3D3"}
+                  variant={activeCategory === category.id ? "fill" : "fill"}
                 />
               )}
               {category.id === "Book" && (
                 <BookIcon
                   size={22}
-                  color={activeCategory === category.id ? "#1E3A5F" : "#999"}
-                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#D3D3D3"}
+                  variant={activeCategory === category.id ? "fill" : "fill"}
                 />
               )}
               {category.id === "Activity" && (
                 <ActivityIcon
                   size={24}
-                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
-                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#D3D3D3"}
+                  variant={activeCategory === category.id ? "fill" : "fill"}
                 />
               )}
               {category.id === "Place" && (
                 <CarIcon
                   size={24}
-                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
-                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#D3D3D3"}
+                  variant={activeCategory === category.id ? "fill" : "fill"}
                 />
               )}
               {category.id === "Buy" && (
                 <WalletIcon
                   size={22}
-                  color={activeCategory === category.id ? "#1E3A5F" : "#888"}
-                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#D3D3D3"}
+                  variant={activeCategory === category.id ? "fill" : "fill"}
                 />
               )}
               {category.id === "Food" && (
                 <FoodIcon
                   size={22}
-                  color={activeCategory === category.id ? "#1E3A5F" : "#999"}
-                  variant={activeCategory === category.id ? "fill" : "outlined"}
+                  color={activeCategory === category.id ? "#1E3A5F" : "#D3D3D3"}
+                  variant={activeCategory === category.id ? "fill" : "fill"}
                 />
-              )}
-              {/* <CustomText
-                style={
-                  activeCategory === category.id
-                    ? styles.activeButtonText
-                    : styles.buttonText
-                }
-                type="regular"
+              )} */}
+              <CustomText
+                type={activeCategory === category.id ? "bold" : "regular"}
+                fontSize={12}
+                color={activeCategory === category.id ? "#1E3A5F" : "#D3D3D3"}
               >
                 {category.label}
-              </CustomText> */}
+              </CustomText>
             </TouchableOpacity>
           ))}
         </View>
@@ -261,6 +258,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     alignItems: "center",
     justifyContent: "flex-start",
+    backgroundColor: "#FCFCFC",
   },
   categoriesContainer: {
     display: "flex",
@@ -287,17 +285,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     color: "#1E3A5F",
     opacity: 0.6,
-    fontSize: 10,
-    marginTop: 6,
+    fontSize: 12,
   },
   activeButton: {
     backgroundColor: "#E5EEFF",
-  },
-  activeButtonText: {
-    color: "#1E3A5F",
-    fontSize: 10,
-    fontWeight: 600,
-    marginTop: 6,
   },
   headerContainer: {
     width: "100%",

@@ -100,10 +100,30 @@ export default function GoalDetailsModal({
                   >
                     {t("goalDetails.actors")}
                   </CustomText>
-                  <CustomText type="medium" color="#333" fontSize={14}>
-                    {goal.actors}
-                  </CustomText>
+
+                  {goal.actors?.length > 0 ? (
+                    <FlatList
+                      data={goal.actors}
+                      keyExtractor={(item, index) => index.toString()}
+                      renderItem={({ item }) => (
+                        <CustomText
+                          style={styles.quoteItem}
+                          type="medium"
+                          color="#333"
+                        >
+                          {item}
+                        </CustomText>
+                      )}
+                      showsVerticalScrollIndicator={false}
+                    />
+                  ) : (
+                    <CustomText type="medium" color="#333" fontSize={14}>
+                      {t("goalDetails.noActors")}{" "}
+                      {/* Eğer boşsa bir mesaj göster */}
+                    </CustomText>
+                  )}
                 </View>
+
                 {/* start year */}
                 <View style={styles.detailItem}>
                   <CustomText
@@ -118,7 +138,7 @@ export default function GoalDetailsModal({
                     {goal.start_year}
                   </CustomText>
                 </View>
-                
+
                 {goal.type === "series" && (
                   <View style={styles.detailItem}>
                     <CustomText
