@@ -344,9 +344,17 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     width: width > 768 ? width - 900 : width - 40,
     minHeight: 100,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#f9f9f9",
     borderRadius: 8,
     padding: 15,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   completedContainer: {
     backgroundColor: "#E5EEFF",
