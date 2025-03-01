@@ -18,7 +18,7 @@ export default function FriendCard({ item, type, onAction }: Props) {
           label={getStatusText()}
           onPress={() => onAction(item.id)}
           variant="fill"
-          width={140}
+          width={130}
           height={40}
         />
       );
@@ -28,7 +28,7 @@ export default function FriendCard({ item, type, onAction }: Props) {
           label={getStatusText()}
           onPress={() => onAction(item.id)}
           variant="cancel"
-          width={140}
+          width={130}
           height={40}
         />
       );
@@ -62,12 +62,11 @@ export default function FriendCard({ item, type, onAction }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#fff",
     borderRadius: 8,
     padding: 15,
-    width: 420,
+    width: "100%",
     height: 80,
-    marginHorizontal: 20,
     marginVertical: 8,
     flexDirection: "row",
     alignItems: "center",

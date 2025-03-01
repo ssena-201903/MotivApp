@@ -11,19 +11,13 @@ import { auth, db } from "@/firebase.config";
 import FriendRequestCard from "@/components/cards/FriendRequestCard";
 import { collection, query, where, getDocs, onSnapshot } from "firebase/firestore";
 import { showMessage } from "react-native-flash-message";
+import NotificationRequestAcceptCard from "@/components/cards/NotificationRequestAcceptCard";
 
 const { width } = Dimensions.get("window");
 
-type Props = {
-  onDiamondPress: () => void;
-  onDatePress: () => void;
-};
-
-export default function NotificationPage({
-  onDiamondPress,
-  onDatePress,
-}: Props) {
+export default function NotificationPage() {
   const [friendRequests, setFriendRequests] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const currentUserId = auth.currentUser?.uid;
 
@@ -31,6 +25,7 @@ export default function NotificationPage({
     if (!currentUserId) return;
     
     loadFriendRequests();
+    loadNotifications();
     
     // Optional: Real-time updates for friend requests
     const requestsRef = collection(db, "friendRequests");
@@ -50,6 +45,7 @@ export default function NotificationPage({
       });
       
       setFriendRequests(requests);
+      setNotifications(notifications);
       setLoading(false);
     }, (error) => {
       console.error("Error in friend requests listener:", error);
@@ -94,9 +90,38 @@ export default function NotificationPage({
     }
   };
 
+  const loadNotifications = async () => {
+    try {
+      const notificationsRef = collection(db, "notifications");
+      const q = query(notificationsRef, 
+        where("type", "==", "friendRequestAccepted"),
+        where("relatedUserId", "==", currentUserId)
+      );
+      const snapshot = await getDocs(q);
+
+      const notifications: any = [];
+
+      snapshot.forEach((doc) => {
+        notifications.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+
+      setNotifications(notifications);
+    } catch (error) {
+      
+    }
+  }
+
   const handleRequestAction = (requestId: string) => {
     // Remove the request from the list
     setFriendRequests(friendRequests.filter(req => req.id !== requestId));
+  };
+
+  const handleRemoveNotification = (notificationId: string) => {
+    // Remove the notification from the list
+    setNotifications(notifications.filter(notif => notif.id !== notificationId));
   };
 
   return (
@@ -105,7 +130,7 @@ export default function NotificationPage({
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#1E3A5F" />
         </View>
-      ) : friendRequests.length > 0 ? (
+      ) : friendRequests.length > 0 || notifications.length > 0 ? (
         <ScrollView style={styles.scrollContainer}>
           <View style={styles.sectionContainer}>
             <CustomText
@@ -123,6 +148,25 @@ export default function NotificationPage({
                 request={request}
                 onAccept={() => handleRequestAction(request.id)}
                 onReject={() => handleRequestAction(request.id)}
+              />
+            ))}
+          </View>
+          
+          <View style={styles.sectionContainer}>
+          <CustomText
+              type="semibold" 
+              fontSize={16} 
+              color="#1E3A5F"
+              style={styles.sectionTitle}
+            >
+              Bildirimler
+            </CustomText>
+
+            {notifications.map((notification: any) => (
+              <NotificationRequestAcceptCard
+                key={notification.id}
+                item={notification}
+                onRead={() => handleRemoveNotification(notification.id)}
               />
             ))}
           </View>

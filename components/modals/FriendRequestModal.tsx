@@ -1,6 +1,6 @@
 import { CustomText } from "@/CustomText";
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Modal, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Modal, TouchableOpacity, Dimensions } from "react-native";
 import CloseIcon from "../icons/CloseIcon";
 import InputField from "../cards/InputField";
 import CustomButton from "../CustomButton";
@@ -16,6 +16,8 @@ import {
   serverTimestamp,
   addDoc
 } from "firebase/firestore";
+
+const { width } = Dimensions.get("window");
 
 type Props = {
   visible: boolean;
@@ -169,7 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FCFCFC",
     padding: 20,
     borderRadius: 8,
-    width: 500,
+    width: width > 768 ? "50%" : width - 40,
     alignItems: "center",
     position: "relative",
     gap: 20,

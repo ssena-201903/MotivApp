@@ -205,14 +205,6 @@ export default function FriendsPage() {
     }
   };
 
-  const handleCardAction = (id: string, type: string) => {
-    if (type === "sent") {
-      handleCancelRequest(id);
-    } else {
-      handleRemoveFriend(id);
-    }
-  };
-
   const handleViewRequestModal = () => {
     setIsRequestModalVisible(true);
   };
@@ -317,7 +309,7 @@ export default function FriendsPage() {
 
           {friends.length === 0 && sentRequests.length === 0 && (
             <View style={styles.emptyContainer}>
-              <CustomText type="medium" fontSize={14} color="#666">
+              <CustomText style={styles.emptyText} type="medium" fontSize={14} color="#666">
                 Henüz bir arkadaşınız veya gönderilmiş bir isteğiniz
                 bulunmamaktadır.
               </CustomText>
@@ -349,6 +341,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FCFCFC",
     position: "relative",
+    alignItems: "center",
   },
   buttonContainer: {
     display: "flex",
@@ -373,9 +366,16 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
     marginTop: 40,
+    width: width > 768 ? width - 860 : width - 40,
+    // backgroundColor: "yellow",
   },
   contentContainer: {
     paddingBottom: 80,
+    paddingHorizontal: 20,
+    // backgroundColor: "green",
+  },
+  emptyText: {
+    alignContent: "center",
   },
   sectionContainer: {
     marginBottom: 20,

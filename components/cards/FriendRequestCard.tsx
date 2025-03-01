@@ -22,7 +22,6 @@ export default function FriendRequestCard({ request, onAccept, onReject }: Props
     if (loading) return;
     
     setLoading(true);
-    // setActionType("accept");
     
     try {
       // Create a new friend connection document
@@ -35,7 +34,16 @@ export default function FriendRequestCard({ request, onAccept, onReject }: Props
         participants: [request.senderId, currentUserId],
         createdAt: serverTimestamp(),
       });
-      
+
+      await addDoc(collection(db, "notifications"), {
+        senderUserId: request.senderId,
+        senderNickname: request.senderNickname,
+        type: "friendRequestAccepted",
+        relatedUserId: currentUserId,
+        createdAt: serverTimestamp(),
+        isRead: false,
+      })
+
       // Delete the friend request
       await deleteDoc(doc(db, "friendRequests", request.id));
       
