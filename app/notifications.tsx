@@ -9,7 +9,17 @@ import { CustomText } from "@/CustomText";
 import { useEffect, useState } from "react";
 import { auth, db } from "@/firebase.config";
 import FriendRequestCard from "@/components/cards/FriendRequestCard";
-import { collection, query, where, getDocs, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+  deleteDoc,
+  doc,
+  getDoc,
+  orderBy,
+} from "firebase/firestore";
 import { showMessage } from "react-native-flash-message";
 import NotificationRequestAcceptCard from "@/components/cards/NotificationRequestAcceptCard";
 
@@ -23,41 +33,77 @@ export default function NotificationPage() {
 
   useEffect(() => {
     if (!currentUserId) return;
-    
-    loadFriendRequests();
-    loadNotifications();
-    
-    // Optional: Real-time updates for friend requests
-    const requestsRef = collection(db, "friendRequests");
-    const q = query(
-      requestsRef,
+  
+    // 1️⃣ Arkadaşlık istekleri için snapshot listener
+    const friendRequestsRef = collection(db, "friendRequests");
+    const friendRequestsQuery = query(
+      friendRequestsRef,
       where("receiverId", "==", currentUserId),
       where("status", "==", "pending")
     );
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const requests: any = [];
-      snapshot.forEach((doc) => {
-        requests.push({
-          id: doc.id,
-          ...doc.data()
+  
+    const unsubscribeFriendRequests = onSnapshot(
+      friendRequestsQuery,
+      (snapshot) => {
+        const requests: any = [];
+        snapshot.forEach((doc) => {
+          requests.push({
+            id: doc.id,
+            ...doc.data(),
+          });
         });
-      });
-      
-      setFriendRequests(requests);
-      setNotifications(notifications);
-      setLoading(false);
-    }, (error) => {
-      console.error("Error in friend requests listener:", error);
-      setLoading(false);
-      showMessage({
-        message: "Bildirimler yüklenirken bir hata oluştu!",
-        type: "danger",
-      });
-    });
-    
-    return () => unsubscribe();
+  
+        setFriendRequests(requests);
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error in friend requests listener:", error);
+        showMessage({
+          message: "Arkadaşlık istekleri yüklenirken bir hata oluştu!",
+          type: "danger",
+        });
+        setLoading(false);
+      }
+    );
+  
+    // 2️⃣ Bildirimler için snapshot listener
+    const notificationsRef = collection(db, "notifications");
+    const notificationsQuery = query(
+      notificationsRef,
+      where("relatedUserId", "==", currentUserId),
+    );
+  
+    const unsubscribeNotifications = onSnapshot(
+      notificationsQuery,
+      (snapshot) => {
+        const notificationsData: any = [];
+        snapshot.forEach((doc) => {
+          notificationsData.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+  
+        setNotifications(notificationsData);
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error in notifications listener:", error);
+        showMessage({
+          message: "Bildirimler yüklenirken bir hata oluştu!",
+          type: "danger",
+        });
+        setLoading(false);
+      }
+    );
+  
+    // Cleanup fonksiyonu (Component unmount olunca dinleyicileri kaldır)
+    return () => {
+      unsubscribeFriendRequests();
+      unsubscribeNotifications();
+    };
   }, [currentUserId]);
+  
 
   const loadFriendRequests = async () => {
     try {
@@ -67,17 +113,17 @@ export default function NotificationPage() {
         where("receiverId", "==", currentUserId),
         where("status", "==", "pending")
       );
-      
+
       const snapshot = await getDocs(q);
       const requests: any = [];
-      
+
       snapshot.forEach((doc) => {
         requests.push({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         });
       });
-      
+
       setFriendRequests(requests);
     } catch (error) {
       console.error("Error loading friend requests:", error);
@@ -92,36 +138,61 @@ export default function NotificationPage() {
 
   const loadNotifications = async () => {
     try {
+      console.log("currentUserId:", currentUserId);
       const notificationsRef = collection(db, "notifications");
-      const q = query(notificationsRef, 
+      const q = query(
+        notificationsRef,
         where("type", "==", "friendRequestAccepted"),
-        where("relatedUserId", "==", currentUserId)
+        where("relatedUserId", "==", currentUserId),
+        orderBy("createdAt", "desc")
       );
       const snapshot = await getDocs(q);
+      console.log("Notifications Snapshot:", snapshot);
 
       const notifications: any = [];
 
       snapshot.forEach((doc) => {
         notifications.push({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         });
       });
 
       setNotifications(notifications);
-    } catch (error) {
-      
-    }
-  }
+    } catch (error) {}
+  };
 
   const handleRequestAction = (requestId: string) => {
     // Remove the request from the list
-    setFriendRequests(friendRequests.filter(req => req.id !== requestId));
+    setFriendRequests(friendRequests.filter((req) => req.id !== requestId));
   };
 
-  const handleRemoveNotification = (notificationId: string) => {
-    // Remove the notification from the list
-    setNotifications(notifications.filter(notif => notif.id !== notificationId));
+  const handleRemoveNotification = async (notificationId: string) => {
+    // console.log("Silme işlemi başlatıldı. Notification ID:", notificationId);
+
+    try {
+      const notificationRef = doc(db, "notifications", notificationId);
+
+      const snapshot = await getDoc(notificationRef);
+      if (!snapshot.exists()) {
+        console.log("Bildirim zaten yok. Firestore'dan silinmiş olabilir.");
+        return;
+      }
+
+      await deleteDoc(notificationRef);
+      // console.log("Bildirim Firestore'dan başarıyla silindi.");
+
+      // State'ten de kaldır
+      setNotifications((prevNotifications) =>
+        prevNotifications.filter((notif) => notif.id !== notificationId)
+      );
+    } catch (error) {
+      // console.error("Bildirim silinirken hata oluştu:", error);
+      showMessage({
+        message: "Bildirim silinirken bir hata oluştu!",
+        type: "danger",
+      });
+    }
   };
 
   return (
@@ -134,14 +205,14 @@ export default function NotificationPage() {
         <ScrollView style={styles.scrollContainer}>
           <View style={styles.sectionContainer}>
             <CustomText
-              type="semibold" 
-              fontSize={16} 
+              type="semibold"
+              fontSize={16}
               color="#1E3A5F"
               style={styles.sectionTitle}
             >
               Arkadaşlık İstekleri
             </CustomText>
-            
+
             {friendRequests.map((request: any) => (
               <FriendRequestCard
                 key={request.id}
@@ -151,11 +222,11 @@ export default function NotificationPage() {
               />
             ))}
           </View>
-          
+
           <View style={styles.sectionContainer}>
-          <CustomText
-              type="semibold" 
-              fontSize={16} 
+            <CustomText
+              type="semibold"
+              fontSize={16}
               color="#1E3A5F"
               style={styles.sectionTitle}
             >

@@ -36,10 +36,10 @@ export default function FriendRequestCard({ request, onAccept, onReject }: Props
       });
 
       await addDoc(collection(db, "notifications"), {
-        senderUserId: request.senderId,
-        senderNickname: request.senderNickname,
+        senderUserId: currentUserId,
+        receiverNickname: request.receiverNickname,
         type: "friendRequestAccepted",
-        relatedUserId: currentUserId,
+        relatedUserId: request.senderId,
         createdAt: serverTimestamp(),
         isRead: false,
       })
