@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
+  Pressable,
 } from "react-native";
 import CustomButton from "@/components/CustomButton";
 import { CustomText } from "@/CustomText";
@@ -31,10 +32,14 @@ export default function EditGoalModal({ visible, onClose, initialName, onSave }:
     }
   };
 
+  const handleModelContentPress = (event: any) => {
+    event.stopPropagation();
+  };
+
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
+        <Pressable style={styles.modalContent} onPress={handleModelContentPress}>
           <CustomText type="semibold" fontSize={18} color="#1E3A5F" style={{ marginBottom: 20 }}>
             {t("editModal.titleGoal")}
           </CustomText>
@@ -60,11 +65,10 @@ export default function EditGoalModal({ visible, onClose, initialName, onSave }:
                 width={120}
                 height={45}
                 marginLeft={10}
-                // disabled={name.trim() === ""}
               />
             </TouchableOpacity>
           </View>
-        </View>
+        </Pressable>
       </View>
     </Modal>
   );

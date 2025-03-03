@@ -11,11 +11,14 @@ import PlusIcon from "@/components/icons/PlusIcon";
 import InfoIcon from "@/components/icons/InfoIcon";
 import TrashIcon from "@/components/icons/TrashIcon";
 import PencilIcon from "@/components/icons/PencilIcon";
+import HeartIcon from "@/components/icons/HeartIcon";
+import ThumbsUpIcon from "@/components/icons/ThumbsUpIcon";
 
 import { useLanguage } from "@/app/LanguageContext";
 import AddGoalNoteModal from "../modals/AddGoalNoteModal";
 import ConfirmationModal from "../modals/ConfirmationModal";
 import EditGoalModal from "@/components/modals/EditGoalModal";
+import FriendsListModal from "../modals/FriendsListModal";
 
 const { width } = Dimensions.get("window");
 
@@ -41,6 +44,8 @@ export default function CardGoalTodo({
   const [isConfirmationVisible, setIsConfirmationVisible] =
     useState<boolean>(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
+  const [isFriendsModalVisible, setIsFriendsModalVisible] =
+    useState<boolean>(false);
 
   // language context
   const { t } = useLanguage();
@@ -137,7 +142,7 @@ export default function CardGoalTodo({
     }
   };
 
-  const handleAddNote = (event :any) => {
+  const handleAddNote = (event: any) => {
     // Olayın üst bileşenlere yayılmasını önle
     event.stopPropagation();
     setIsAddNoteModalVisible(true);
@@ -154,28 +159,36 @@ export default function CardGoalTodo({
   };
 
   // İç butonlar için tıklama işleyicileri
-  const handleDeleteButtonPress = (event :any) => {
+  const handleDeleteButtonPress = (event: any) => {
     event.stopPropagation(); // Olayın kartın tıklama olayına yayılmasını engelle
     setIsConfirmationVisible(true);
   };
 
-  const handleEditButtonPress = (event :any) => {
+  const handleEditButtonPress = (event: any) => {
     event.stopPropagation();
     setIsEditModalVisible(true);
   };
 
-  const handleCheckboxPress = (event :any) => {
+  const handleCheckboxPress = (event: any) => {
     event.stopPropagation();
     toggleCard();
   };
 
   // Picker için tıklama işleyicisi
-  const handlePickerPress = (event :any) => {
+  const handlePickerPress = (event: any) => {
     event.stopPropagation();
   };
 
+  const handleAdvicePress = (event: any) => {
+    event.stopPropagation();
+    setIsFriendsModalVisible(true);
+  }
+
   return (
-    <Pressable style={[styles.container, isDone && styles.completedContainer]} onPress={handleCardPress}>
+    <Pressable
+      style={[styles.container, isDone && styles.completedContainer]}
+      onPress={handleCardPress}
+    >
       {/* Movie poster */}
       {category === "Movie" && (
         <Image
@@ -213,10 +226,7 @@ export default function CardGoalTodo({
               </CustomText>
             )}
             {category === "Book" && (
-              <Pressable 
-                style={styles.infoSection} 
-                onPress={handlePickerPress}
-              >
+              <Pressable style={styles.infoSection} onPress={handlePickerPress}>
                 <Picker
                   selectedValue={selectedStatus}
                   onValueChange={(value) => {
@@ -244,7 +254,7 @@ export default function CardGoalTodo({
 
           <View style={styles.actionsContainer}>
             <Pressable style={styles.actionButton} onPress={handleAddNote}>
-              <PlusIcon size={16} color="#1E3A5F" />
+              <PlusIcon size={12} color="#1E3A5F" />
               {width >= 340 && (
                 <CustomText
                   style={styles.actionText}
@@ -257,7 +267,10 @@ export default function CardGoalTodo({
               )}
             </Pressable>
 
-            <Pressable style={styles.checkboxButton} onPress={handleCheckboxPress}>
+            <Pressable
+              style={styles.checkboxButton}
+              onPress={handleCheckboxPress}
+            >
               {isDone ? (
                 <BoxIcon size={20} color="#1E3A5F" variant="fill" />
               ) : (
@@ -283,12 +296,27 @@ export default function CardGoalTodo({
             {/* Edit button for non-Movie categories */}
             {category !== "Movie" && (
               <Pressable
-                style={styles.iconButton}
+                style={styles.actionButton}
                 onPress={handleEditButtonPress}
               >
-                <PencilIcon size={20} color="#1E3A5F" />
+                <PencilIcon size={14} color="#1E3A5F" />
+                <CustomText
+                  style={styles.actionText}
+                  color="#666"
+                  fontSize={14}
+                  type="medium"
+                >
+                  Düzenle
+                </CustomText>
               </Pressable>
             )}
+
+            <Pressable
+              style={styles.iconButton}
+              onPress={handleAdvicePress}
+            >
+              <ThumbsUpIcon size={20} color="#1E3A5F" variant="outlined" />
+            </Pressable>
 
             {/* Delete button */}
             <Pressable
@@ -331,6 +359,12 @@ export default function CardGoalTodo({
         onClose={() => setIsEditModalVisible(false)}
         initialName={goal.name}
         onSave={handleEditSubmit}
+      />
+
+      <FriendsListModal
+        isFriendsModalVisible={isFriendsModalVisible}
+        onClose={() => {setIsFriendsModalVisible(false)}}
+        goal={goal}
       />
     </Pressable>
   );
@@ -395,6 +429,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginRight: 12,
+    backgroundColor: "#E5EEFF",
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   actionText: {
     marginLeft: 8,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, View, TextInput, StyleSheet, Dimensions } from "react-native";
+import { Modal, View, TextInput, StyleSheet, Dimensions, Pressable } from "react-native";
 import CustomButton from "@/components/CustomButton";
 import { CustomText } from "@/CustomText";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
@@ -46,10 +46,14 @@ export default function AddGoalNoteModal({
     }
   };
 
+  const handleModelContentPress = (event: any) => {
+    event.stopPropagation();
+  };
+
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
-        <View style={styles.content}>
+        <Pressable style={styles.content} onPress={handleModelContentPress}>
           <CustomText
             style={styles.title}
             type="semibold"
@@ -86,7 +90,7 @@ export default function AddGoalNoteModal({
               marginLeft={10}
             />
           </View>
-        </View>
+        </Pressable>
       </View>
     </Modal>
   );
