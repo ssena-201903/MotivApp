@@ -250,6 +250,14 @@ export default function NotificationPage() {
 
   return (
     <View style={styles.container}>
+      {/* <CustomText
+        type="semibold"
+        fontSize={16}
+        color="#1E3A5F"
+        style={styles.sectionTitle}
+      >
+        Bildirimler
+      </CustomText> */}
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#1E3A5F" />
@@ -257,17 +265,12 @@ export default function NotificationPage() {
       ) : friendRequests.length > 0 ||
         notifications.length > 0 ||
         recommendations.length > 0 ? (
-        <ScrollView style={styles.scrollContainer}>
+        <ScrollView
+          style={styles.scrollContainer}
+          contentContainerStyle={styles.scrollContentContainer}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.sectionContainer}>
-            <CustomText
-              type="semibold"
-              fontSize={16}
-              color="#1E3A5F"
-              style={styles.sectionTitle}
-            >
-              Arkadaşlık İstekleri
-            </CustomText>
-
             {friendRequests.map((request: any) => (
               <FriendRequestCard
                 key={request.id}
@@ -279,15 +282,6 @@ export default function NotificationPage() {
           </View>
 
           <View style={styles.sectionContainer}>
-            <CustomText
-              type="semibold"
-              fontSize={16}
-              color="#1E3A5F"
-              style={styles.sectionTitle}
-            >
-              Bildirimler
-            </CustomText>
-
             {notifications.map((notification: any) => (
               <NotificationRequestAcceptCard
                 key={notification.id}
@@ -298,15 +292,6 @@ export default function NotificationPage() {
 
             {/* Tavsiyeler */}
             <View style={styles.sectionContainer}>
-              <CustomText
-                type="semibold"
-                fontSize={16}
-                color="#1E3A5F"
-                style={styles.sectionTitle}
-              >
-                Tavsiyeler
-              </CustomText>
-
               {recommendations.map((recommendation: any) => (
                 <RecommendationCard
                   key={recommendation.id}
@@ -332,6 +317,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FCFCFC",
     position: "relative",
+    alignItems: "center",
   },
   loadingContainer: {
     flex: 1,
@@ -342,10 +328,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sectionContainer: {
-    padding: 20,
+    paddingVertical: 20,
   },
   sectionTitle: {
-    marginBottom: 10,
+    alignSelf: "flex-start",
+    marginVertical: 20,
+    marginLeft: 20,
   },
   emptyContainer: {
     flex: 1,

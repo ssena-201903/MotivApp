@@ -163,6 +163,7 @@ export default function FriendsListModal({
               runtime: goal.runtime,
               start_year: goal.start_year,
               type: goal.type,
+              posterUrl: goal.posterUrl
             }),
 
             ...(goal.type === "series" && { 
@@ -173,6 +174,8 @@ export default function FriendsListModal({
             rating: goal.rating,
             receiverId: friend.id,
             receiverNickname: friend.nickname,
+            isSeen: false,
+            isAdded: false,
             createdAt: new Date()
           });
         }

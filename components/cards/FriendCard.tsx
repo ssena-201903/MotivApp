@@ -18,7 +18,7 @@ export default function FriendCard({ item, type, onAction }: Props) {
           label={getStatusText()}
           onPress={() => onAction(item.id)}
           variant="fill"
-          width={130}
+          width={80}
           height={40}
         />
       );
@@ -28,7 +28,7 @@ export default function FriendCard({ item, type, onAction }: Props) {
           label={getStatusText()}
           onPress={() => onAction(item.id)}
           variant="cancel"
-          width={130}
+          width={80}
           height={40}
         />
       );
@@ -39,7 +39,7 @@ export default function FriendCard({ item, type, onAction }: Props) {
     if (type === "request") {
       return "Bekleniyor...";
     } else {
-      return "Bağlantıyı Sil";
+      return "Sil";
     }
   };
 
