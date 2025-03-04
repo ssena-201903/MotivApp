@@ -141,11 +141,11 @@ export default function FriendsListModal({
   
         if (matchingFriendship) {
           const friendshipRef = matchingFriendship.ref;
-  
+
           // add recommendation to the subcollection
           const recommendationRef = collection(friendshipRef, "recommendations");
+          
           await addDoc(recommendationRef, {
-            id: goal.id,
             name: goal.name,
             category: goal.category,
   

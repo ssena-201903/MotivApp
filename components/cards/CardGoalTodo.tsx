@@ -334,6 +334,8 @@ export default function CardGoalTodo({
         visible={isDetailsModalVisible}
         onClose={() => setIsDetailsModalVisible(false)}
         goal={goal}
+        isPrivate={true}
+        isNotesVisible={true}
       />
 
       <AddGoalNoteModal

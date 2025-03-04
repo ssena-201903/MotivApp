@@ -20,6 +20,8 @@ type GoalDetailsModalProps = {
   visible: boolean;
   onClose: () => void;
   goal: any;
+  isPrivate: boolean;
+  isNotesVisible: boolean;
 };
 
 // function to format date
@@ -33,6 +35,8 @@ export default function GoalDetailsModal({
   visible,
   onClose,
   goal,
+  isPrivate,
+  isNotesVisible,
 }: GoalDetailsModalProps) {
   const { t, language, setLanguage } = useLanguage();
 
@@ -175,63 +179,75 @@ export default function GoalDetailsModal({
             )}
 
             {/* Created At */}
-            <View style={styles.detailItem}>
-              <CustomText
-                style={styles.detailLabel}
-                color="#1E3A5F"
-                fontSize={14}
-                type="regular"
-              >
-                {t("goalDetails.createdAt")}
-              </CustomText>
-              <CustomText type="medium" color="#333" fontSize={14}>
-                {formatDate(goal.createdAt)}
-              </CustomText>
-            </View>
+            {isPrivate && (
+              <View style={styles.detailItem}>
+                <CustomText
+                  style={styles.detailLabel}
+                  color="#1E3A5F"
+                  fontSize={14}
+                  type="regular"
+                >
+                  {t("goalDetails.createdAt")}
+                </CustomText>
+                <CustomText type="medium" color="#333" fontSize={14}>
+                  {formatDate(goal.createdAt)}
+                </CustomText>
+              </View>
+            )}
 
             {/* Finished At */}
-            <View style={styles.detailItem}>
-              <CustomText
-                style={styles.detailLabel}
-                color="#1E3A5F"
-                fontSize={14}
-                type="regular"
-              >
-                {t("goalDetails.finishedAt")}
-              </CustomText>
-              <CustomText type="medium" color="#333" fontSize={14}>
-                {goal.finishedAt ? formatDate(goal.finishedAt) : "-"}
-              </CustomText>
-            </View>
+            {isPrivate && (
+              <View style={styles.detailItem}>
+                <CustomText
+                  style={styles.detailLabel}
+                  color="#1E3A5F"
+                  fontSize={14}
+                  type="regular"
+                >
+                  {t("goalDetails.finishedAt")}
+                </CustomText>
+                <CustomText type="medium" color="#333" fontSize={14}>
+                  {goal.finishedAt ? formatDate(goal.finishedAt) : "-"}
+                </CustomText>
+              </View>
+            )}
 
             {/* Notes List */}
-            <CustomText
-              style={styles.sectionTitle}
-              color="#1E3A5F"
-              fontSize={16}
-              type="semibold"
-            >
-              {t("goalDetails.notes")}
-            </CustomText>
-            {goal.notes?.length > 0 ? (
-              <FlatList
-                data={goal.notes}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
+            {isNotesVisible && (
+              <>
+                <CustomText
+                  style={styles.sectionTitle}
+                  color="#1E3A5F"
+                  fontSize={16}
+                  type="semibold"
+                >
+                  {t("goalDetails.notes")}
+                </CustomText>
+                {goal.notes?.length > 0 ? (
+                  <FlatList
+                    data={goal.notes}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                      <CustomText
+                        style={styles.quoteItem}
+                        type="medium"
+                        color="#333"
+                      >
+                        - {item}
+                      </CustomText>
+                    )}
+                    showsVerticalScrollIndicator={false}
+                  />
+                ) : (
                   <CustomText
                     style={styles.quoteItem}
                     type="medium"
                     color="#333"
                   >
-                    - {item}
+                    {t("goalDetails.noNotesAdded")}
                   </CustomText>
                 )}
-                showsVerticalScrollIndicator={false}
-              />
-            ) : (
-              <CustomText style={styles.quoteItem} type="medium" color="#333">
-                {t("goalDetails.noNotesAdded")}
-              </CustomText>
+              </>
             )}
           </ScrollView>
         </View>

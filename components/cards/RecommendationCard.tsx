@@ -11,11 +11,10 @@ const { width } = Dimensions.get("window");
 
 type RecommendationCardProps = {
   goal: any;
+  onClose: (id: string) => void;
 };
 
-export default function RecommendationCard({ goal }: RecommendationCardProps) {
-  const handleClose = () => {};
-
+export default function RecommendationCard({ goal, onClose }: RecommendationCardProps) {
   const createdAt = goal.createdAt.toDate(); // convert Timestamp to Date
   let formattedDate = "";
 
@@ -29,147 +28,8 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
 
   // console.log("Goal: ", goal);
   return (
-    // <View style={styles.card}>
-    //   {/* Kart Başlığı */}
-    //   <CustomText style={styles.title} type="bold" fontSize={18}>
-    //     {goal.name}
-    //   </CustomText>
-
-    //   {/* Kategoriye Özgü Bilgiler */}
-    //   {goal.category === "Book" && (
-    //     <View>
-    //       <View style={styles.detailItem}>
-    //         <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //           Yazar:
-    //         </CustomText>
-    //         <CustomText type="regular" fontSize={14}>
-    //           {goal.author || "Bilinmiyor"}
-    //         </CustomText>
-    //       </View>
-    //       <View style={styles.detailItem}>
-    //         <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //           Okuma Durumu:
-    //         </CustomText>
-    //         <CustomText type="regular" fontSize={14}>
-    //           {goal.readingStatus || "Bilinmiyor"}
-    //         </CustomText>
-    //       </View>
-    //     </View>
-    //   )}
-
-    //   {goal.category === "Movie" && (
-    //     <View>
-    //       <View style={styles.detailItem}>
-    //         <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //           Yönetmen:
-    //         </CustomText>
-    //         <CustomText type="regular" fontSize={14}>
-    //           {goal.director || "Bilinmiyor"}
-    //         </CustomText>
-    //       </View>
-    //       <View style={styles.detailItem}>
-    //         <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //           Oyuncular:
-    //         </CustomText>
-    //         <CustomText type="regular" fontSize={14}>
-    //           {goal.actors?.join(", ") || "Bilinmiyor"}
-    //         </CustomText>
-    //       </View>
-    //       <View style={styles.detailItem}>
-    //         <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //           Tür:
-    //         </CustomText>
-    //         <CustomText type="regular" fontSize={14}>
-    //           {goal.genres?.join(", ") || "Bilinmiyor"}
-    //         </CustomText>
-    //       </View>
-    //       <View style={styles.detailItem}>
-    //         <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //           IMDB Puanı:
-    //         </CustomText>
-    //         <CustomText type="regular" fontSize={14}>
-    //           {goal.imdbRate || "Bilinmiyor"}
-    //         </CustomText>
-    //       </View>
-    //       <View style={styles.detailItem}>
-    //         <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //           Konu:
-    //         </CustomText>
-    //         <CustomText type="regular" fontSize={14}>
-    //           {goal.plot || "Bilinmiyor"}
-    //         </CustomText>
-    //       </View>
-    //       <View style={styles.detailItem}>
-    //         <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //           Süre:
-    //         </CustomText>
-    //         <CustomText type="regular" fontSize={14}>
-    //           {goal.runtime ? `${goal.runtime} dakika` : "Bilinmiyor"}
-    //         </CustomText>
-    //       </View>
-    //       <View style={styles.detailItem}>
-    //         <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //           Başlangıç Yılı:
-    //         </CustomText>
-    //         <CustomText type="regular" fontSize={14}>
-    //           {goal.start_year || "Bilinmiyor"}
-    //         </CustomText>
-    //       </View>
-    //       {goal.type === "series" && (
-    //         <View style={styles.detailItem}>
-    //           <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //             Toplam Sezon:
-    //           </CustomText>
-    //           <CustomText type="regular" fontSize={14}>
-    //             {goal.totalSeasons || "Bilinmiyor"}
-    //           </CustomText>
-    //         </View>
-    //       )}
-    //     </View>
-    //   )}
-
-    //   {/* Tavsiye Bilgileri */}
-    //   <View style={styles.detailItem}>
-    //     <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //       Tavsiye Eden:
-    //     </CustomText>
-    //     <CustomText type="regular" fontSize={14}>
-    //       {goal.senderNickname || "Bilinmiyor"}
-    //     </CustomText>
-    //   </View>
-
-    //   <View style={styles.detailItem}>
-    //     <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //       Tavsiye Tarihi:
-    //     </CustomText>
-    //     <CustomText type="regular" fontSize={14}>
-    //       {"Bilinmiyor"}
-    //     </CustomText>
-    //   </View>
-
-    //   <View style={styles.detailItem}>
-    //     <CustomText style={styles.detailLabel} type="medium" fontSize={14}>
-    //       Kategori:
-    //     </CustomText>
-    //     <CustomText type="regular" fontSize={14}>
-    //       {goal.category || "Bilinmiyor"}
-    //     </CustomText>
-    //   </View>
-
-    //   {/* Yorum */}
-    //   {goal.comment && (
-    //     <View style={styles.commentContainer}>
-    //       <CustomText style={styles.commentLabel} type="medium" fontSize={14}>
-    //         Yorum:
-    //       </CustomText>
-    //       <CustomText type="regular" fontSize={14}>
-    //         {goal.comment}
-    //       </CustomText>
-    //     </View>
-    //   )}
-    // </View>
     <View style={styles.card}>
-      <Pressable style={styles.closeButton} onPress={() => handleClose()}>
+      <Pressable style={styles.closeButton} onPress={() => onClose(goal.id) }>
         <CloseIcon size={20} color="#666" />
       </Pressable>
 
@@ -178,7 +38,7 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
           style={styles.categoryTitle}
           type="regular"
           fontSize={14}
-          color="#1E3A5F"
+          color="#999"
         >
           🍿 Film • {formattedDate}
         </CustomText>
@@ -188,7 +48,7 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
           style={styles.categoryTitle}
           type="regular"
           fontSize={14}
-          color="#666"
+          color="#999"
         >
           📺 Dizi • {formattedDate}
         </CustomText>
@@ -197,9 +57,9 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
       {goal.category === "Book" && (
         <CustomText
           style={styles.categoryTitle}
-          type="medium"
-          fontSize={16}
-          color="#1E3A5F"
+          type="regular"
+          fontSize={14}
+          color="#999"
         >
           📖 Kitap • {formattedDate}
         </CustomText>
@@ -207,9 +67,9 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
       {goal.category === "Food" && (
         <CustomText
           style={styles.categoryTitle}
-          type="medium"
-          fontSize={16}
-          color="#666"
+          type="regular"
+          fontSize={14}
+          color="#999"
         >
           🍔 Yemek • {formattedDate}
         </CustomText>
@@ -217,9 +77,9 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
       {goal.category === "Try" && (
         <CustomText
           style={styles.categoryTitle}
-          type="medium"
-          fontSize={16}
-          color="#666"
+          type="regular"
+          fontSize={14}
+          color="#999"
         >
           🪂 Aktivite • {formattedDate}
         </CustomText>
@@ -227,9 +87,9 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
       {goal.category === "Place" && (
         <CustomText
           style={styles.categoryTitle}
-          type="medium"
-          fontSize={16}
-          color="#666"
+          type="regular"
+          fontSize={14}
+          color="#999"
         >
           🚗 Seyahat • {formattedDate}
         </CustomText>
@@ -237,9 +97,9 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
       {goal.category === "Buy" && (
         <CustomText
           style={styles.categoryTitle}
-          type="medium"
+          type="regular"
           fontSize={14}
-          color="#666"
+          color="#999"
         >
           💵 Alışveriş • {formattedDate}
         </CustomText>
@@ -268,7 +128,6 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
         <View style={styles.goalInfo}>
           <View style={styles.topContainer}>
             <CustomText
-              style={styles.goalTitle}
               type="bold"
               fontSize={18}
               color="#1E3A5F"
@@ -277,7 +136,6 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
             </CustomText>
             {goal.category === "Movie" && (
               <CustomText
-                style={styles.goalTitle}
                 type="regular"
                 fontSize={14}
                 color="#666"
@@ -287,14 +145,14 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
             )}
           </View>
 
-          <View style={styles.ratingContainer}>
+          <View>
             <StarRating rating={goal.rating} onRatingChange={() => {}} />
           </View>
         </View>
       </View>
 
       <View style={styles.commentContainer}>
-        <CustomText type="semibold" fontSize={14} color="#1E3A5F">
+        <CustomText type="bold" fontSize={14} color="#1E3A5F">
           Yorum:
         </CustomText>
         <CustomText type="regular" fontSize={14} color="#333">
@@ -305,14 +163,14 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
       <View style={styles.buttonContainer}>
         <CustomButton
           label="Detaylar"
-          onPress={() => handleRecommendation()}
+          onPress={() => {}}
           width={"50%"}
           height={40}
           variant="cancel"
         />
         <CustomButton
           label="Ekle"
-          onPress={() => handleNotRecommendation()}
+          onPress={() => {}}
           width={"50%"}
           height={40}
           variant="fill"
@@ -324,7 +182,7 @@ export default function RecommendationCard({ goal }: RecommendationCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#fff",
     width: width > 768 ? 400 : width - 40,
     borderRadius: 8,
     padding: 20,
@@ -352,6 +210,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     display: "flex",
     flexDirection: "row",
+    alignItems: "flex-end",
     gap: 10,
   },
   poster: {
@@ -359,6 +218,9 @@ const styles = StyleSheet.create({
     height: 100,
     marginRight: 15,
     borderRadius: 4,
+  },
+  topContainer: {
+    gap: 4,
   },
   goalContainer: {
     display: "flex",

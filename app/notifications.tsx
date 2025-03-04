@@ -19,10 +19,12 @@ import {
   doc,
   getDoc,
   orderBy,
+  updateDoc,
 } from "firebase/firestore";
 import { showMessage } from "react-native-flash-message";
 import NotificationRequestAcceptCard from "@/components/cards/NotificationRequestAcceptCard";
 import RecommendationCard from "@/components/cards/RecommendationCard";
+import { set } from "date-fns";
 
 const { width } = Dimensions.get("window");
 
@@ -32,6 +34,10 @@ export default function NotificationPage() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const currentUserId = auth.currentUser?.uid;
+
+  const [isFriendRequestsLoading, setFriendRequestsLoading] = useState(false);
+  const [isRecommendationsLoading, setRecommendationsLoading] = useState(false);
+  const [isNotificationsLoading, setNotificationsLoading] = useState(false);
 
   useEffect(() => {
     if (!currentUserId) return;
@@ -56,7 +62,7 @@ export default function NotificationPage() {
         });
 
         setFriendRequests(requests);
-        setLoading(false);
+        setFriendRequestsLoading(true);
       },
       (error) => {
         console.error("Error in friend requests listener:", error);
@@ -64,7 +70,7 @@ export default function NotificationPage() {
           message: "Arkadaşlık istekleri yüklenirken bir hata oluştu!",
           type: "danger",
         });
-        setLoading(false);
+        // setFriendRequestsLoading(false);
       }
     );
 
@@ -87,7 +93,7 @@ export default function NotificationPage() {
         });
 
         setNotifications(notificationsData);
-        setLoading(false);
+        setNotificationsLoading(true);
       },
       (error) => {
         console.error("Error in notifications listener:", error);
@@ -95,7 +101,7 @@ export default function NotificationPage() {
           message: "Bildirimler yüklenirken bir hata oluştu!",
           type: "danger",
         });
-        setLoading(false);
+        // setLoading(false);
       }
     );
 
@@ -109,6 +115,7 @@ export default function NotificationPage() {
         );
 
         const friendshipsSnapshot = await getDocs(friendshipsQuery);
+        console.log("friendshipsSnapshot:", friendshipsSnapshot);
         const recommendationsData: any = [];
 
         for (const friendshipDoc of friendshipsSnapshot.docs) {
@@ -126,6 +133,7 @@ export default function NotificationPage() {
           recommendationsSnapshot.forEach((doc) => {
             recommendationsData.push({
               id: doc.id,
+              friendshipId: friendshipDoc.id,
               ...doc.data(),
               senderNickname:
                 friendshipData.senderId === currentUserId
@@ -137,6 +145,7 @@ export default function NotificationPage() {
 
         // console.log("recommendationsData:", recommendationsData);
         setRecommendations(recommendationsData);
+        console.log("recommendationsData:", recommendationsData);
         // console.log("recommendationsData:", recommendations);
       } catch (error) {
         console.error("Error loading recommendations:", error);
@@ -145,7 +154,7 @@ export default function NotificationPage() {
           type: "danger",
         });
       } finally {
-        setLoading(false);
+        setRecommendationsLoading(true);
       }
     };
 
@@ -158,66 +167,95 @@ export default function NotificationPage() {
     };
   }, [currentUserId]);
 
-  const loadFriendRequests = async () => {
-    try {
-      const requestsRef = collection(db, "friendRequests");
-      const q = query(
-        requestsRef,
-        where("receiverId", "==", currentUserId),
-        where("status", "==", "pending")
-      );
-
-      const snapshot = await getDocs(q);
-      const requests: any = [];
-
-      snapshot.forEach((doc) => {
-        requests.push({
-          id: doc.id,
-          ...doc.data(),
-        });
-      });
-
-      setFriendRequests(requests);
-    } catch (error) {
-      console.error("Error loading friend requests:", error);
-      showMessage({
-        message: "Arkadaşlık istekleri yüklenirken bir hata oluştu!",
-        type: "danger",
-      });
-    } finally {
+  useEffect(() => {
+    if (isFriendRequestsLoading && isRecommendationsLoading && isNotificationsLoading) {
       setLoading(false);
     }
-  };
+  }, [isFriendRequestsLoading, isRecommendationsLoading, isNotificationsLoading]);
 
-  const loadNotifications = async () => {
+ 
+  // close recommendation modal
+  const handleCloseRecommendationCard = async (friendshipId: string, recommendationId: string) => {
     try {
-      console.log("currentUserId:", currentUserId);
-      const notificationsRef = collection(db, "notifications");
-      const q = query(
-        notificationsRef,
-        where("type", "==", "friendRequestAccepted"),
-        where("relatedUserId", "==", currentUserId),
-        orderBy("createdAt", "desc")
-      );
-      const snapshot = await getDocs(q);
-      console.log("Notifications Snapshot:", snapshot);
-
-      const notifications: any = [];
-
-      snapshot.forEach((doc) => {
-        notifications.push({
-          id: doc.id,
-          ...doc.data(),
-        });
+      const currentUserId = auth.currentUser?.uid;
+      if (!currentUserId) {
+        console.error("Kullanıcı oturum açmamış.");
+        return;
+      }
+  
+      console.log("Current Method Inputs:", {
+        currentUserId,
+        friendshipId,
+        recommendationId,
       });
-
-      setNotifications(notifications);
-    } catch (error) {}
+  
+      // Mevcut recommendations state'ini logla
+      console.log("Current Recommendations State:", recommendations);
+  
+      // Belirli bir tavsiyeyi bul
+      const specificRecommendation = recommendations.find(
+        (rec: any) => rec.id === recommendationId
+      );
+  
+      console.log("Specific Recommendation:", specificRecommendation);
+  
+      if (!specificRecommendation) {
+        console.error("Tavsiye state'de bulunamadı.");
+        return;
+      }
+  
+      const recommendationRef = doc(
+        db,
+        "friendships",
+        friendshipId,
+        "recommendations",
+        recommendationId
+      );
+  
+      console.log("Recommendation Reference Path:", recommendationRef.path);
+  
+      const recommendationDoc = await getDoc(recommendationRef);
+  
+      console.log("Recommendation Document Exists:", recommendationDoc.exists());
+      console.log("Recommendation Document Data:", recommendationDoc.data());
+  
+      if (!recommendationDoc.exists()) {
+        console.error("Tavsiye belgesi bulunamadı.");
+  
+        // State'den de kaldır
+        setRecommendations((prev: any) =>
+          prev.filter((rec: any) => rec.id !== recommendationId)
+        );
+  
+        return;
+      }
+  
+      const recommendationData = recommendationDoc.data();
+  
+      // Firestore'daki belgeyi güncelle
+      await updateDoc(recommendationRef, {
+        isSeen: true,
+      });
+  
+      console.log("Firestore belgesi başarıyla güncellendi.");
+  
+      // State'i güncelle
+      setRecommendations((prev: any) =>
+        prev.filter((rec: any) => rec.id !== recommendationId)
+      );
+    } catch (error) {
+      console.error("Tavsiye kartı kapatılırken hata oluştu:", error);
+      console.error("Hata Detayları:", JSON.stringify(error, null, 2));
+      showMessage({
+        message: "Tavsiye kartı kapatılırken hata oluştu!",
+        type: "danger",
+      });
+    }
   };
 
   const handleRequestAction = (requestId: string) => {
     // Remove the request from the list
-    setFriendRequests(friendRequests.filter((req) => req.id !== requestId));
+    setFriendRequests(friendRequests.filter((req: any) => req.id !== requestId));
   };
 
   const handleRemoveNotification = async (notificationId: string) => {
@@ -237,7 +275,7 @@ export default function NotificationPage() {
 
       // State'ten de kaldır
       setNotifications((prevNotifications) =>
-        prevNotifications.filter((notif) => notif.id !== notificationId)
+        prevNotifications.filter((notif: any) => notif.id !== notificationId)
       );
     } catch (error) {
       // console.error("Bildirim silinirken hata oluştu:", error);
@@ -250,14 +288,6 @@ export default function NotificationPage() {
 
   return (
     <View style={styles.container}>
-      {/* <CustomText
-        type="semibold"
-        fontSize={16}
-        color="#1E3A5F"
-        style={styles.sectionTitle}
-      >
-        Bildirimler
-      </CustomText> */}
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#1E3A5F" />
@@ -267,7 +297,7 @@ export default function NotificationPage() {
         recommendations.length > 0 ? (
         <ScrollView
           style={styles.scrollContainer}
-          contentContainerStyle={styles.scrollContentContainer}
+          // contentContainerStyle={styles.scrollContentContainer}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.sectionContainer}>
@@ -289,17 +319,27 @@ export default function NotificationPage() {
                 onRead={() => handleRemoveNotification(notification.id)}
               />
             ))}
+          </View>
 
             {/* Tavsiyeler */}
             <View style={styles.sectionContainer}>
-              {recommendations.map((recommendation: any) => (
-                <RecommendationCard
-                  key={recommendation.id}
-                  goal={recommendation}
-                />
-              ))}
+              {recommendations
+                .filter(
+                  (recommendation: any) =>
+                    !recommendation.isSeen && !recommendation.isAdded
+                )
+                .map((recommendation: any) => (
+                  <RecommendationCard
+                    key={recommendation.id}
+                    goal={recommendation}
+                    onClose={() =>
+                      handleCloseRecommendationCard(
+                        recommendation.friendshipId,
+                        recommendation.id)
+                    }
+                  />
+                ))}
             </View>
-          </View>
         </ScrollView>
       ) : (
         <View style={styles.emptyContainer}>
