@@ -19,6 +19,7 @@ import { auth, db } from "@/firebase.config";
 import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
 import { showMessage } from "react-native-flash-message";
 import CheckIcon from "@/components/icons/CheckIcon";
+import { is } from "date-fns/locale";
 
 const { width } = Dimensions.get("window");
 
@@ -43,6 +44,7 @@ export default function FriendsListModal({
   const [recommendComment, setRecommendComment] = useState<string>("");
   const [friends, setFriends] = useState<Friend[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isNotesAdded, setIsNotesAdded] = useState<boolean>(false);
 
   useEffect(() => {
     if (isFriendsModalVisible) {
@@ -111,7 +113,7 @@ export default function FriendsListModal({
   const handleSendRecommendation = async () => {
     try {
       const selectedFriends = friends.filter((friend) => friend.selected);
-  
+
       if (selectedFriends.length === 0) {
         showMessage({
           message: "En az bir arkadaş seçmelisiniz!",
@@ -119,42 +121,45 @@ export default function FriendsListModal({
         });
         return;
       }
-  
+
       const userId = auth.currentUser?.uid;
-      if (!userId) return;  
-  
+      if (!userId) return;
+
       // console.log("GOALS:", goal.id, goal.category, goal.genres);
-  
+
       for (const friend of selectedFriends) {
         // Sadece bir array-contains filtresi kullanıyoruz
         const friendshipQuery = query(
           collection(db, "friendships"),
           where("participants", "array-contains", userId)
         );
-  
+
         const friendshipSnapshot = await getDocs(friendshipQuery);
-        
+
         // JavaScript filter ve find kullanarak arkadaşı içeren belgeyi buluyoruz
-        const matchingFriendship = friendshipSnapshot.docs.find(doc => 
+        const matchingFriendship = friendshipSnapshot.docs.find((doc) =>
           doc.data().participants.includes(friend.id)
         );
-  
+
         if (matchingFriendship) {
           const friendshipRef = matchingFriendship.ref;
 
           // add recommendation to the subcollection
-          const recommendationRef = collection(friendshipRef, "recommendations");
-          
+          const recommendationRef = collection(
+            friendshipRef,
+            "recommendations"
+          );
+
           await addDoc(recommendationRef, {
             name: goal.name,
             category: goal.category,
-  
-            ...(goal.category === "Book" && { 
+
+            ...(goal.category === "Book" && {
               readingStatus: goal.readingStatus,
-              author: goal.author
+              author: goal.author,
             }),
-  
-            ...(goal.category === "Movie" && { 
+
+            ...(goal.category === "Movie" && {
               director: goal.director,
               actors: goal.actors,
               genres: goal.genres,
@@ -163,11 +168,11 @@ export default function FriendsListModal({
               runtime: goal.runtime,
               start_year: goal.start_year,
               type: goal.type,
-              posterUrl: goal.posterUrl
+              posterUrl: goal.posterUrl,
             }),
 
-            ...(goal.type === "series" && { 
-                totalSeasons: goal.totalSeasons 
+            ...(goal.type === "series" && {
+              totalSeasons: goal.totalSeasons,
             }),
 
             comment: recommendComment,
@@ -176,16 +181,18 @@ export default function FriendsListModal({
             receiverNickname: friend.nickname,
             isSeen: false,
             isAdded: false,
-            createdAt: new Date()
+            isNotesAdded,
+            ...(isNotesAdded && { notes: goal.notes }),
+            createdAt: new Date(),
           });
         }
       }
-      
+
       showMessage({
         message: "Arkadaşlarına tavsiyen gönderildi!",
         type: "success",
       });
-  
+
       handleCloseModal();
     } catch (error) {
       console.error("Tavsiye gönderme hatası:", error);
@@ -249,6 +256,25 @@ export default function FriendsListModal({
               multiline
             />
           </View>
+
+          <TouchableOpacity
+            style={styles.friendItem}
+            onPress={() => setIsNotesAdded((prev) => !prev)}
+          >
+            <BoxIcon
+              size={20}
+              color={isNotesAdded ? "#1E3A5F" : "#666"}
+              variant={isNotesAdded ? "fill" : "outlined"}
+            />
+            <CustomText
+              color="#333"
+              fontSize={14}
+              type="medium"
+              style={{ marginLeft: 10 }}
+            >
+              Notlarını Paylaş
+            </CustomText>
+          </TouchableOpacity>
 
           <CustomText
             color="#1E3A5F"

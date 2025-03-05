@@ -261,6 +261,7 @@ export default function FriendsPage() {
         <ScrollView
           style={styles.scrollContainer}
           contentContainerStyle={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }

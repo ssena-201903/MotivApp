@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Dimensions, Pressable, Image } from "react-native";
 import { CustomText } from "@/CustomText"; // Özel metin bileşeniniz
 import CloseIcon from "../icons/CloseIcon";
 import StarRating from "../icons/StarRating";
 import { format, isToday, isYesterday } from "date-fns";
 import { tr } from "date-fns/locale";
-import CustomButton from "../CustomButton";
+import CustomButton from "@/components/CustomButton";
+import GoalDetailsModal from "@/components/modals/GoalDetailsModal";
 
 const { width } = Dimensions.get("window");
 
@@ -14,7 +15,13 @@ type RecommendationCardProps = {
   onClose: (id: string) => void;
 };
 
-export default function RecommendationCard({ goal, onClose }: RecommendationCardProps) {
+export default function RecommendationCard({
+  goal,
+  onClose,
+}: RecommendationCardProps) {
+  const [isDetailsModalVisible, setIsDetailsModalVisible] =
+    useState<boolean>(false);
+
   const createdAt = goal.createdAt.toDate(); // convert Timestamp to Date
   let formattedDate = "";
 
@@ -26,10 +33,14 @@ export default function RecommendationCard({ goal, onClose }: RecommendationCard
     formattedDate = format(createdAt, "dd.MM.yyyy", { locale: tr }); // if it's not today or yesterday, show full date
   }
 
+  const handleDetailsPress = () => {
+    setIsDetailsModalVisible(true);
+  };
+
   // console.log("Goal: ", goal);
   return (
     <View style={styles.card}>
-      <Pressable style={styles.closeButton} onPress={() => onClose(goal.id) }>
+      <Pressable style={styles.closeButton} onPress={() => onClose(goal.id)}>
         <CloseIcon size={20} color="#666" />
       </Pressable>
 
@@ -127,19 +138,11 @@ export default function RecommendationCard({ goal, onClose }: RecommendationCard
         )}
         <View style={styles.goalInfo}>
           <View style={styles.topContainer}>
-            <CustomText
-              type="bold"
-              fontSize={18}
-              color="#1E3A5F"
-            >
+            <CustomText type="bold" fontSize={18} color="#1E3A5F">
               {goal.name}
             </CustomText>
             {goal.category === "Movie" && (
-              <CustomText
-                type="regular"
-                fontSize={14}
-                color="#666"
-              >
+              <CustomText type="regular" fontSize={14} color="#666">
                 Imdb: {goal.imdbRate}
               </CustomText>
             )}
@@ -163,19 +166,27 @@ export default function RecommendationCard({ goal, onClose }: RecommendationCard
       <View style={styles.buttonContainer}>
         <CustomButton
           label="Detaylar"
-          onPress={() => {}}
+          onPress={handleDetailsPress}
           width={"50%"}
           height={40}
           variant="cancel"
         />
         <CustomButton
-          label="Ekle"
+          label="Listene Ekle"
           onPress={() => {}}
           width={"50%"}
           height={40}
           variant="fill"
         />
       </View>
+
+      <GoalDetailsModal
+        visible={isDetailsModalVisible}
+        onClose={() => setIsDetailsModalVisible(false)}
+        goal={goal}
+        isPrivate={false}
+        isNotesVisible={false}
+      />
     </View>
   );
 }

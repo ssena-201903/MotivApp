@@ -29,6 +29,16 @@ export default function CreateHabitCard() {
   const [variant, setVariant] = useState<string>("");
   const [existingHabits, setExistingHabits] = useState<string[]>([]);
 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        router.replace("/login"); // Eğer kullanıcı oturum açmamışsa, login sayfasına yönlendir
+      }
+    });
+  
+    return () => unsubscribe();
+  }, []);
+
   // language context
   const { t, language, setLanguage } = useLanguage();
 

@@ -6,6 +6,7 @@ import {
   Pressable,
   Dimensions,
   FlatList,
+  Image,
 } from "react-native";
 import { CustomText } from "@/CustomText"; // Özel metin bileşenin
 import InfoIcon from "../icons/InfoIcon"; // Bilgi ikonu bileşenin
@@ -49,14 +50,27 @@ export default function GoalDetailsModal({
     >
       <Pressable style={styles.overlay} onPress={onClose}>
         <View style={styles.modalContent}>
-          <CustomText
-            style={styles.title}
-            color="#1E3A5F"
-            fontSize={12}
-            type="semibold"
-          >
-            {goal.name}
-          </CustomText>
+          <View style={styles.titleContainer}>
+            {goal.posterUrl && (
+              <Image
+                source={
+                  goal.posterUrl
+                    ? { uri: goal.posterUrl }
+                    : require("@/assets/images/logo.png")
+                }
+                style={styles.poster}
+              />
+            )}
+
+            <CustomText
+              style={styles.title}
+              color="#1E3A5F"
+              fontSize={12}
+              type="semibold"
+            >
+              {goal.name}
+            </CustomText>
+          </View>
 
           {/* scrollable detail content except title */}
           <ScrollView
@@ -158,6 +172,49 @@ export default function GoalDetailsModal({
                     </CustomText>
                   </View>
                 )}
+
+                {isPrivate && (
+                  <View style={styles.detailItem}>
+                    <CustomText
+                      style={styles.detailLabel}
+                      color="#1E3A5F"
+                      fontSize={14}
+                      type="regular"
+                    >
+                      {t("goalDetails.imdbRate")}
+                    </CustomText>
+                    <CustomText type="medium" color="#333" fontSize={14}>
+                      {goal.imdbRate}
+                    </CustomText>
+                  </View>
+                )}
+
+                {isPrivate && (
+                  <View style={styles.detailItem}>
+                    <CustomText
+                      style={styles.detailLabel}
+                      color="#1E3A5F"
+                      fontSize={14}
+                      type="regular"
+                    >
+                      {t("goalDetails.genres")}
+                    </CustomText>
+
+                    {goal.genres?.length > 0 ? (
+                      <CustomText
+                        style={styles.quoteItem}
+                        type="medium"
+                        color="#333"
+                      >
+                        {goal.genres.join(", ")}
+                      </CustomText>
+                    ) : (
+                      <CustomText type="medium" color="#333" fontSize={14}>
+                        {t("goalDetails.noGenres")}
+                      </CustomText>
+                    )}
+                  </View>
+                )}
               </View>
             )}
 
@@ -213,7 +270,7 @@ export default function GoalDetailsModal({
             )}
 
             {/* Notes List */}
-            {isNotesVisible && (
+            {!isNotesVisible && (
               <>
                 <CustomText
                   style={styles.sectionTitle}
@@ -221,7 +278,9 @@ export default function GoalDetailsModal({
                   fontSize={16}
                   type="semibold"
                 >
-                  {t("goalDetails.notes")}
+                  {isPrivate
+                    ? t("goalDetails.notesPrivate")
+                    : `${goal.senderNickname} ${t("goalDetails.notesPublic")}`}
                 </CustomText>
                 {goal.notes?.length > 0 ? (
                   <FlatList
@@ -270,13 +329,25 @@ const styles = StyleSheet.create({
     maxHeight: 400,
     width: width > 768 ? "30%" : width - 40,
   },
+  titleContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-end",
+    marginBottom: 20,
+  },
+  poster: {
+    width: 30,
+    height: 40,
+    marginRight: 10,
+    borderRadius: 5,
+  },
   scrollableContent: {
     flex: 1,
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 15,
+    // marginBottom: 15,
   },
   detailItem: {
     flexDirection: "row",
